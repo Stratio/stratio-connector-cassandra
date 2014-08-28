@@ -70,7 +70,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
                         tableName = project.getTableName();
 
-                        catalogInc=tableName.containsCatalog();
+                        catalogInc=tableName.isCompletedName();
                         if (catalogInc) {
                             CatalogName catalogName = tableName.getCatalogName();
                             catalog=catalogName.getName();

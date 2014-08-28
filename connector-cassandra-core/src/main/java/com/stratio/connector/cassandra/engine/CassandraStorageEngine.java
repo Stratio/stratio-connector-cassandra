@@ -41,7 +41,7 @@ public class CassandraStorageEngine implements IStorageEngine {
     }
     @Override
     public void insert(TableName targetTable, Row row) throws UnsupportedException, ExecutionException {
-        String tableName=targetTable.getTableQualifiedName();
+        String tableName=targetTable.getQualifiedName();
 
         Set<String> keys=row.getCells().keySet();
         List<String> columns=new ArrayList<String>();
@@ -60,7 +60,7 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     @Override
     public void insert(TableName targetTable, Collection<Row> rows) throws UnsupportedException, ExecutionException {
-        String tableName=targetTable.getTableQualifiedName();
+        String tableName=targetTable.getQualifiedName();
 
         for(Row row:rows){
             Set<String> keys=row.getCells().keySet();
