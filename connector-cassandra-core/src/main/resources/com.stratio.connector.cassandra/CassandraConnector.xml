@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Connector>
+    <ConnectorName>CassandraConnector</ConnectorName>
+    <Version>0.1.0</Version>
+    <RequiredProperties>
+        <limit></limit>
+    </RequiredProperties>
+    <OptionalProperties>
+    </OptionalProperties>
+    <SupportedOperations></SupportedOperations>
+</Connector>
