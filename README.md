@@ -1,4 +1,4 @@
 stratio-connector-cassandra
 ===========================
 
-Native connector for Cassandra using META
+Native connector for Cassandra using META.
