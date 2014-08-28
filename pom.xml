@@ -46,6 +46,7 @@
 
     <modules>
         <module>connector-cassandra-core</module>
+        <module>connector-cluster-server</module>
     </modules>
 
 
