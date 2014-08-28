@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package com.stratio.connector.cassandra.engine;
+package com.stratio.connector.cassandra.utils;
 
 import com.datastax.driver.core.DataType;
 
@@ -42,7 +42,7 @@ import java.util.Map;
  *     <tr><td>TEXT</td><td>String</td><td>TEXT</td></tr>
  * </table>
  */
-public class CassandraMetadataHelper extends AbstractMetadataHelper{
+public class CassandraMetadataHelper extends AbstractMetadataHelper {
 
     /**
      * Mapping of native datatypes to SQL types

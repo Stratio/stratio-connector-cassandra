@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package com.stratio.connector.cassandra.engine;
+package com.stratio.connector.cassandra.utils;
 
 import com.datastax.driver.core.*;
 import com.stratio.meta.common.data.CassandraResultSet;

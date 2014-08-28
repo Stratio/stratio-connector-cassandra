@@ -20,7 +20,7 @@ package com.stratio.connector.cassandra;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.engine.Utils;
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
 
@@ -34,7 +34,7 @@ public class CassandraExecutor {
     private static final Logger LOG = Logger.getLogger(CassandraExecutor.class);
 
     /**
-     * The {@link com.stratio.connector.cassandra.engine.Utils}.
+     * The {@link com.stratio.connector.cassandra.utils.Utils}.
      */
     private static Utils utils = new Utils();
 
