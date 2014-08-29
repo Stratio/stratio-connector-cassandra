@@ -17,7 +17,6 @@
  */
 package com.stratio.connector.cassandra.engine;
 
-
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.meta.common.connector.Operations;
@@ -50,71 +49,62 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
-
 public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    BasicCoreCassandraTest.setUpBeforeClass();
+    BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
+    //metadataManager = new MetadataManager(_session, null);
+    //metadataManager.loadMetadata();
+  }
 
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        BasicCoreCassandraTest.setUpBeforeClass();
-        BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
-        //metadataManager = new MetadataManager(_session, null);
-        //metadataManager.loadMetadata();
+  @Test
+  public void basicSelect() {
+    ClusterName targetCluster = new ClusterName("Cluster");
 
+    List<LogicalStep> logicalSteps = new ArrayList<>();
 
+    TableName tableName = new TableName("demo", "users");
+
+    List<ColumnName> columnList = new ArrayList<>();
+    ColumnName columnName = new ColumnName(tableName, "name");
+    columnList.add(columnName);
+
+    Project project = new Project(tableName, columnList);
+
+    Selector identifier = new ColumnSelector(columnName);
+    Term term = new StringTerm("name_5");
+    List<Term<?>> terms = new ArrayList<>();
+    terms.add(term);
+
+    Relation relation = new Relation(identifier, Operator.LIKE, terms);
+    Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+
+    project.setNextStep(filter);
+
+    logicalSteps.add(project);
+    logicalSteps.add(filter);
+
+    LogicalWorkflow workflow = new LogicalWorkflow(logicalSteps);
+
+    Map<String, Session> sessions = new HashMap<>();
+    sessions.put("Cluster", this._session);
+    CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
+
+    try {
+      QueryResult qr = cqe.execute(targetCluster, workflow);
+      String value = "";
+      for (Row row : qr.getResultSet()) {
+        Cell cell = row.getCell("name");
+        value = cell.getValue().toString();
+      }
+      assertEquals(value, "name_5");
+    } catch (UnsupportedException e) {
+      e.printStackTrace();
+    } catch (ExecutionException e) {
+      e.printStackTrace();
     }
-
-    @Test
-    public void basicSelect() {
-
-        ClusterName targetCluster = new ClusterName("Cluster");
-
-        List<LogicalStep> logicalSteps = new ArrayList<>();
-
-        CatalogName catalogName = new CatalogName("demo");
-        TableName tableName = new TableName("demo.users", catalogName.getName());
-
-        List<ColumnName> columnList = new ArrayList<>();
-        ColumnName columnName = new ColumnName(tableName, "name");
-        columnList.add(columnName);
-
-        Project project = new Project("demo", tableName, columnList);
-
-        Selector identifier = new ColumnSelector(columnName);
-        Term term = new StringTerm("name_5");
-        List<Term<?>> terms = new ArrayList<>();
-        terms.add(term);
-
-        Relation relation = new Relation(identifier, Operator.LIKE, terms);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
-
-        project.setNextStep(filter);
-
-        logicalSteps.add(project);
-        logicalSteps.add(filter);
-
-
-        LogicalWorkflow workflow = new LogicalWorkflow(logicalSteps);
-
-        Map<String, Session> sessions = new HashMap<>();
-        sessions.put("Cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
-
-        try {
-            QueryResult qr = cqe.execute(targetCluster, workflow);
-            String value = "";
-            for (Row row : qr.getResultSet()) {
-                Cell cell = row.getCell("name");
-                value = cell.getValue().toString();
-            }
-            assertEquals(value, "name_5");
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5'");
-
-
-    }
+    assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5'");
+  }
 }

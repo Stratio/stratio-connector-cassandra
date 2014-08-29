@@ -30,111 +30,104 @@ import org.apache.log4j.Logger;
 
 import java.util.Map;
 
-/**
- * Created by jjlopez on 26/08/14.
- */
 public class CassandraConnector implements IConnector {
 
-    private Map<String, Session> sessions;
+  private Map<String, Session> sessions;
 
-    /**
-     * Class logger.
-     */
-    private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
+  /**
+   * Class logger.
+   */
+  private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
 
+  @Override
+  public String getConnectorName() {
+    return "Cassandra";
+  }
 
-    /**
-     * Get the name of the datastore required by the connector.
-     *
-     * @return The name.
-     */
-    @Override
-    public String getDatastoreName() {
-        return "Cassandra";
+  /**
+   * Get the name of the datastore required by the connector.
+   *
+   * @return The name.
+   */
+  @Override
+  public String[] getDatastoreName() {
+    return new String[]{"Cassandra"};
+  }
+
+  @Override
+  public void init(IConfiguration configuration) throws InitializationException {
+
+  }
+
+  @Override
+  public void connect(ICredentials credentials, ConnectorClusterConfig config)
+      throws ConnectionException {
+    ClusterName clusterName = config.getName();
+    Map<String, Object> options = config.getOptions();
+
+    //getting the hosts and port of the cluster
+    Map<String, Object> clusterOptions =
+        (Map<String, Object>) options.get(clusterName.getName());
+
+    EngineConfig engineConfig = new EngineConfig();
+    engineConfig.setCassandraHosts((String[]) clusterOptions.get("Hosts"));
+    engineConfig.setCassandraPort(Integer.parseInt((String) clusterOptions.get("Port")));
+
+    Engine engine = new Engine(engineConfig);
+    sessions.put(clusterName.getName(), engine.getSession());
+  }
+
+  @Override
+  public void close(ClusterName name) throws ConnectionException {
+    sessions.get(name.getName()).close();
+    sessions.remove(name.getName());
+  }
+
+  @Override
+  public boolean isConnected(ClusterName name) {
+    boolean connected;
+    if (sessions.get(name.getName()) != null) {
+      connected = true;
+    } else {
+      connected = false;
     }
+    return connected;
+  }
 
-    @Override
-    public void init(IConfiguration configuration) throws InitializationException {
+  /**
+   * Get the storage engine.
+   *
+   * @return An implementation of {@link com.stratio.meta.common.connector.IStorageEngine}.
+   * @throws UnsupportedException If the connector does not provide this functionality.
+   */
+  @Override
+  public IStorageEngine getStorageEngine() throws UnsupportedException {
+    IStorageEngine storageEngine = new CassandraStorageEngine(sessions);
+    return storageEngine;
+  }
 
+  /**
+   * Get the query engine.
+   *
+   * @return An implementation of {@link com.stratio.meta.common.connector.IQueryEngine}.
+   * @throws UnsupportedException If the connector does not provide this functionality.
+   */
+  @Override
+  public IQueryEngine getQueryEngine() throws UnsupportedException {
+    IQueryEngine queryEngine = new CassandraQueryEngine(sessions);
+    return queryEngine;
+  }
 
-    }
-
-    @Override
-    public void connect(ICredentials credentials, ConnectorClusterConfig config)
-        throws ConnectionException {
-        ClusterName clusterName = config.getName();
-        Map<String, Object> options = config.getOptions();
-
-        //getting the hosts and port of the cluster
-        Map<String, Object> clusterOptions =
-            (Map<String, Object>) options.get(clusterName.getName());
-
-
-        EngineConfig engineConfig = new EngineConfig();
-        engineConfig.setCassandraHosts((String[]) clusterOptions.get("Hosts"));
-        engineConfig.setCassandraPort(Integer.parseInt((String) clusterOptions.get("Port")));
-
-
-        Engine engine = new Engine(engineConfig);
-        sessions.put(clusterName.getName(), engine.getSession());
-    }
-
-    @Override
-    public void close(ClusterName name) throws ConnectionException {
-        sessions.get(name.getName()).close();
-        sessions.remove(name.getName());
-    }
-
-    @Override
-    public boolean isConnected(ClusterName name) {
-        boolean connected;
-        if (sessions.get(name.getName()) != null) {
-            connected = true;
-        } else {
-            connected = false;
-        }
-
-        return connected;
-    }
-
-
-
-    /**
-     * Get the storage engine.
-     *
-     * @return An implementation of {@link com.stratio.meta.common.connector.IStorageEngine}.
-     * @throws UnsupportedException If the connector does not provide this functionality.
-     */
-    @Override
-    public IStorageEngine getStorageEngine() throws UnsupportedException {
-        IStorageEngine storageEngine = new CassandraStorageEngine(sessions);
-        return storageEngine;
-    }
-
-
-    /**
-     * Get the query engine.
-     *
-     * @return An implementation of {@link com.stratio.meta.common.connector.IQueryEngine}.
-     * @throws UnsupportedException If the connector does not provide this functionality.
-     */
-    @Override
-    public IQueryEngine getQueryEngine() throws UnsupportedException {
-        IQueryEngine queryEngine = new CassandraQueryEngine(sessions);
-        return queryEngine;
-    }
-
-    /**
-     * Get the metadata engine.
-     *
-     * @return An implementation of {@link com.stratio.meta.common.connector.IMetadataEngine}.
-     * @throws UnsupportedException If the connector does not provide this functionality.
-     */
-    @Override
-    public IMetadataEngine getMetadataEngine() throws UnsupportedException {
-        IMetadataEngine metadataEngine = new CassandraMetadataEngine(sessions);
-        return metadataEngine;
-    }
-
+  /**
+   * Get the metadata engine.
+   *
+   * @return An implementation of {@link com.stratio.meta.common.connector.IMetadataEngine}.
+   * @throws UnsupportedException If the connector does not provide this functionality.
+   */
+  @Override
+  public IMetadataEngine getMetadataEngine() throws UnsupportedException {
+    IMetadataEngine metadataEngine = new CassandraMetadataEngine(sessions);
+    return metadataEngine;
+  }
 
 }
