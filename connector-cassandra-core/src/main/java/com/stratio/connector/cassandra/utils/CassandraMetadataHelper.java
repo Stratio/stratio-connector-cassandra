@@ -19,7 +19,6 @@
 package com.stratio.connector.cassandra.utils;
 
 import com.datastax.driver.core.DataType;
-
 import com.stratio.meta.common.metadata.structures.ColumnType;
 import org.apache.log4j.Logger;
 
@@ -30,16 +29,16 @@ import java.util.Map;
  * Cassandra mapping of META column types to their underlying Java
  * class implementations. The following conversions are considered:
  * <table>
- *     <tr><th>Cassandra Type</th><th>Cassandra Java class</th><th>META Column Type</th></tr>
- *     <tr><td>BIGINT</td><td>Long</td><td>BIGINT</td></tr>
- *     <tr><td>BOOLEAN</td><td>Boolean</td>BOOLEAN<td></td></tr>
- *     <tr><td>COUNTER</td><td>Long</td>NATIVE<td></td></tr>
- *     <tr><td>DOUBLE</td><td>Double</td><td>DOUBLE</td></tr>
- *     <tr><td>FLOAT</td><td>Float</td><td>FLOAT</td></tr>
- *     <tr><td>INT</td><td>Integer</td><td>INT</td></tr>
- *     <tr><td>TEXT</td><td>String</td><td>TEXT</td></tr>
- *     <tr><td>VARCHAR</td><td>String</td><td>VARCHAR</td></tr>
- *     <tr><td>TEXT</td><td>String</td><td>TEXT</td></tr>
+ * <tr><th>Cassandra Type</th><th>Cassandra Java class</th><th>META Column Type</th></tr>
+ * <tr><td>BIGINT</td><td>Long</td><td>BIGINT</td></tr>
+ * <tr><td>BOOLEAN</td><td>Boolean</td>BOOLEAN<td></td></tr>
+ * <tr><td>COUNTER</td><td>Long</td>NATIVE<td></td></tr>
+ * <tr><td>DOUBLE</td><td>Double</td><td>DOUBLE</td></tr>
+ * <tr><td>FLOAT</td><td>Float</td><td>FLOAT</td></tr>
+ * <tr><td>INT</td><td>Integer</td><td>INT</td></tr>
+ * <tr><td>TEXT</td><td>String</td><td>TEXT</td></tr>
+ * <tr><td>VARCHAR</td><td>String</td><td>VARCHAR</td></tr>
+ * <tr><td>TEXT</td><td>String</td><td>TEXT</td></tr>
  * </table>
  */
 public class CassandraMetadataHelper extends AbstractMetadataHelper {
@@ -84,8 +83,8 @@ public class CassandraMetadataHelper extends AbstractMetadataHelper {
     /**
      * Class constructor.
      */
-    public CassandraMetadataHelper(){
-        for(Map.Entry<ColumnType, String> entry: dbType.entrySet()){
+    public CassandraMetadataHelper() {
+        for (Map.Entry<ColumnType, String> entry : dbType.entrySet()) {
             typeMapping.put(entry.getValue(), entry.getKey());
         }
     }
@@ -93,17 +92,17 @@ public class CassandraMetadataHelper extends AbstractMetadataHelper {
     @Override
     public ColumnType toColumnType(String dbTypeName) {
         ColumnType result = typeMapping.get(dbTypeName.toUpperCase());
-        if(result == null) {
+        if (result == null) {
             try {
                 DataType.Name cassandraType = DataType.Name.valueOf(dbTypeName.toUpperCase());
                 result = ColumnType.NATIVE;
                 result.setDBMapping(cassandraType.name(), cassandraType.asJavaClass());
                 result.setODBCType(nativeODBCType.get(cassandraType));
-            }catch (IllegalArgumentException iae) {
+            } catch (IllegalArgumentException iae) {
                 LOG.error("Invalid database type: " + dbTypeName, iae);
                 result = null;
             }
-        }else{
+        } else {
             result.setDBMapping(dbType.get(result), dbClass.get(result));
         }
 

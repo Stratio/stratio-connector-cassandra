@@ -29,6 +29,7 @@ import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.CatalogName;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
@@ -43,51 +44,65 @@ import java.util.Map;
  */
 public class CassandraMetadataEngine implements IMetadataEngine {
 
-    private Session session;
+    private Map<String, Session> sessions;
+    private Session session = null;
 
-    public CassandraMetadataEngine(Session session){
-        this.session=session;
+    public CassandraMetadataEngine(Map<String, Session> sessions) {
+        this.sessions = sessions;
     }
 
     @Override
-    public void createCatalog(CatalogMetadata catalogMetadata) throws UnsupportedException, ExecutionException {
-        String catalogName=catalogMetadata.getName().getQualifiedName();
-        Map<String, Object> catalogOptions=catalogMetadata.getOptions();
+    public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata)
+        throws UnsupportedException, ExecutionException {
+        session = sessions.get(targetCluster);
+        String catalogName = catalogMetadata.getName().getQualifiedName();
+        Map<String, Object> catalogOptions = catalogMetadata.getOptions();
 
-        CreateCatalogStatement catalogStatement=new CreateCatalogStatement(catalogName,true, catalogOptions.toString());
+        CreateCatalogStatement catalogStatement =
+            new CreateCatalogStatement(catalogName, true, catalogOptions.toString());
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
     }
 
     @Override
-    public void createTable(TableMetadata tableMetadata) throws UnsupportedException, ExecutionException {
-        String tableName=tableMetadata.getName().getQualifiedName();
-        Map<String,Object> tableOptions=tableMetadata.getOptions();
-        List<String> primaryKey=(List<String>)tableOptions.get("primaryKey");
-        List<String> clusterKey=(List<String>)tableOptions.get("clusterKey");
+    public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
+        throws UnsupportedException, ExecutionException {
+        session = sessions.get(targetCluster);
+        String tableName = tableMetadata.getName().getQualifiedName();
+        Map<String, Object> tableOptions = tableMetadata.getOptions();
+        List<String> primaryKey = (List<String>) tableOptions.get("primaryKey");
+        List<String> clusterKey = (List<String>) tableOptions.get("clusterKey");
 
 
-        Map<ColumnName, com.stratio.meta2.common.metadata.ColumnMetadata> tableColumns=tableMetadata.getColumns();
-        Map<String,String> columnWithType=new HashMap<String, String>();
-        for(ColumnName key:tableColumns.keySet()){
-            com.stratio.meta2.common.metadata.ColumnMetadata column=(com.stratio.meta2.common.metadata.ColumnMetadata)tableColumns.get(key);
-            columnWithType.put(column.getColumnType().getStandardType(),column.getName().getName());
+        Map<ColumnName, com.stratio.meta2.common.metadata.ColumnMetadata> tableColumns =
+            tableMetadata.getColumns();
+        Map<String, String> columnWithType = new HashMap<String, String>();
+        for (ColumnName key : tableColumns.keySet()) {
+            com.stratio.meta2.common.metadata.ColumnMetadata column =
+                (com.stratio.meta2.common.metadata.ColumnMetadata) tableColumns.get(key);
+            columnWithType
+                .put(column.getColumnType().getStandardType(), column.getName().getName());
         }
 
-        CreateTableStatement tableStatement=new CreateTableStatement(tableName,columnWithType,primaryKey,clusterKey,0,0);
+        CreateTableStatement tableStatement =
+            new CreateTableStatement(tableName, columnWithType, primaryKey, clusterKey, 0, 0);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
     }
 
     @Override
-    public void dropCatalog(CatalogName name) throws UnsupportedException, ExecutionException {
-        DropCatalogStatement catalogStatement=new DropCatalogStatement(name.getName(),true);
+    public void dropCatalog(ClusterName targetCluster, CatalogName name)
+        throws UnsupportedException, ExecutionException {
+        session = sessions.get(targetCluster);
+        DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
         CassandraExecutor.execute(catalogStatement.toString(), session);
     }
 
     @Override
-    public void dropTable(TableName name) throws UnsupportedException, ExecutionException {
-        DropTableStatement tableStatement=new DropTableStatement(name.getQualifiedName(),true);
+    public void dropTable(ClusterName targetCluster, TableName name)
+        throws UnsupportedException, ExecutionException {
+        session = sessions.get(targetCluster);
+        DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
     }

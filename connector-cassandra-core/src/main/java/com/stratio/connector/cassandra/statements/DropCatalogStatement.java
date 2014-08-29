@@ -18,16 +18,10 @@
 
 package com.stratio.connector.cassandra.statements;
 
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.stratio.connector.cassandra.engine.EngineConfig;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta.common.result.Result;
-
-
 /**
  * Class that models a {@code DROP KEYSPACE} statement from the META language.
  */
-public class DropCatalogStatement{
+public class DropCatalogStatement {
     /**
      * Catalog
      */
@@ -45,7 +39,8 @@ public class DropCatalogStatement{
 
     /**
      * Class constructor.
-     * @param catalog The name of the catalog.
+     *
+     * @param catalog  The name of the catalog.
      * @param ifExists Whether it should be removed only if exists.
      */
     public DropCatalogStatement(String catalog, boolean ifExists) {
@@ -53,14 +48,14 @@ public class DropCatalogStatement{
         this.catalog = catalog;
         this.catalogInc = true;
         this.ifExists = ifExists;
-    }    
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("DROP CATALOG ");
-        if(ifExists){
-           sb.append("IF EXISTS ");
-        } 
+        if (ifExists) {
+            sb.append("IF EXISTS ");
+        }
         sb.append(catalog);
         return sb.toString();
     }

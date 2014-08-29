@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Connector>
     <ConnectorName>CassandraConnector</ConnectorName>
+    <DataStoresName>
+        <Datastore>Cassandra</Datastore>
+     </DataStoresName>
     <Version>0.1.0</Version>
     <RequiredProperties>
-        <limit></limit>
+        <Property>
+            <Name></Name>
+            <Type></Type>
+        </Property>
     </RequiredProperties>
     <OptionalProperties>
     </OptionalProperties>

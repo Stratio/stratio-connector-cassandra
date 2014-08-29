@@ -21,8 +21,8 @@ package com.stratio.connector.cassandra.engine;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
-
 import org.apache.log4j.Logger;
+
 import java.util.Arrays;
 
 
@@ -33,64 +33,63 @@ import java.util.Arrays;
 public class Engine {
 
 
-  /**
-   * Datastax Java Driver session.
-   */
-  private final Session session;
+    /**
+     * Class logger.
+     */
+    private static final Logger LOG = Logger.getLogger(Engine.class.getName());
+    /**
+     * Datastax Java Driver session.
+     */
+    private final Session session;
 
-
-  /**
-   * Class logger.
-   */
-  private static final Logger LOG = Logger.getLogger(Engine.class.getName());
-
-  /**
-   * Class constructor.
-   *
-   * @param config The {@link com.stratio.connector.cassandra.engine.EngineConfig}.
-   */
-  public Engine(EngineConfig config) {
-    this.session=initializeDB(config);
-  }
-
-
-  /**
-   * Initialize the connection to the underlying database.
-   * @param config The {@link com.stratio.connector.cassandra.engine.EngineConfig}.
-   * @return A new Session.
-   */
-  private Session initializeDB(EngineConfig config){
-    Cluster cluster = Cluster.builder()
-        .addContactPoints(config.getCassandraHosts())
-        .withPort(config.getCassandraPort()).build();
-
-
-
-    LOG.info("Connecting to Cassandra Cluster on "
-             + Arrays.toString(config.getCassandraHosts()) + ":" + config.getCassandraPort());
-    Session result = null;
-
-    try {
-      result = cluster.connect();
-    }catch(NoHostAvailableException nhae){
-      LOG.error("Cannot connect to Cassandra", nhae);
+    /**
+     * Class constructor.
+     *
+     * @param config The {@link com.stratio.connector.cassandra.engine.EngineConfig}.
+     */
+    public Engine(EngineConfig config) {
+        this.session = initializeDB(config);
     }
 
-    return result;
-  }
+
+    /**
+     * Initialize the connection to the underlying database.
+     *
+     * @param config The {@link com.stratio.connector.cassandra.engine.EngineConfig}.
+     * @return A new Session.
+     */
+    private Session initializeDB(EngineConfig config) {
+        Cluster cluster = Cluster.builder()
+            .addContactPoints(config.getCassandraHosts())
+            .withPort(config.getCassandraPort()).build();
 
 
-  /**
-   * Close open connections.
-   */
-  public void shutdown(){
 
-    session.close();
+        LOG.info("Connecting to Cassandra Cluster on "
+            + Arrays.toString(config.getCassandraHosts()) + ":" + config.getCassandraPort());
+        Session result = null;
 
-  }
+        try {
+            result = cluster.connect();
+        } catch (NoHostAvailableException nhae) {
+            LOG.error("Cannot connect to Cassandra", nhae);
+        }
 
-  public Session getSession(){
-      return session;
-  }
+        return result;
+    }
+
+
+    /**
+     * Close open connections.
+     */
+    public void shutdown() {
+
+        session.close();
+
+    }
+
+    public Session getSession() {
+        return session;
+    }
 
 }

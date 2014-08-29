@@ -24,11 +24,12 @@ import java.util.List;
 
 public class SelectStatement {
 
-    public SelectStatement(String tableName, boolean catalogInc, List<ColumnName> selectionClause, boolean whereInc, List<Relation> where ){
+    public SelectStatement(String tableName, boolean catalogInc, List<ColumnName> selectionClause,
+        boolean whereInc, List<Relation> where) {
 
     }
 
-    public String toString(){
+    public String toString() {
         return "";
     }
 

@@ -25,6 +25,7 @@ import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.statements.structures.terms.GenericTerm;
 
@@ -34,49 +35,55 @@ import java.util.*;
  * Created by jjlopez on 26/08/14.
  */
 public class CassandraStorageEngine implements IStorageEngine {
-    private Session session;
+    private Map<String, Session> sessions;
 
-    public CassandraStorageEngine(Session session){
-        this.session=session;
+    public CassandraStorageEngine(Map<String, Session> sessions) {
+        this.sessions = sessions;
     }
-    @Override
-    public void insert(TableName targetTable, Row row) throws UnsupportedException, ExecutionException {
-        String tableName=targetTable.getQualifiedName();
 
-        Set<String> keys=row.getCells().keySet();
-        List<String> columns=new ArrayList<String>();
-        for (String key:keys){
+    @Override
+    public void insert(ClusterName targetCluster, TableName targetTable, Row row)
+        throws UnsupportedException, ExecutionException {
+        Session session = sessions.get(targetCluster);
+        String tableName = targetTable.getQualifiedName();
+
+        Set<String> keys = row.getCells().keySet();
+        List<String> columns = new ArrayList<String>();
+        for (String key : keys) {
             columns.add(key);
         }
 
-        List<GenericTerm> cellValues=new ArrayList<GenericTerm>();
-        for (String key:keys) {
-            cellValues.add((GenericTerm)row.getCell(key).getValue());
+        List<GenericTerm> cellValues = new ArrayList<GenericTerm>();
+        for (String key : keys) {
+            cellValues.add((GenericTerm) row.getCell(key).getValue());
         }
 
-        InsertIntoStatement insertStatement=new InsertIntoStatement(tableName,columns,cellValues,true);
+        InsertIntoStatement insertStatement =
+            new InsertIntoStatement(tableName, columns, cellValues, true);
         CassandraExecutor.execute(insertStatement.toString(), session);
     }
 
     @Override
-    public void insert(TableName targetTable, Collection<Row> rows) throws UnsupportedException, ExecutionException {
-        String tableName=targetTable.getQualifiedName();
+    public void insert(ClusterName targetCluster, TableName targetTable, Collection<Row> rows)
+        throws UnsupportedException, ExecutionException {
+        Session session = sessions.get(targetCluster);
+        String tableName = targetTable.getQualifiedName();
 
-        for(Row row:rows){
-            Set<String> keys=row.getCells().keySet();
-            List<String> columns=new ArrayList<String>();
-            for (String key:keys){
+        for (Row row : rows) {
+            Set<String> keys = row.getCells().keySet();
+            List<String> columns = new ArrayList<String>();
+            for (String key : keys) {
                 columns.add(key);
             }
 
-            List<GenericTerm> cellValues=new ArrayList<GenericTerm>();
-            for (String key:keys) {
-                cellValues.add((GenericTerm)row.getCell(key).getValue());
+            List<GenericTerm> cellValues = new ArrayList<GenericTerm>();
+            for (String key : keys) {
+                cellValues.add((GenericTerm) row.getCell(key).getValue());
             }
 
-            InsertIntoStatement insertStatement=new InsertIntoStatement(tableName,columns,cellValues,true);
+            InsertIntoStatement insertStatement =
+                new InsertIntoStatement(tableName, columns, cellValues, true);
             CassandraExecutor.execute(insertStatement.toString(), session);
         }
-
     }
 }

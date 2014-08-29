@@ -20,21 +20,20 @@ package com.stratio.connector.cassandra.engine;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.meta.common.connector.IQueryEngine;
-
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.*;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
-
 import com.stratio.meta.common.utils.StringUtils;
-
 import com.stratio.meta2.common.data.CatalogName;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class CassandraQueryEngine implements IQueryEngine {
@@ -43,26 +42,28 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String catalog;
     private TableName tableName;
 
-    private boolean whereInc=false;
-    private boolean orderInc=false;
-    private boolean limitInc=false;
+    private boolean whereInc = false;
+    private boolean orderInc = false;
+    private boolean limitInc = false;
 
     private List<Relation> where = new ArrayList<Relation>();
     private int limit = 0;
-    private Session session;
+    private Map<String, Session> sessions;
 
-    public CassandraQueryEngine(Session session){
-        this.session=session;
+    public CassandraQueryEngine(Map<String, Session> sessions) {
+        this.sessions = sessions;
     }
 
     @Override
-    public QueryResult execute(LogicalWorkflow workflow) throws UnsupportedException, ExecutionException {
+    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow)
+        throws UnsupportedException, ExecutionException {
+        Session session = sessions.get(targetCluster);
 
-        if (workflow.getInitialSteps().size()>1){
+        if (workflow.getInitialSteps().size() > 1) {
             throw new UnsupportedException("");
-        }else {
+        } else {
             LogicalStep logicalStep = workflow.getInitialSteps().get(0);
-            while (logicalStep.getNextStep() != null){
+            while (logicalStep.getNextStep() != null) {
                 if (logicalStep instanceof TransformationStep) {
                     TransformationStep transformation = (TransformationStep) logicalStep;
                     if (transformation instanceof Project) {
@@ -70,16 +71,16 @@ public class CassandraQueryEngine implements IQueryEngine {
 
                         tableName = project.getTableName();
 
-                        catalogInc=tableName.isCompletedName();
+                        catalogInc = tableName.isCompletedName();
                         if (catalogInc) {
                             CatalogName catalogName = tableName.getCatalogName();
-                            catalog=catalogName.getName();
+                            catalog = catalogName.getName();
                         }
                         selectionClause = project.getColumnList();
                     } else {
                         if (transformation instanceof Filter) {
                             Filter filter = (Filter) transformation;
-                            whereInc=true;
+                            whereInc = true;
                             Relation relation = filter.getRelation();
                             where.add(relation);
                         }
@@ -88,18 +89,18 @@ public class CassandraQueryEngine implements IQueryEngine {
                 logicalStep = logicalStep.getNextStep();
             }
         }
-        String query=parseQuery();
+        String query = parseQuery();
         return (QueryResult) CassandraExecutor.execute(query, session);
     }
 
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
         if (selectionClause != null) {
-            for(ColumnName columnName:selectionClause){
+            for (ColumnName columnName : selectionClause) {
                 sb.append(columnName.getName());
                 sb.append(",");
             }
-            sb.delete(sb.lastIndexOf(","),sb.indexOf(","));
+            sb.delete(sb.lastIndexOf(","), sb.indexOf(","));
         }
         sb.append(" FROM ");
         if (catalogInc) {
@@ -117,5 +118,6 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         return sb.toString().replace("  ", " ");
     }
+
 
 }

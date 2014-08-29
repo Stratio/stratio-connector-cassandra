@@ -23,7 +23,6 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
-
 import org.apache.log4j.Logger;
 
 public class CassandraExecutor {
@@ -41,14 +40,14 @@ public class CassandraExecutor {
     /**
      * Private class constructor as all methods are static.
      */
-    private CassandraExecutor(){
+    private CassandraExecutor() {
     }
 
 
     /**
      * Executes a query from a String.
      *
-     * @param query The query in a String.
+     * @param query   The query in a String.
      * @param session Cassandra datastax java driver session.
      * @return a {@link com.stratio.meta.common.result.Result}.
      */
@@ -56,9 +55,10 @@ public class CassandraExecutor {
         try {
             ResultSet resultSet = session.execute(query);
             return QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
-        } catch (UnsupportedOperationException unSupportException){
+        } catch (UnsupportedOperationException unSupportException) {
             LOG.debug("Cassandra executor failed", unSupportException);
-            return Result.createExecutionErrorResult("Unsupported operation by C*: " + unSupportException.getMessage());
+            return Result.createExecutionErrorResult(
+                "Unsupported operation by C*: " + unSupportException.getMessage());
         } catch (Exception ex) {
             return processException(ex);
         }
@@ -72,10 +72,10 @@ public class CassandraExecutor {
      * @param ex Exception catched.
      * @return a {@link com.stratio.meta.common.result.Result} with errors.
      */
-    public static Result processException(Exception ex){
-        if(ex.getMessage() == null) {
+    public static Result processException(Exception ex) {
+        if (ex.getMessage() == null) {
             return Result.createExecutionErrorResult("Unknown exception");
-        }else{
+        } else {
             return Result.createExecutionErrorResult(ex.getMessage());
         }
     }

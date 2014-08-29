@@ -35,44 +35,45 @@ public class CreateCatalogStatement {
      */
     private boolean catalogInc;
 
-  /**
-   * Whether the keyspace should be created only if it not exists.
-   */
-  private final boolean ifNotExists;
+    /**
+     * Whether the keyspace should be created only if it not exists.
+     */
+    private final boolean ifNotExists;
 
-  /**
-   * A JSON with the options specified by the user.
-   */
-  private final String options;
+    /**
+     * A JSON with the options specified by the user.
+     */
+    private final String options;
 
-  /**
-   * Class constructor.
-   * @param catalogName The name of the catalog.
-   * @param ifNotExists Whether it should be created only if it not exists.
-   * @param options A JSON with the storage options.
-   */
-  public CreateCatalogStatement(String catalogName, boolean ifNotExists,
-                                String options) {
-    this.catalog = catalogName;
-    this.catalogInc = true;
-    this.ifNotExists = ifNotExists;
-    this.options = options;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder("CREATE CATALOG ");
-    if(ifNotExists){
-      sb.append("IF NOT EXISTS ");
+    /**
+     * Class constructor.
+     *
+     * @param catalogName The name of the catalog.
+     * @param ifNotExists Whether it should be created only if it not exists.
+     * @param options     A JSON with the storage options.
+     */
+    public CreateCatalogStatement(String catalogName, boolean ifNotExists,
+        String options) {
+        this.catalog = catalogName;
+        this.catalogInc = true;
+        this.ifNotExists = ifNotExists;
+        this.options = options;
     }
-    sb.append(catalog);
-    System.out.println(options.toString());
-    System.out.println(options.length());
-    if((options != null) && (options.length() > 0)) {
-      sb.append(" WITH ").append(options);
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("CREATE CATALOG ");
+        if (ifNotExists) {
+            sb.append("IF NOT EXISTS ");
+        }
+        sb.append(catalog);
+        System.out.println(options.toString());
+        System.out.println(options.length());
+        if ((options != null) && (options.length() > 0)) {
+            sb.append(" WITH ").append(options);
+        }
+        return sb.toString();
     }
-    return sb.toString();
-  }
 
 
 

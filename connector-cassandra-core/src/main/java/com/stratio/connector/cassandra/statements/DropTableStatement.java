@@ -23,7 +23,7 @@ package com.stratio.connector.cassandra.statements;
 /**
  * Class that models a {@code DROP TABLE} statement from the META language.
  */
-public class DropTableStatement{
+public class DropTableStatement {
     /**
      * Catalog
      */
@@ -33,46 +33,46 @@ public class DropTableStatement{
      * Indicates if there is a catalog specified in the table name
      */
     private boolean catalogInc;
-  /**
-   * The name of the target table.
-   */
-  private String tableName;
+    /**
+     * The name of the target table.
+     */
+    private String tableName;
 
-  /**
-   * Whether the table should be dropped only if exists.
-   */
-  private boolean ifExists;
+    /**
+     * Whether the table should be dropped only if exists.
+     */
+    private boolean ifExists;
 
-  /**
-   * Class constructor.
-   * 
-   * @param tableName The name of the table.
-   * @param ifExists Whether it should be dropped only if exists.
-   */
-  public DropTableStatement(String tableName, boolean ifExists) {
-    if (tableName.contains(".")) {
-      String[] ksAndTableName = tableName.split("\\.");
-      catalog = ksAndTableName[0];
-      this.tableName = ksAndTableName[1];
-      catalogInc = true;
-    } else {
-      this.tableName = tableName;
+    /**
+     * Class constructor.
+     *
+     * @param tableName The name of the table.
+     * @param ifExists  Whether it should be dropped only if exists.
+     */
+    public DropTableStatement(String tableName, boolean ifExists) {
+        if (tableName.contains(".")) {
+            String[] ksAndTableName = tableName.split("\\.");
+            catalog = ksAndTableName[0];
+            this.tableName = ksAndTableName[1];
+            catalogInc = true;
+        } else {
+            this.tableName = tableName;
+        }
+        this.ifExists = ifExists;
     }
-    this.ifExists = ifExists;
-  }
 
 
-  public String toString() {
-    StringBuilder sb = new StringBuilder("DROP TABLE ");
-    if (ifExists) {
-      sb.append("IF EXISTS ");
+    public String toString() {
+        StringBuilder sb = new StringBuilder("DROP TABLE ");
+        if (ifExists) {
+            sb.append("IF EXISTS ");
+        }
+        if (catalogInc) {
+            sb.append(catalog).append(".");
+        }
+        sb.append(tableName);
+        return sb.toString();
     }
-    if (catalogInc) {
-      sb.append(catalog).append(".");
-    }
-    sb.append(tableName);
-    return sb.toString();
-  }
 
 
 
