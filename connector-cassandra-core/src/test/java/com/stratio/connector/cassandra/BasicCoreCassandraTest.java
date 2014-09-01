@@ -133,8 +133,7 @@ public class BasicCoreCassandraTest {
 
     /**
      * Load a {@code keyspace} in Cassandra using the CQL sentences in the script path. The script is
-     * executed if the keyspace does not exist in Cassandra.
-     *
+     * executed if the keyspace does not exist in Cassandra.     *
      * @param keyspace The name of the keyspace.
      * @param path     The path of the CQL script.
      */
@@ -146,6 +145,7 @@ public class BasicCoreCassandraTest {
             logger.info("Executing " + scriptLines.size() + " lines");
             for (String cql : scriptLines) {
                 ResultSet result = _session.execute(cql);
+                logger.info("Executing: " + cql + " -> " + result.toString());
                 if (logger.isDebugEnabled()) {
                     logger.debug("Executing: " + cql + " -> " + result.toString());
                 }

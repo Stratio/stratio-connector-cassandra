@@ -23,8 +23,8 @@
 
 
 CURRENTDIR=$(pwd)
-CASSANDRA_BRANCH=release-2.0.5
-CASSANDRA_BASE_VERSION=2.0.5
+CASSANDRA_BRANCH=release-2.0.9
+CASSANDRA_BASE_VERSION=2.0.9
 STRATIO_CASSANDRA_REPO="git@github.com:Stratio/stratio-cassandra.git"
 CCM_DIR=$(which ccm)
 

@@ -54,7 +54,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata)
         throws UnsupportedException, ExecutionException {
-        session = sessions.get(targetCluster);
+        session = sessions.get(targetCluster.getName());
         String catalogName = catalogMetadata.getName().getQualifiedName();
         Map<String, Object> catalogOptions = catalogMetadata.getOptions();
 
@@ -67,7 +67,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
         throws UnsupportedException, ExecutionException {
-        session = sessions.get(targetCluster);
+        session = sessions.get(targetCluster.getName());
         String tableName = tableMetadata.getName().getQualifiedName();
         Map<String, Object> tableOptions = tableMetadata.getOptions();
         List<String> primaryKey = (List<String>) tableOptions.get("primaryKey");
@@ -93,7 +93,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void dropCatalog(ClusterName targetCluster, CatalogName name)
         throws UnsupportedException, ExecutionException {
-        session = sessions.get(targetCluster);
+        session = sessions.get(targetCluster.getName());
         DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
         CassandraExecutor.execute(catalogStatement.toString(), session);
     }
@@ -101,7 +101,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void dropTable(ClusterName targetCluster, TableName name)
         throws UnsupportedException, ExecutionException {
-        session = sessions.get(targetCluster);
+        session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
         CassandraExecutor.execute(tableStatement.toString(), session);
 

@@ -57,13 +57,13 @@ public class CassandraQueryEngine implements IQueryEngine {
     @Override
     public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow)
         throws UnsupportedException, ExecutionException {
-        Session session = sessions.get(targetCluster);
+        Session session = sessions.get(targetCluster.getName());
 
         if (workflow.getInitialSteps().size() > 1) {
             throw new UnsupportedException("");
         } else {
             LogicalStep logicalStep = workflow.getInitialSteps().get(0);
-            while (logicalStep.getNextStep() != null) {
+            while (logicalStep != null) {
                 if (logicalStep instanceof TransformationStep) {
                     TransformationStep transformation = (TransformationStep) logicalStep;
                     if (transformation instanceof Project) {
@@ -90,7 +90,8 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
         }
         String query = parseQuery();
-        return (QueryResult) CassandraExecutor.execute(query, session);
+        QueryResult result =QueryResult.createQueryResult(CassandraExecutor.execute(query, session));
+        return result;
     }
 
     public String parseQuery() {
@@ -100,7 +101,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                 sb.append(columnName.getName());
                 sb.append(",");
             }
-            sb.delete(sb.lastIndexOf(","), sb.indexOf(","));
+            sb.delete(sb.lastIndexOf(","), sb.indexOf(",")+1);
         }
         sb.append(" FROM ");
         if (catalogInc) {
@@ -110,7 +111,22 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         if (whereInc) {
             sb.append(" WHERE ");
-            sb.append(StringUtils.stringList(where, " AND "));
+            int count=0;
+            for(Relation relation:where) {
+                if (count>0)
+                    sb.append(" AND ");
+                count=1;
+
+                //TODO adjust to new META Select refactor
+
+                String identifier=relation.getIdentifier().toString();
+                String realIdentifier=identifier.substring(identifier.lastIndexOf(".")+1,identifier.length());
+                sb.append(realIdentifier);
+                sb.append(" " + relation.getOperator().toString() + " ");
+                relation.getRightSelectors().get(0).getType();
+
+                //sb.append("'" + relation.getTerms().get(0).toString() + "'");
+            }
         }
         if (limitInc) {
             sb.append(" LIMIT ").append(limit);

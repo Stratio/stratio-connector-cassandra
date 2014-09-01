@@ -8,10 +8,14 @@
     <RequiredProperties>
         <Property>
             <Name></Name>
-            <Type></Type>
         </Property>
     </RequiredProperties>
     <OptionalProperties>
+        <Property>
+            <Name></Name>
+        </Property>
     </OptionalProperties>
-    <SupportedOperations></SupportedOperations>
+    <SupportedOperations>
+        <operation></operation>
+    </SupportedOperations>
 </Connector>
