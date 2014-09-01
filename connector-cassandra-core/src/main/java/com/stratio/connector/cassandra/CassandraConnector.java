@@ -42,8 +42,8 @@ public class CassandraConnector implements IConnector {
   private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
 
   public static void main(String [] args){
-	  ConnectorApp connectorApp=new ConnectorApp();
-	  connectorApp.startup(this,{"2554"});
+	ConnectorApp connectorApp=new ConnectorApp();
+	connectorApp.startup(new CassandraConnector(),args[0]);
   }
   
   
