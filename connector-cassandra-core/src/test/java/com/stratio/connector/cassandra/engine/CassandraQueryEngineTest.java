@@ -59,6 +59,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     //metadataManager.loadMetadata();
   }
 
+  /*
   @Test
   public void basicSelect() {
     ClusterName targetCluster = new ClusterName("Cluster");
@@ -107,4 +108,5 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     }
     assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5'");
   }
+  */
 }
