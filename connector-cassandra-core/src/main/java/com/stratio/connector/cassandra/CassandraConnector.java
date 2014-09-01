@@ -19,6 +19,7 @@
 package com.stratio.connector.cassandra;
 
 import com.datastax.driver.core.Session;
+import com.stratio.connector.ConnectorApp;
 import com.stratio.connector.cassandra.engine.*;
 import com.stratio.meta.common.connector.*;
 import com.stratio.meta.common.exceptions.ConnectionException;
@@ -26,6 +27,7 @@ import com.stratio.meta.common.exceptions.InitializationException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
+
 import org.apache.log4j.Logger;
 
 import java.util.Map;
@@ -39,6 +41,12 @@ public class CassandraConnector implements IConnector {
    */
   private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
 
+  public static void main(String [] args){
+	  ConnectorApp connectorApp=new ConnectorApp();
+	  connectorApp.startup(this,{"2554"});
+  }
+  
+  
   @Override
   public String getConnectorName() {
     return "Cassandra";
