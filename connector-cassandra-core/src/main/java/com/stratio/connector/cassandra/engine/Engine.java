@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 
 /**
- * Execution engine that creates all entities required for processing an executing a query:
+ * Execution com.stratio.connector.cassandra that creates all entities required for processing an executing a query:
  * Additionally, it also maintains the {@link com.datastax.driver.core.Session} with the Cassandra backend.
  */
 public class Engine {

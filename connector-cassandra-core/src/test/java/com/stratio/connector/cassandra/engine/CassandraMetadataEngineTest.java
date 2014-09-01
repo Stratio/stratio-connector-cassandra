@@ -1,6 +1,7 @@
 package com.stratio.connector.cassandra.engine;
 
 
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.meta.common.exceptions.ExecutionException;
@@ -27,8 +28,17 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     private Map<String, Session> sessions;
 
-    private boolean catalogIsCreated(){
-        return true;
+    private int assertCatalog(){
+        ResultSet res = sessions.get("cluster").execute("DESCRIBE keyspaces");
+        int numberOfRows = res.all().size();
+        return numberOfRows;
+    }
+
+    private int assertTable(){
+        sessions.get("cluster").execute("use demoMetadata");
+        ResultSet res = sessions.get("cluster").execute("DESCRIBE TABLES");
+        int numberOfRows = res.all().size();
+        return numberOfRows;
     }
 
     @BeforeClass
@@ -41,16 +51,19 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void createCatalogTest() {
+
+        int rowsInitial= assertCatalog();
         CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
 
         Map<String, Object> options=new HashMap<>();
         Map<TableName, TableMetadata> tables=new HashMap<>();
 
         CatalogMetadata catalogmetadata=new CatalogMetadata(new CatalogName("demoMetadata"), options, tables );
+
         try {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
-            //TODO Control if the catalog is created
-            if (catalogIsCreated())
+            int rowsFinal= assertCatalog();
+            if (rowsInitial<=rowsFinal)
                 assert(true);
             else
                 assert(false);
@@ -66,6 +79,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void createTableTest() {
+        int rowsInitial= assertTable();
         CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
         List<ColumnName> clusterKey=new ArrayList<>();
         Map<String, Object> options=new HashMap<>();
@@ -75,8 +89,11 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         try {
             cme.createTable(new ClusterName("cluster"),table);
-            //TODO test if table is created
-            assert(true);
+            int rowsFinal= assertTable();
+            if(rowsInitial<=rowsFinal)
+                assert(true);
+            else
+                assert(false);
         } catch (UnsupportedException e) {
             assert(false);
             e.printStackTrace();
@@ -88,13 +105,44 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void dropCatalogTest() {
-        //TODO test if catalog is removed
+        int rowsInitial=assertCatalog();
+        CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
+        try {
+            cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demoMetadata"));
+            int rowsFinal=assertCatalog();
+            if(rowsInitial>rowsFinal)
+                assert(true);
+            else
+                assert(false);
+        } catch (UnsupportedException e) {
+            e.printStackTrace();
+            assert(false);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            assert(false);
+        }
 
     }
 
     @Test
     public void dropTableTest() {
-        //TODO test if table is removed
+        int rowsInitial=assertTable();
+        CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
+        try {
+            cme.dropTable(new ClusterName("cluster"),new TableName("demoMetadata","testCreateTable"));
+            int rowsFinal=assertTable();
+            if(rowsInitial>rowsFinal)
+                assert(true);
+            else
+                assert(false);
+        } catch (UnsupportedException e) {
+            e.printStackTrace();
+            assert(false);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            assert(false);
+        }
+
     }
 
 

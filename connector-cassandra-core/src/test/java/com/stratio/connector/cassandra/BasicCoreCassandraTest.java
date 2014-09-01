@@ -1,4 +1,4 @@
-package com.stratio.connector.cassandra;/*
+/*
  * Licensed to STRATIO (C) under one or more contributor license agreements.
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.  The STRATIO (C) licenses this file
@@ -15,6 +15,8 @@ package com.stratio.connector.cassandra;/*
  * specific language governing permissions and limitations
  * under the License.
  */
+
+package com.stratio.connector.cassandra;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.KeyspaceMetadata;
@@ -95,7 +97,7 @@ public class BasicCoreCassandraTest {
      * Initialize the connection to Cassandra using the host specified by {@code DEFAULT_HOST}.
      */
     public static void initCassandraConnection() {
-        assertTrue(connect(getHost()), "Cannot connect to cassandra");
+        assertTrue(connect(getHost()), "Cannot connect to com.stratio.connector.cassandra.com.stratio.connector.cassandra");
     }
 
     /**
@@ -161,6 +163,7 @@ public class BasicCoreCassandraTest {
     public static List<String> loadScript(String path) {
         List<String> result = new ArrayList<>();
         logger.info("Getting url from path: " + path);
+        //URL url = BasicCoreCassandraTest.class.getClassLoader().getS   getResource(path);
         URL url = BasicCoreCassandraTest.class.getResource(path);
         logger.info("Loading script from: " + url);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
