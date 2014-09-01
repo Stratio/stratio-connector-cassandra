@@ -27,6 +27,8 @@ import com.stratio.meta.common.exceptions.InitializationException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 
 import org.apache.log4j.Logger;
 
@@ -42,8 +44,10 @@ public class CassandraConnector implements IConnector {
   private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
 
   public static void main(String [] args){
+	String port=args[0];
 	ConnectorApp connectorApp=new ConnectorApp();
-	connectorApp.startup(new CassandraConnector(),args[0]);
+	Config config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).withFallback(ConfigFactory.load());
+	connectorApp.startup(new CassandraConnector(),port,config);
   }
   
   
