@@ -7,14 +7,18 @@
       <xs:element type="DataStoresNameType" name="DataStoresName"/>
       <xs:element type="xs:string" name="Version"/>
       <xs:element type="RequiredPropertiesType" name="RequiredProperties"/>
-      <xs:element type="xs:string" name="OptionalProperties"/>
-      <xs:element type="xs:string" name="SupportedOperations"/>
+      <xs:element type="OptionalPropertiesType" name="OptionalProperties"/>
+      <xs:element type="SupportedOperationsType" name="SupportedOperations"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="OptionalPropertiesType">
+    <xs:sequence>
+      <xs:element type="PropertyType" name="Property"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="PropertyType">
     <xs:sequence>
       <xs:element type="xs:string" name="Name"/>
-      <xs:element type="xs:string" name="Type"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="RequiredPropertiesType">
@@ -25,6 +29,11 @@
   <xs:complexType name="DataStoresNameType">
     <xs:sequence>
       <xs:element type="xs:string" name="Datastore"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SupportedOperationsType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="operation"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

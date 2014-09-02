@@ -19,15 +19,19 @@
 package com.stratio.connector.cassandra.engine;
 
 import com.datastax.driver.core.Session;
+
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.connector.cassandra.statements.InsertIntoStatement;
+import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.statements.structures.terms.GenericTerm;
+import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.meta2.common.metadata.ColumnMetadata;
+import com.stratio.meta2.common.metadata.ColumnType;
+
 
 import java.util.*;
 
@@ -42,48 +46,62 @@ public class CassandraStorageEngine implements IStorageEngine {
     }
 
     @Override
-    public void insert(ClusterName targetCluster, TableName targetTable, Row row)
+    public void insert(ClusterName targetCluster, com.stratio.meta2.common.metadata.TableMetadata targetTable, Row row)
         throws UnsupportedException, ExecutionException {
-        Session session = sessions.get(targetCluster);
-        String tableName = targetTable.getQualifiedName();
+        Session session = sessions.get(targetCluster.getName());
+        String tableName = targetTable.getName().getQualifiedName();
 
         Set<String> keys = row.getCells().keySet();
+
         List<String> columns = new ArrayList<String>();
+
+        List<Object> cellValues = new ArrayList<Object>();
+        Map<ColumnName,ColumnMetadata> columnsWithMetadata=targetTable.getColumns();
+        Map<String, ColumnInsertCassandra> columnsMetadata=new HashMap<>();
+
+
+
         for (String key : keys) {
             columns.add(key);
-        }
+            //ColumnType columnMetadata=columnsWithMetadata.get(key).getColumnType();
+            columnsMetadata.put(key,new ColumnInsertCassandra(columnsWithMetadata.get(key).getColumnType(),row.getCell(key).getValue().toString(),key));
 
-        List<GenericTerm> cellValues = new ArrayList<GenericTerm>();
-        for (String key : keys) {
-            cellValues.add((GenericTerm) row.getCell(key).getValue());
         }
 
         InsertIntoStatement insertStatement =
-            new InsertIntoStatement(tableName, columns, cellValues, true);
-        CassandraExecutor.execute(insertStatement.toString(), session);
+            new InsertIntoStatement(targetTable, columnsMetadata, true);
+        String query=insertStatement.toString();
+        CassandraExecutor.execute(query, session);
     }
 
     @Override
-    public void insert(ClusterName targetCluster, TableName targetTable, Collection<Row> rows)
+    public void insert(ClusterName targetCluster, com.stratio.meta2.common.metadata.TableMetadata targetTable, Collection<Row> rows)
         throws UnsupportedException, ExecutionException {
         Session session = sessions.get(targetCluster);
-        String tableName = targetTable.getQualifiedName();
+        String tableName = targetTable.getName().getQualifiedName();
 
         for (Row row : rows) {
+
             Set<String> keys = row.getCells().keySet();
             List<String> columns = new ArrayList<String>();
+
+            List<Object> cellValues = new ArrayList<Object>();
+            Map<ColumnName,ColumnMetadata> columnsWithMetadata=targetTable.getColumns();
+            Map<String, ColumnInsertCassandra> columnsMetadata=new HashMap<>();
+
+
             for (String key : keys) {
                 columns.add(key);
-            }
+                columnsMetadata.put(key,new ColumnInsertCassandra(columnsWithMetadata.get(key).getColumnType(),row.getCell(key).getValue().toString(),key));
 
-            List<GenericTerm> cellValues = new ArrayList<GenericTerm>();
-            for (String key : keys) {
-                cellValues.add((GenericTerm) row.getCell(key).getValue());
             }
 
             InsertIntoStatement insertStatement =
-                new InsertIntoStatement(tableName, columns, cellValues, true);
-            CassandraExecutor.execute(insertStatement.toString(), session);
+                new InsertIntoStatement(targetTable, columnsMetadata, true);
+            String query=insertStatement.toString();
+            CassandraExecutor.execute(query, session);
         }
     }
+
+
 }

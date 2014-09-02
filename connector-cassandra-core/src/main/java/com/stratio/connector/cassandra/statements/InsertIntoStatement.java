@@ -19,11 +19,15 @@
 package com.stratio.connector.cassandra.statements;
 
 
+import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.meta.common.utils.StringUtils;
+import com.stratio.meta2.common.metadata.ColumnType;
+import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.terms.GenericTerm;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -47,7 +51,7 @@ public class InsertIntoStatement {
      * A list of {@link com.stratio.meta2.common.statements.structures.terms.GenericTerm} with the literal values to be
      * assigned if the insert type matches {@code TYPE_VALUES_CLAUSE}.
      */
-    private List<GenericTerm> cellValues;
+    private Map<String, ColumnInsertCassandra> cellValues;
 
     /**
      * Indicates if exists "IF NOT EXISTS" clause.
@@ -73,23 +77,25 @@ public class InsertIntoStatement {
     /**
      * InsertIntoStatement general constructor.
      *
-     * @param tableName   Tablename target.
-     * @param ids         List of name of fields in the table.
-     * @param cellValues  List of {@link com.stratio.meta2.common.statements.structures.terms.GenericTerm} to insert.
+     * @param targetTable Table target.
+     * @param columnsMetadata  List of {@link com.stratio.connector.cassandra.utils.ColumnInsertCassandra} to insert.
      * @param ifNotExists Boolean that indicates if IF NOT EXISTS clause is included in the query.
      */
-    public InsertIntoStatement(String tableName, List<String> ids, List<GenericTerm> cellValues,
+    public InsertIntoStatement(TableMetadata targetTable, Map<String, ColumnInsertCassandra> columnsMetadata,
         boolean ifNotExists) {
 
-        this.tableName = tableName;
+        this.tableName = targetTable.getName().getQualifiedName();
         if (tableName.contains(".")) {
             String[] ksAndTableName = tableName.split("\\.");
             catalog = ksAndTableName[0];
             this.tableName = ksAndTableName[1];
             catalogInc = true;
         }
-        this.ids = ids;
-        this.cellValues = cellValues;
+
+        for(String id:columnsMetadata.keySet()) {
+            ids.add(id);
+        }
+        this.cellValues = columnsMetadata;
         this.ifNotExists = ifNotExists;
     }
 
@@ -103,7 +109,25 @@ public class InsertIntoStatement {
         sb.append(StringUtils.stringList(ids, ", ")).append(") ");
 
         sb.append("VALUES (");
-        sb.append(StringUtils.stringList(cellValues, ", "));
+
+        int cont=0;
+        for(String column:cellValues.keySet()){
+            String value=cellValues.get(column).getValue();
+            ColumnType type=cellValues.get(column).getType();
+            if (cont>0)
+                sb.append(", ");
+            cont=1;
+
+            switch(type){
+                case TEXT:
+                case VARCHAR:
+                    sb.append("'"+value+"'");
+                    break;
+                default:
+                    sb.append("value");
+                    break;
+            }
+        }
         sb.append(")");
 
         if (ifNotExists) {

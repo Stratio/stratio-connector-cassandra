@@ -21,8 +21,8 @@ package com.stratio.connector.cassandra;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.Utils;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta.common.result.Result;
+import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
 import org.apache.log4j.Logger;
 
 public class CassandraExecutor {
@@ -51,11 +51,13 @@ public class CassandraExecutor {
      * @param session Cassandra datastax java driver session.
      * @return a {@link com.stratio.meta.common.result.Result}.
      */
-    public static Result execute(String query, Session session) {
-        try {
-            ResultSet resultSet = session.execute(query);
-            return QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
-        } catch (UnsupportedOperationException unSupportException) {
+    public static com.stratio.meta.common.data.ResultSet execute(String query, Session session) throws UnsupportedException, ExecutionException {
+        ResultSet resultSet = session.execute(query);
+        return (utils.transformToMetaResultSet(resultSet));
+    }
+
+
+/*} catch (UnsupportedOperationException unSupportException) {
             LOG.debug("Cassandra executor failed", unSupportException);
             return Result.createExecutionErrorResult(
                 "Unsupported operation by C*: " + unSupportException.getMessage());
@@ -63,7 +65,7 @@ public class CassandraExecutor {
             return processException(ex);
         }
     }
-
+*/
 
 
     /**
@@ -72,6 +74,7 @@ public class CassandraExecutor {
      * @param ex Exception catched.
      * @return a {@link com.stratio.meta.common.result.Result} with errors.
      */
+    /*
     public static Result processException(Exception ex) {
         if (ex.getMessage() == null) {
             return Result.createExecutionErrorResult("Unknown exception");
@@ -79,5 +82,5 @@ public class CassandraExecutor {
             return Result.createExecutionErrorResult(ex.getMessage());
         }
     }
-
+*/
 }

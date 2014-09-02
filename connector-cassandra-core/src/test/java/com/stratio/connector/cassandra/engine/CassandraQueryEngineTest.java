@@ -62,6 +62,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
   /*
   @Test
   public void basicSelect() {
+    /*
     ClusterName targetCluster = new ClusterName("Cluster");
 
     List<LogicalStep> logicalSteps = new ArrayList<>();
@@ -79,13 +80,21 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     List<Term<?>> terms = new ArrayList<>();
     terms.add(term);
 
-    Relation relation = new Relation(identifier, Operator.LIKE, terms);
+    Selector identifier2 = new ColumnSelector(new ColumnName("demo","demo.users","gender"));
+    Term term2 = new StringTerm("female");
+    List<Term<?>> terms2 = new ArrayList<>();
+    terms2.add(term2);
+
+    Relation relation2 = new Relation(identifier2, Operator.ASSIGN, terms2);
+    Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+
+    Relation relation = new Relation(identifier, Operator.ASSIGN, terms);
     Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+    filter.setNextStep(filter2);
 
     project.setNextStep(filter);
 
     logicalSteps.add(project);
-    logicalSteps.add(filter);
 
     LogicalWorkflow workflow = new LogicalWorkflow(logicalSteps);
 
@@ -106,7 +115,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     } catch (ExecutionException e) {
       e.printStackTrace();
     }
-    assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5'");
+    assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
+    */
   }
   */
 }

@@ -58,34 +58,34 @@ public class EngineConfig {
     }
 
     /**
-     * Set cassandra hosts.
+     * Set com.stratio.connector.cassandra.com.stratio.connector.cassandra hosts.
      *
-     * @param cassandraHosts an array of String containing cassandra hosts.
+     * @param cassandraHosts an array of String containing com.stratio.connector.cassandra.com.stratio.connector.cassandra hosts.
      */
     public void setCassandraHosts(String[] cassandraHosts) {
         this.cassandraHosts = Arrays.copyOf(cassandraHosts, cassandraHosts.length);
     }
 
     /**
-     * Get cassandra port.
+     * Get com.stratio.connector.cassandra.com.stratio.connector.cassandra port.
      *
-     * @return current cassandra port.
+     * @return current com.stratio.connector.cassandra.com.stratio.connector.cassandra port.
      */
     public int getCassandraPort() {
         return cassandraPort;
     }
 
     /**
-     * Set cassandra port.
+     * Set com.stratio.connector.cassandra.com.stratio.connector.cassandra port.
      *
-     * @param cassandraPort Port of cassandra (CQL).
+     * @param cassandraPort Port of com.stratio.connector.cassandra.com.stratio.connector.cassandra (CQL).
      */
     public void setCassandraPort(int cassandraPort) {
         this.cassandraPort = cassandraPort;
     }
 
     /**
-     * Get cassandra cluster name.
+     * Get com.stratio.connector.cassandra.com.stratio.connector.cassandra cluster name.
      *
      * @return the cluster name.
      */
@@ -94,7 +94,7 @@ public class EngineConfig {
     }
 
     /**
-     * Set cassandra port.
+     * Set com.stratio.connector.cassandra.com.stratio.connector.cassandra port.
      *
      * @param clusterName .
      */
@@ -103,9 +103,9 @@ public class EngineConfig {
     }
 
     /**
-     * Get cassandra host randomly.
+     * Get com.stratio.connector.cassandra.com.stratio.connector.cassandra host randomly.
      *
-     * @return random cassandra host.
+     * @return random com.stratio.connector.cassandra.com.stratio.connector.cassandra host.
      */
     public String getRandomCassandraHost() {
         Random rand = new Random();
