@@ -46,6 +46,9 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     private Map<String, Session> sessions;
     private Session session = null;
+    private static final int PRIMARY_SINGLE = 1;
+    private static final int PRIMARY_COMPOSED = 2;
+    private static final int PRIMARY_AND_CLUSTERING_SPECIFIED = 3;
 
     public CassandraMetadataEngine(Map<String, Session> sessions) {
         this.sessions = sessions;
@@ -58,8 +61,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String catalogName = catalogMetadata.getName().getQualifiedName();
         Map<String, Object> catalogOptions = catalogMetadata.getOptions();
 
+
+
         CreateCatalogStatement catalogStatement =
-            new CreateCatalogStatement(catalogName, true, catalogOptions.toString());
+            new CreateCatalogStatement(catalogName, true, catalogOptions.size()==0?null:catalogOptions.toString());
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
     }
@@ -70,22 +75,25 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         String tableName = tableMetadata.getName().getQualifiedName();
         Map<String, Object> tableOptions = tableMetadata.getOptions();
-        List<String> primaryKey = (List<String>) tableOptions.get("primaryKey");
-        List<String> clusterKey = (List<String>) tableOptions.get("clusterKey");
+        List<ColumnName> primaryKey = tableMetadata.getPrimaryKey();
+        List<ColumnName> clusterKey = tableMetadata.getClusterKey();
 
+        int primaryKeyType;
+        if (primaryKey.size()<=1){
+            primaryKeyType=PRIMARY_SINGLE;
+        }else{
+            if(clusterKey.size()>0) {
+                primaryKeyType = PRIMARY_AND_CLUSTERING_SPECIFIED;
+            }else {
+                primaryKeyType = PRIMARY_COMPOSED;
+            }
+        }
 
         Map<ColumnName, com.stratio.meta2.common.metadata.ColumnMetadata> tableColumns =
             tableMetadata.getColumns();
-        Map<String, String> columnWithType = new HashMap<String, String>();
-        for (ColumnName key : tableColumns.keySet()) {
-            com.stratio.meta2.common.metadata.ColumnMetadata column =
-                (com.stratio.meta2.common.metadata.ColumnMetadata) tableColumns.get(key);
-            columnWithType
-                .put(column.getColumnType().getStandardType(), column.getName().getName());
-        }
 
         CreateTableStatement tableStatement =
-            new CreateTableStatement(tableName, columnWithType, primaryKey, clusterKey, 0, 0);
+            new CreateTableStatement(tableName, tableColumns, primaryKey, clusterKey, primaryKeyType, true);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
     }

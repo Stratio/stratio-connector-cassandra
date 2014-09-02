@@ -23,9 +23,9 @@ import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.meta.common.utils.StringUtils;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
-import com.stratio.meta2.common.statements.structures.terms.GenericTerm;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +83,7 @@ public class InsertIntoStatement {
      */
     public InsertIntoStatement(TableMetadata targetTable, Map<String, ColumnInsertCassandra> columnsMetadata,
         boolean ifNotExists) {
-
+        ids=new ArrayList<>();
         this.tableName = targetTable.getName().getQualifiedName();
         if (tableName.contains(".")) {
             String[] ksAndTableName = tableName.split("\\.");
@@ -124,7 +124,7 @@ public class InsertIntoStatement {
                     sb.append("'"+value+"'");
                     break;
                 default:
-                    sb.append("value");
+                    sb.append(value);
                     break;
             }
         }

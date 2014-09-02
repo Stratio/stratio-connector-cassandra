@@ -49,22 +49,15 @@ public class CassandraStorageEngine implements IStorageEngine {
     public void insert(ClusterName targetCluster, com.stratio.meta2.common.metadata.TableMetadata targetTable, Row row)
         throws UnsupportedException, ExecutionException {
         Session session = sessions.get(targetCluster.getName());
-        String tableName = targetTable.getName().getQualifiedName();
 
         Set<String> keys = row.getCells().keySet();
 
-        List<String> columns = new ArrayList<String>();
-
-        List<Object> cellValues = new ArrayList<Object>();
         Map<ColumnName,ColumnMetadata> columnsWithMetadata=targetTable.getColumns();
         Map<String, ColumnInsertCassandra> columnsMetadata=new HashMap<>();
 
-
-
         for (String key : keys) {
-            columns.add(key);
-            //ColumnType columnMetadata=columnsWithMetadata.get(key).getColumnType();
-            columnsMetadata.put(key,new ColumnInsertCassandra(columnsWithMetadata.get(key).getColumnType(),row.getCell(key).getValue().toString(),key));
+            ColumnName col=new ColumnName(targetTable.getName().getCatalogName().getName(), targetTable.getName().getName(),key);
+            columnsMetadata.put(key,new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),row.getCell(key).getValue().toString(),key));
 
         }
 
@@ -77,22 +70,19 @@ public class CassandraStorageEngine implements IStorageEngine {
     @Override
     public void insert(ClusterName targetCluster, com.stratio.meta2.common.metadata.TableMetadata targetTable, Collection<Row> rows)
         throws UnsupportedException, ExecutionException {
-        Session session = sessions.get(targetCluster);
+        Session session = sessions.get(targetCluster.getName());
         String tableName = targetTable.getName().getQualifiedName();
 
         for (Row row : rows) {
 
             Set<String> keys = row.getCells().keySet();
-            List<String> columns = new ArrayList<String>();
 
-            List<Object> cellValues = new ArrayList<Object>();
             Map<ColumnName,ColumnMetadata> columnsWithMetadata=targetTable.getColumns();
             Map<String, ColumnInsertCassandra> columnsMetadata=new HashMap<>();
 
-
             for (String key : keys) {
-                columns.add(key);
-                columnsMetadata.put(key,new ColumnInsertCassandra(columnsWithMetadata.get(key).getColumnType(),row.getCell(key).getValue().toString(),key));
+                ColumnName col=new ColumnName(targetTable.getName().getCatalogName().getName(), targetTable.getName().getName(),key);
+                columnsMetadata.put(key,new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),row.getCell(key).getValue().toString(),key));
 
             }
 

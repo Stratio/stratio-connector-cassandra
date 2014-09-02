@@ -52,7 +52,7 @@ public class DropCatalogStatement {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("DROP CATALOG ");
+        StringBuilder sb = new StringBuilder("DROP KEYSPACE ");
         if (ifExists) {
             sb.append("IF EXISTS ");
         }

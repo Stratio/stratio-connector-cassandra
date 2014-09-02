@@ -32,6 +32,7 @@ import com.typesafe.config.ConfigFactory;
 
 import org.apache.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class CassandraConnector implements IConnector {
@@ -47,12 +48,12 @@ public class CassandraConnector implements IConnector {
 
 	  //ConnectorApp connectorApp=new ConnectorApp();
 	  //connectorApp.startup(this,{"2554"});
-/*
+
 	String port=args[0];
 	ConnectorApp connectorApp=new ConnectorApp();
 	Config config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).withFallback(ConfigFactory.load());
 	connectorApp.startup(new CassandraConnector(),port,config);
-*/
+
   }
   
   
@@ -80,11 +81,10 @@ public class CassandraConnector implements IConnector {
   public void connect(ICredentials credentials, ConnectorClusterConfig config)
       throws ConnectionException {
     ClusterName clusterName = config.getName();
-    Map<String, Object> options = config.getOptions();
+    Map<String, String> options = config.getOptions();
 
     //getting the hosts and port of the cluster
-    Map<String, Object> clusterOptions =
-        (Map<String, Object>) options.get(clusterName.getName());
+    Map<String, Object> clusterOptions = new HashMap<>();//options.get(clusterName.getName());
 
     EngineConfig engineConfig = new EngineConfig();
     engineConfig.setCassandraHosts((String[]) clusterOptions.get("Hosts"));

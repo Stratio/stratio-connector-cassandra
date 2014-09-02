@@ -20,6 +20,9 @@ package com.stratio.connector.cassandra.statements;
 
 
 
+import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.meta2.common.metadata.ColumnMetadata;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +41,17 @@ public class CreateTableStatement {
     /**
      * A map with the name of the columns in the table and the associated data type.
      */
-    private Map<String, String> columnsWithType;
+    private Map<ColumnName, ColumnMetadata> tableColumns;
 
     /**
      * The list of columns that are part of the primary key.
      */
-    private List<String> primaryKey;
+    private List<ColumnName> primaryKey;
 
     /**
      * The list of columns that are part of the clustering key.
      */
-    private List<String> clusterKey;
+    private List<ColumnName> clusterKey;
 
 
     /**
@@ -71,16 +74,6 @@ public class CreateTableStatement {
      */
     private boolean ifNotExists;
 
-    /**
-     * Whether the table will be created.
-     */
-    private boolean createTable = false;
-
-    /**
-     * The number of the column associated with the primary key. This value is only used if the type
-     * of primary key is {@code 1}.
-     */
-    private int columnNumberPK;
 
     /**
      * Whether the table should be created with a set of properties.
@@ -103,15 +96,14 @@ public class CreateTableStatement {
      * Class constructor.
      *
      * @param tableName      The name of the table.
-     * @param columns        A map with the name of the columns in the table and the associated data type.
+     * @param tableColumns        A map with the name of the columns in the table and the associated data type.
      * @param primaryKey     The list of columns that are part of the primary key.
      * @param clusterKey     The list of columns that are part of the clustering key.
      * @param primaryKeyType The type of primary key.
-     * @param columnNumberPK The number of the column associated with the primary key. This value is
-     *                       only used if the type of primary key is {@code 1}.
+     *
      */
-    public CreateTableStatement(String tableName, Map<String, String> columns,
-        List<String> primaryKey, List<String> clusterKey, int primaryKeyType, int columnNumberPK) {
+    public CreateTableStatement(String tableName, Map<ColumnName, ColumnMetadata> tableColumns,
+        List<ColumnName> primaryKey, List<ColumnName> clusterKey, int primaryKeyType, boolean ifNotExists) {
 
         if (tableName.contains(".")) {
             String[] ksAndTablename = tableName.split("\\.");
@@ -121,58 +113,31 @@ public class CreateTableStatement {
         } else {
             this.tableName = tableName;
         }
-        this.columnsWithType = columns;
+        this.tableColumns=tableColumns;
         this.primaryKey = primaryKey;
         this.clusterKey = clusterKey;
         this.primaryKeyType = primaryKeyType;
-        this.columnNumberPK = columnNumberPK;
+        this.ifNotExists=ifNotExists;
     }
 
-    public Map<String, String> getColumnsWithTypes() {
-        return columnsWithType;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    /**
-     * Set the keyspace specified in the create table statement.
-     *
-     * @param keyspace The name of the keyspace.
-     */
-    public void setKeyspace(String keyspace) {
-        this.catalog = keyspace;
-    }
-
-
-
-    public void setIfNotExists(boolean ifNotExists) {
-        this.ifNotExists = ifNotExists;
-    }
-
-    public void setWithProperties(boolean withProperties) {
-        this.withProperties = withProperties;
-    }
 
     public String getSinglePKString() {
         StringBuilder sb = new StringBuilder(" (");
-        Set<String> keySet = columnsWithType.keySet();
-        int i = 0;
-        for (Iterator<String> it = keySet.iterator(); it.hasNext(); ) {
-            String key = it.next();
-            String vp = columnsWithType.get(key);
-            sb.append(key).append(" ").append(vp);
-            if (i == columnNumberPK) {
-                sb.append(" PRIMARY KEY");
-            }
-            i++;
-            if (it.hasNext()) {
+        Set<ColumnName> keySet = tableColumns.keySet();
+        int i=0;
+        for (ColumnName column:keySet) {
+            if (i!=0)
                 sb.append(", ");
-            } else {
-                sb.append(")");
-            }
+            i=1;
+            String key = column.getName().substring(column.getName().lastIndexOf(".")+1);
+            String vp = column.getType().toString();
+            sb.append(key).append(" ").append(vp);
+
+            if (key.equals(primaryKey.get(0).getName()))
+                sb.append(" PRIMARY KEY");
+
         }
+        sb.append(")");
         return sb.toString();
     }
 
@@ -182,9 +147,9 @@ public class CreateTableStatement {
             sb.append("(");
         }
 
-        Iterator<String> pks = primaryKey.iterator();
+        Iterator<ColumnName> pks = primaryKey.iterator();
         while (pks.hasNext()) {
-            sb.append(pks.next());
+            sb.append(pks.next().getName());
             if (pks.hasNext()) {
                 sb.append(", ");
             }
@@ -192,8 +157,8 @@ public class CreateTableStatement {
 
         if (primaryKeyType == PRIMARY_AND_CLUSTERING_SPECIFIED) {
             sb.append(")");
-            for (String key : clusterKey) {
-                sb.append(", ").append(key);
+            for (ColumnName key : clusterKey) {
+                sb.append(", ").append(key.getName());
             }
         }
 
@@ -216,11 +181,11 @@ public class CreateTableStatement {
         if (primaryKeyType == PRIMARY_SINGLE) {
             sb.append(getSinglePKString());
         } else {
-            Set<String> keySet = columnsWithType.keySet();
+            Set<ColumnName> keySet = tableColumns.keySet();
             sb.append(" (");
-            for (String key : keySet) {
-                String vp = columnsWithType.get(key);
-                sb.append(key).append(" ").append(vp).append(", ");
+            for (ColumnName key : keySet) {
+                String vp = tableColumns.get(key).getColumnType().toString();
+                sb.append(key.getName()).append(" ").append(vp).append(", ");
             }
             sb.append(getCompositePKString());
         }

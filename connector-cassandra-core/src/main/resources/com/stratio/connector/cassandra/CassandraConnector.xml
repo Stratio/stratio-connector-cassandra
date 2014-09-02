@@ -9,13 +9,20 @@
         <Property>
             <Name></Name>
         </Property>
+        <Property>
+            <Name></Name>
+        </Property>
     </RequiredProperties>
     <OptionalProperties>
         <Property>
             <Name></Name>
         </Property>
+        <Property>
+            <Name></Name>
+        </Property>
     </OptionalProperties>
     <SupportedOperations>
+        <operation></operation>
         <operation></operation>
     </SupportedOperations>
 </Connector>

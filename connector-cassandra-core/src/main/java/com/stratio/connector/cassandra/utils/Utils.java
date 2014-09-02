@@ -22,7 +22,7 @@ import com.datastax.driver.core.*;
 import com.stratio.meta.common.data.CassandraResultSet;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.metadata.structures.ColumnType;
-import com.stratio.meta2.common.statements.structures.terms.Term;
+
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -151,26 +151,8 @@ public class Utils {
         return crs;
     }
 
-    public static boolean castForLongType(ColumnMetadata cm, Term<?> term) {
-        boolean required = false;
-        if (((cm.getType().asJavaClass() == Integer.class)
-            || (cm.getType().asJavaClass() == Long.class))
-            && ((term.getTermClass() == Integer.class)
-            || (term.getTermClass() == Long.class))) {
-            required = true;
-        }
-        return required;
-    }
 
-    public static boolean castForDoubleType(ColumnMetadata cm, Term<?> term) {
-        boolean required = false;
-        if ((cm.getType().asJavaClass() == Double.class)
-            || (cm.getType().asJavaClass() == Float.class)
-            && ((term.getTermClass() == Double.class)
-            || (term.getTermClass() == Float.class))) {
-            required = true;
-        }
-        return required;
-    }
+
+
 
 }

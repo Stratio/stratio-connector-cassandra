@@ -27,6 +27,7 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -75,6 +76,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         columns.put(new ColumnName(new TableName("demo","users"),"age"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"age"),parameters, ColumnType.INT));
         columns.put(new ColumnName(new TableName("demo","users"),"bool"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"bool"),parameters, ColumnType.BOOLEAN));
         columns.put(new ColumnName(new TableName("demo","users"),"phrase"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"phrase"),parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo","users"),"email"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"email"),parameters, ColumnType.TEXT));
 
 
         TableMetadata table=new TableMetadata(targetTable,options,columns,clusterRef,partitionKey,clusterKey);
@@ -88,21 +90,16 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         row.addCell("bool", new Cell(false));
         row.addCell("phrase", new Cell("insert phase"));
 
+        int finalCount=initialCount;
         try {
             cse.insert(new ClusterName("cluster"), table, row);
-            int finalCount = select2InsertTest(_session, query);
-            if (finalCount >= initialCount) {
-                assert (true);
-            } else {
-                assert (false);
-            }
+            finalCount = select2InsertTest(_session, query);
         } catch (UnsupportedException e) {
-            assert (false);
             e.printStackTrace();
         } catch (ExecutionException e) {
-            assert (false);
             e.printStackTrace();
         }
+        Assert.assertNotEquals(initialCount,finalCount);
     }
 
     @Test
@@ -122,6 +119,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         columns.put(new ColumnName(new TableName("demo","users"),"age"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"age"),parameters, ColumnType.INT));
         columns.put(new ColumnName(new TableName("demo","users"),"bool"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"bool"),parameters, ColumnType.BOOLEAN));
         columns.put(new ColumnName(new TableName("demo","users"),"phrase"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"phrase"),parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo","users"),"email"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"email"),parameters, ColumnType.TEXT));
 
 
         TableMetadata table=new TableMetadata(targetTable,options,columns,clusterRef,partitionKey,clusterKey);
@@ -149,21 +147,16 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         rows.add(row);
         rows.add(row2);
 
+        int finalCount=initialCount;
         try {
             cse.insert(new ClusterName("cluster"), table, rows);
-            int finalCount = select2InsertTest(_session, query);
-            if (finalCount >= initialCount) {
-                assert (true);
-            } else {
-                assert (false);
-            }
+            finalCount = select2InsertTest(_session, query);
         } catch (UnsupportedException e) {
-            assert (false);
             e.printStackTrace();
         } catch (ExecutionException e) {
-            assert (false);
             e.printStackTrace();
         }
+        Assert.assertNotEquals(initialCount,finalCount);
     }
 
 

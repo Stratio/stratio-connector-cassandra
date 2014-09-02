@@ -9,9 +9,19 @@
                 <host></host>
                 <port></port>
             </hosts>
+            <hosts>
+                <host></host>
+                <port></port>
+            </hosts>
         </cluster>
     </RequiredProperties>
     <OptionalProperties>
+        <Property>
+            <Name></Name>
+        </Property>
+        <Property>
+            <Name></Name>
+        </Property>
     </OptionalProperties>
 </DataStore>
 

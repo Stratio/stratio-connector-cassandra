@@ -62,15 +62,16 @@ public class CreateCatalogStatement {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("CREATE CATALOG ");
+        StringBuilder sb = new StringBuilder("CREATE KEYSPACE ");
         if (ifNotExists) {
             sb.append("IF NOT EXISTS ");
         }
         sb.append(catalog);
-        System.out.println(options.toString());
-        System.out.println(options.length());
+
         if ((options != null) && (options.length() > 0)) {
             sb.append(" WITH ").append(options);
+        }else{
+            sb.append(" WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         }
         return sb.toString();
     }
