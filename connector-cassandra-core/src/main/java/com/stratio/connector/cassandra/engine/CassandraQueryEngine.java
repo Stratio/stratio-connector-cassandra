@@ -18,6 +18,7 @@
 package com.stratio.connector.cassandra.engine;
 
 
+import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
 
 import com.stratio.connector.cassandra.CassandraExecutor;
@@ -50,6 +51,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     private List<Relation> where = new ArrayList<Relation>();
     private int limit = 100;
     private Map<String, Session> sessions;
+    Session session;
 
     public CassandraQueryEngine(Map<String, Session> sessions) {
         this.sessions = sessions;
@@ -58,7 +60,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     @Override
     public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow)
         throws UnsupportedException, ExecutionException {
-        Session session = sessions.get(targetCluster.getName());
+        session = sessions.get(targetCluster.getName());
 
         if (workflow.getInitialSteps().size() > 1) {
             throw new UnsupportedException("");
@@ -129,11 +131,22 @@ public class CassandraQueryEngine implements IQueryEngine {
                     case BETWEEN:
                         break;
                     case MATCH:
+                        String nameIndex=getLuceneIndex();
+                        //sb.append(relation.getLeftTerm().toString().substring(relation.getLeftTerm().toString().lastIndexOf(".")+1)).append(" = ");
+                        sb.append(nameIndex).append(" = '");
                         sb.append(getLuceneWhereClause(relation));
+                        sb.append("'");
+                        //SELECT name FROM demo.users WHERE stratio_lucene_index_1 = {filter:{type:"boolean",must:[{type:"wildcard",field:"demo.users.stratio_lucene_index_1",value:"*"}]}}
                         break;
                     default:
-
-                        sb.append(relation.toString());
+                        //SELECT name FROM demo.users WHERE demo.users.name = 'name_5' AND demo.users.gender = 'female'
+                        String whereWithQualification=relation.toString();
+                        String parts[]=whereWithQualification.split(" ");
+                        String columnName=parts[0].substring(parts[0].lastIndexOf(".")+1);
+                        sb.append(columnName);
+                        for (int i=1;i<parts.length;i++)
+                            sb.append(" ").append(parts[i]);
+                        //sb.append(relation.toString());
                         break;
                 }
             }
@@ -144,13 +157,28 @@ public class CassandraQueryEngine implements IQueryEngine {
         return sb.toString().replace("  ", " ");
     }
 
-    public String[] getLuceneWhereClause(Relation relation) {
-        String[] result;
+    private String getLuceneIndex() {
+        String indexName="";
+        List<ColumnMetadata> columns= session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName()).getColumns();
+        for(ColumnMetadata column:columns){
+            try {
+                if (column.getIndex().isCustomIndex()) {
+                    indexName = column.getIndex().getName();
+                }
+            }catch(NullPointerException e){
+
+            }
+        }
+        return indexName;
+    }
+
+    public String getLuceneWhereClause(Relation relation) {
+        String result;
 
         StringBuilder sb = new StringBuilder("{filter:{type:\"boolean\",must:[");
 
 
-        String column = relation.getLeftTerm().toString();
+        String column = relation.getLeftTerm().toString().substring(relation.getLeftTerm().toString().lastIndexOf(".")+1);
         String value = relation.getRightTerm().toString();
         // Generate query for column
         String[] processedQuery = processLuceneQueryType(value);
@@ -165,7 +193,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         sb.replace(sb.length() - 1, sb.length(), "");
         sb.append("]}}");
 
-        result = new String[] {sb.toString()};
+        result = sb.toString();
 
     return result;
 
