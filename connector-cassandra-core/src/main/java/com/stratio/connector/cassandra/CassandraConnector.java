@@ -49,11 +49,13 @@ public class CassandraConnector implements IConnector {
 	  //ConnectorApp connectorApp=new ConnectorApp();
 	  //connectorApp.startup(this,{"2554"});
 
-	String port=args[0];
+	/*String port=args[0];
 	ConnectorApp connectorApp=new ConnectorApp();
 	Config config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).withFallback(ConfigFactory.load());
 	connectorApp.startup(new CassandraConnector(),port,config);
-
+*/
+      ConnectorApp connectorApp=new ConnectorApp();
+      connectorApp.startup(new CassandraConnector());
   }
   
   
