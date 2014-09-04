@@ -25,10 +25,7 @@ import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-import com.stratio.meta.common.logicalplan.LogicalWorkflow;
-import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.logicalplan.*;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
@@ -124,6 +121,76 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
     @Test
+    public void SelectTestWithAlias() {
+
+        ClusterName targetCluster = new ClusterName("cluster");
+
+        List<LogicalStep> logicalSteps = new ArrayList<>();
+
+        TableName tableName = new TableName("demo", "users");
+
+        List<ColumnName> columnList = new ArrayList<>();
+        ColumnName columnName = new ColumnName(tableName, "name");
+        columnList.add(columnName);
+
+        //Generation of Data
+        Project project = new Project(Operations.PROJECT, tableName);
+        ColumnName selectColumn=new ColumnName("demo","users","name");
+        project.addColumn(selectColumn);
+
+        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector rightTerm = new StringSelector("'name_5'");
+
+        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector rightTerm2 = new StringSelector("'female'");
+
+        Relation relation2 = new Relation(selector2, Operator.COMPARE, rightTerm2);
+        Filter filter2 = new Filter(Operations.FILTER_INDEXED_EQ , relation2);
+
+        Relation relation = new Relation(selector, Operator.COMPARE, rightTerm);
+        Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
+
+        Map<String, String> aliasColumns=new HashMap<>();
+        aliasColumns.put("demo.users.name", "nameAlias");
+
+        Select aliasSelect=new Select(Operations.SELECT_LIMIT, aliasColumns);
+
+        //Compound workflow
+        filter2.setNextStep(aliasSelect);
+        filter.setNextStep(filter2);
+        project.setNextStep(filter);
+        logicalSteps.add(project);
+        LogicalWorkflow workflow = new LogicalWorkflow(logicalSteps);
+
+        Map<String, Session> sessions = new HashMap<>();
+        sessions.put("cluster", this._session);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
+
+
+        QueryResult qr = null;
+        try {
+            qr = cqe.execute(targetCluster, workflow);
+        } catch (UnsupportedException e) {
+            e.printStackTrace();
+        } catch (com.stratio.meta.common.exceptions.ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        String value = "";
+        for (Row row : qr.getResultSet()) {
+            Cell cell = row.getCell("namealias");
+            value = cell.getValue().toString();
+        }
+        assertEquals(value, "name_5");
+
+        assertEquals(cqe.parseQuery(),
+            "SELECT name AS nameAlias FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
+
+    }
+
+
+
+    @Test
     public void LuceneSelectTest() {
 
         ClusterName targetCluster = new ClusterName("cluster");
@@ -182,17 +249,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void processLuceneQueryType(){
-        /*String inputText = "SELECT * FROM demo.users WHERE name MATCH 'name_1*' AND age > 20;";
-        String methodName = "processLuceneQueryType";
-        MetaQuery mq = parser.parseStatement(inputText);
-        MetaStatement st = mq.getStatement();
-        assertNotNull(st, "Cannot parse "+methodName
-            + " parser error: " + mq.hasError()
-            + " -> " + getErrorMessage(mq.getResult()));
-        assertFalse(mq.hasError(), "Parsing expecting '" + inputText
-            + "' from '" + st.toString() + "' returned: " + getErrorMessage(mq.getResult()));
 
-        */
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
 

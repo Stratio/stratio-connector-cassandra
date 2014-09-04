@@ -31,6 +31,7 @@ import com.stratio.meta.common.statements.structures.relationships.Relation;
 import com.stratio.meta2.common.data.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -42,13 +43,12 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String catalog;
     private TableName tableName;
 
-
-
     private boolean whereInc = false;
-    private boolean orderInc = false;
     private boolean limitInc = false;
 
     private List<Relation> where = new ArrayList<Relation>();
+    private StringBuffer alias=new StringBuffer();
+    Map<String,String> aliasColumns=new HashMap<>();
     private int limit = 100;
     private Map<String, Session> sessions;
     Session session;
@@ -86,6 +86,11 @@ public class CassandraQueryEngine implements IQueryEngine {
                             whereInc = true;
                             Relation relation = filter.getRelation();
                             where.add(relation);
+                        } else {
+                            if (transformation instanceof Select){
+                                Select select=(Select)transformation;
+                                aliasColumns=select.getColumnMap();
+                            }
                         }
                     }
                 }
@@ -105,7 +110,13 @@ public class CassandraQueryEngine implements IQueryEngine {
                 if (i!=0)
                     sb.append(",");
                 i=1;
-                sb.append(columnName.getName());
+                String aliasColumnQuealified=columnName.getQualifiedName();
+                if(aliasColumns.get(aliasColumnQuealified)!=null) {
+                    sb.append(columnName.getName()).append(" AS ")
+                        .append(aliasColumns.get(aliasColumnQuealified));
+                }else{
+                    sb.append(columnName.getName());
+                }
             }
 
         }
@@ -122,10 +133,6 @@ public class CassandraQueryEngine implements IQueryEngine {
                 if (count>0)
                     sb.append(" AND ");
                 count=1;
-
-                //TODO adjust to new META Select refactor
-                //DIFRENT CASES: IN, BETWEEN, MATCH, OTHERS
-
                 switch (relation.getOperator()){
                     case IN:
                     case BETWEEN:

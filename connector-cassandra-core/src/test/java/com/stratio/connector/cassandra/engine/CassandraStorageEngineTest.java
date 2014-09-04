@@ -23,9 +23,11 @@ import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.meta2.common.data.IndexName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
+import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -79,7 +81,8 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         columns.put(new ColumnName(new TableName("demo","users"),"email"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"email"),parameters, ColumnType.TEXT));
 
 
-        TableMetadata table=new TableMetadata(targetTable,options,columns,clusterRef,partitionKey,clusterKey);
+        Map<IndexName, IndexMetadata> indexes=new HashMap<>();
+        TableMetadata table=new TableMetadata(targetTable,options,columns,indexes,clusterRef,partitionKey,clusterKey);
 
         //INSERT INTO demo.users (name, gender, email, age, bool, phrase) VALUES ('name_0', 'male', 'name_0@domain.com', 10, true, '');
         Row row = new Row();
@@ -122,7 +125,8 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         columns.put(new ColumnName(new TableName("demo","users"),"email"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"email"),parameters, ColumnType.TEXT));
 
 
-        TableMetadata table=new TableMetadata(targetTable,options,columns,clusterRef,partitionKey,clusterKey);
+        Map<IndexName, IndexMetadata> indexes=new HashMap<>();
+        TableMetadata table=new TableMetadata(targetTable,options,columns,indexes,clusterRef,partitionKey,clusterKey);
 
         CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
 

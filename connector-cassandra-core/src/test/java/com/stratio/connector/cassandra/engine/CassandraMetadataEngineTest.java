@@ -7,14 +7,8 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.data.CatalogName;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.CatalogMetadata;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.metadata.ColumnType;
-import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.data.*;
+import com.stratio.meta2.common.metadata.*;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -103,7 +97,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         columns.put(new ColumnName(new TableName("demometadata","users"),"phrase"),new ColumnMetadata(new ColumnName(new TableName("demometadata","users"),"phrase"),parameters, ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demometadata","users"),"email"),new ColumnMetadata(new ColumnName(new TableName("demometadata","users"),"email"),parameters, ColumnType.TEXT));
 
-        TableMetadata table=new TableMetadata(targetTable,options,columns,clusterRef,partitionKey,clusterKey);
+        Map<IndexName, IndexMetadata> indexes=new HashMap<>();
+        TableMetadata table=new TableMetadata(targetTable,options,columns,indexes,clusterRef,partitionKey,clusterKey);
 
         int rowsFinal=rowsInitial;
         try {

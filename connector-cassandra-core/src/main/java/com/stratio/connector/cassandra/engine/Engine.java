@@ -63,7 +63,7 @@ public class Engine {
             .addContactPoints(config.getCassandraHosts())
             .withPort(config.getCassandraPort()).build();
 
-
+        //TODO When credential exists change cluster builder to add withCredentials method to it
 
         LOG.info("Connecting to Cassandra Cluster on "
             + Arrays.toString(config.getCassandraHosts()) + ":" + config.getCassandraPort());
