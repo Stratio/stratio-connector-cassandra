@@ -141,7 +141,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         ColumnName selectColumn=new ColumnName("demo","users","name");
         project.addColumn(selectColumn);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "stratio_lucene_index_1"));
+        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "phrase"));
         Selector rightTerm = new StringSelector("*");
 
         Relation relation = new Relation(selector, Operator.MATCH, rightTerm);
