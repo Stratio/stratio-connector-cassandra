@@ -21,10 +21,7 @@ package com.stratio.connector.cassandra.engine;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
-import com.stratio.connector.cassandra.statements.CreateCatalogStatement;
-import com.stratio.connector.cassandra.statements.CreateTableStatement;
-import com.stratio.connector.cassandra.statements.DropCatalogStatement;
-import com.stratio.connector.cassandra.statements.DropTableStatement;
+import com.stratio.connector.cassandra.statements.*;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -33,6 +30,7 @@ import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.IndexType;
 import com.stratio.meta2.common.metadata.TableMetadata;
 
 import java.util.HashMap;
@@ -113,5 +111,17 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
+    }
+
+    public void createIndex(ClusterName targetCluster, List<ColumnName> columns, IndexType indexType) throws UnsupportedException, ExecutionException{
+        session = sessions.get(targetCluster.getName());
+        CreateIndexStatement indexStatement = new CreateIndexStatement(columns,indexType, true);
+        CassandraExecutor.execute(indexStatement.toString(), session);
+    }
+
+    public void dropIndex(ClusterName targetCluster, String indexName) throws UnsupportedException, ExecutionException{
+        session = sessions.get(targetCluster.getName());
+        DropIndexStatement indexStatement=new DropIndexStatement(indexName, true);
+        CassandraExecutor.execute(indexStatement.toString(), session);
     }
 }
