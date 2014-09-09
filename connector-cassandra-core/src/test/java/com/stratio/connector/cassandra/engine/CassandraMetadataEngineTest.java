@@ -1,14 +1,16 @@
 package com.stratio.connector.cassandra.engine;
 
 
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.connector.cassandra.utils.IdentifierProperty;
+import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.*;
 import com.stratio.meta2.common.metadata.*;
+import com.stratio.meta2.common.metadata.ColumnMetadata;
+import com.stratio.meta2.common.metadata.TableMetadata;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -35,6 +37,14 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         int numberOfTables = tables.size();
         return numberOfTables;
     }
+
+    private String assertIndex(String columnIndex){
+        Session session=sessions.get("cluster");
+        com.datastax.driver.core.TableMetadata table=session.getCluster().getMetadata().getKeyspace("demo").getTable("users");
+        String indexName=table.getColumn(columnIndex).getIndex().getName();
+        return indexName;
+    }
+
 
     @BeforeClass
     public void setUp() {
@@ -145,5 +155,45 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         }
         Assert.assertNotEquals(rowsInitial,rowsFinal);
     }
+
+    @Test
+    public void createSimpleIndexTest() {
+        CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
+        List<ColumnMetadata> columns=new ArrayList<>();
+        Object[] parameters=null;
+        columns.add(new ColumnMetadata(new ColumnName(new TableName("demo","users"),"name"),parameters, ColumnType.TEXT));
+
+        Map<IndexName, IndexMetadata> indexes=new HashMap<>();
+
+        try {
+            cme.createIndex(new ClusterName("cluster"),columns,IndexType.DEFAULT,"IndexTest");
+        } catch (UnsupportedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(assertIndex("name"), "IndexTest");
+    }
+
+
+    @Test
+    public void createLuceneIndexTest() {
+        CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
+        List<ColumnMetadata> columns=new ArrayList<>();
+        Object[] parameters=null;
+        columns.add(new ColumnMetadata(new ColumnName(new TableName("demo","users"),"name"),parameters, ColumnType.TEXT));
+        columns.add(new ColumnMetadata(new ColumnName(new TableName("demo","users"),"phrase"),parameters, ColumnType.TEXT));
+
+        try {
+            cme.createIndex(new ClusterName("cluster"),columns,IndexType.FULL_TEXT,"LuceneIndexTest");
+        } catch (UnsupportedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(assertIndex("name"),"LuceneIndexTest");
+    }
+
+
 
 }

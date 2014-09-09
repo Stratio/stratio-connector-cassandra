@@ -22,6 +22,7 @@ package com.stratio.connector.cassandra.engine;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.connector.cassandra.statements.*;
+import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -30,6 +31,7 @@ import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexType;
 import com.stratio.meta2.common.metadata.TableMetadata;
 
@@ -113,9 +115,9 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
-    public void createIndex(ClusterName targetCluster, List<ColumnName> columns, IndexType indexType) throws UnsupportedException, ExecutionException{
+    public void createIndex(ClusterName targetCluster, List<ColumnMetadata> columns, IndexType indexType, String indexName) throws UnsupportedException, ExecutionException{
         session = sessions.get(targetCluster.getName());
-        CreateIndexStatement indexStatement = new CreateIndexStatement(columns,indexType, true);
+        CreateIndexStatement indexStatement = new CreateIndexStatement(columns, indexType, true, indexName);
         CassandraExecutor.execute(indexStatement.toString(), session);
     }
 
