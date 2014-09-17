@@ -21,6 +21,7 @@ package com.stratio.connector.cassandra.engine;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.connector.cassandra.data.CassandraResultSet;
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
@@ -29,12 +30,15 @@ import com.stratio.meta.common.logicalplan.*;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
+import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -55,6 +59,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         //metadataManager = new MetadataManager(_session, null);
         //metadataManager.loadMetadata();
     }
+
+
+
 
 
     @Test
@@ -177,14 +184,18 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         String value = "";
-        for (Row row : qr.getResultSet()) {
-            Cell cell = row.getCell("namealias");
-            value = cell.getValue().toString();
-        }
-        assertEquals(value, "name_5");
+        try {
+            for (Row row : qr.getResultSet()) {
+                Cell cell = row.getCell("nameAlias");
+                value = cell.getValue().toString();
+            }
+            assertEquals(value, "name_5");
 
-        assertEquals(cqe.parseQuery(),
-            "SELECT name AS nameAlias FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
+            assertEquals(cqe.parseQuery(),
+                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
+        }catch (Exception ex){
+            Assert.fail("No alias found");
+        }
 
     }
 
@@ -279,6 +290,11 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             assertEquals(result[1], query[2], "Parsed does not match");
         }
 
+    }
+
+    @AfterClass
+    public void restore(){
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
     }
 
 

@@ -19,8 +19,11 @@
 package com.stratio.connector.cassandra.utils;
 
 import com.datastax.driver.core.*;
-import com.stratio.meta.common.data.CassandraResultSet;
-import com.stratio.meta.common.data.Cell;
+
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Row;
+import com.stratio.connector.cassandra.data.CassandraResultSet;
+import com.stratio.meta.common.data.*;
 import com.stratio.meta.common.metadata.structures.ColumnType;
 
 import org.apache.log4j.Logger;
@@ -111,7 +114,7 @@ public class Utils {
      * @param resultSet The input Cassandra result set.
      * @return An equivalent Meta ResultSet
      */
-    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(ResultSet resultSet) {
+    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(com.datastax.driver.core.ResultSet resultSet) {
         CassandraResultSet crs = new CassandraResultSet();
 
         AbstractMetadataHelper helper = new CassandraMetadataHelper();
@@ -141,6 +144,68 @@ public class Utils {
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
                     metaRow.addCell(def.getName(), metaCell);
+                }
+                crs.add(metaRow);
+            }
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            LOG.error("Cannot transform result set", e);
+            crs = new CassandraResultSet();
+        }
+        return crs;
+    }
+
+
+    /**
+     * Transforms a Cassandra {@link com.datastax.driver.core.ResultSet} into a {@link
+     * com.stratio.meta.common.data.ResultSet}.
+     *
+     * @param resultSet The input Cassandra result set.
+     * @return An equivalent Meta ResultSet
+     */
+    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(com.datastax.driver.core.ResultSet resultSet, Map<String,String> alias) {
+        CassandraResultSet crs = new CassandraResultSet();
+
+        AbstractMetadataHelper helper = new CassandraMetadataHelper();
+
+        //Get the columns in order
+        List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
+        List<com.stratio.meta.common.metadata.structures.ColumnMetadata> columnList =
+            new ArrayList<>();
+        com.stratio.meta.common.metadata.structures.ColumnMetadata columnMetadata = null;
+        //Obtain the metadata associated with the columns.
+        for (ColumnDefinitions.Definition def : definitions) {
+            //Insert the alias if exists
+            if (alias.containsKey(def.getKeyspace() + "." + def.getTable()+ "." + def.getName())){
+                columnMetadata =
+                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
+                        def.getName());
+                columnMetadata.setColumnAlias(def.getKeyspace() + "." + def.getTable()+ "." + def.getName());
+            }else {
+
+                columnMetadata =
+                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
+                        def.getName());
+
+            }
+            ColumnType type = helper.toColumnType(def.getType().getName().toString());
+            columnMetadata.setType(type);
+            columnList.add(columnMetadata);
+        }
+        crs.setColumnMetadata(columnList);
+
+        try {
+            for (Row row : resultSet.all()) {
+                com.stratio.meta.common.data.Row metaRow = new com.stratio.meta.common.data.Row();
+                for (ColumnDefinitions.Definition def : definitions) {
+                    if (def.getName().toLowerCase().startsWith("stratio")) {
+                        continue;
+                    }
+                    Cell metaCell = getCell(def.getType(), row, def.getName());
+                    if (alias.containsKey(def.getKeyspace() + "." + def.getTable()+ "." + def.getName())){
+                        metaRow.addCell(alias.get(def.getKeyspace() + "." + def.getTable()+ "." + def.getName()), metaCell);
+                    }else {
+                        metaRow.addCell(def.getName(), metaCell);
+                    }
                 }
                 crs.add(metaRow);
             }

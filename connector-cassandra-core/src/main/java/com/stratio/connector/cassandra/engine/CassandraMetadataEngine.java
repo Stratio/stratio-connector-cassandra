@@ -30,10 +30,7 @@ import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.CatalogMetadata;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.metadata.IndexType;
-import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.metadata.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -115,15 +112,18 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
-    public void createIndex(ClusterName targetCluster, List<ColumnMetadata> columns, IndexType indexType, String indexName) throws UnsupportedException, ExecutionException{
+    @Override
+    public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata) throws UnsupportedException, ExecutionException{
         session = sessions.get(targetCluster.getName());
-        CreateIndexStatement indexStatement = new CreateIndexStatement(columns, indexType, true, indexName);
+        CreateIndexStatement indexStatement = new CreateIndexStatement(indexMetadata, true );
         CassandraExecutor.execute(indexStatement.toString(), session);
     }
 
-    public void dropIndex(ClusterName targetCluster, String indexName) throws UnsupportedException, ExecutionException{
+    @Override
+    public void dropIndex(ClusterName targetCluster, IndexMetadata indexName) throws UnsupportedException, ExecutionException{
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement=new DropIndexStatement(indexName, true);
         CassandraExecutor.execute(indexStatement.toString(), session);
+
     }
 }

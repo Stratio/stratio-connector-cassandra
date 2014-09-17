@@ -30,6 +30,7 @@ import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -163,6 +164,9 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Assert.assertNotEquals(initialCount,finalCount);
     }
 
-
+    @AfterClass
+    public void restore(){
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
+    }
 
 }

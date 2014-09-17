@@ -26,9 +26,13 @@ import com.stratio.meta.common.connector.IQueryEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.*;
-import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta.common.result.Result;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta2.common.data.*;
+import com.stratio.meta2.common.data.CatalogName;
+import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.meta2.common.data.TableName;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +62,8 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     @Override
-    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow)
+    public com.stratio.meta.common.result.QueryResult execute(ClusterName targetCluster,
+        LogicalWorkflow workflow)
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
 
@@ -98,8 +103,20 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
         }
         String query = parseQuery();
-        QueryResult result =QueryResult.createQueryResult(CassandraExecutor.execute(query, session));
-        return result;
+
+        Result result=null;
+        if (aliasColumns.isEmpty()) {
+            result = CassandraExecutor.execute(query, session);
+        }else{
+            result = CassandraExecutor.execute(query, aliasColumns, session);
+        }
+
+        if (result.hasError()){
+            com.stratio.meta.common.result.ErrorResult errorResult=(com.stratio.meta.common.result.ErrorResult)result;
+            throw new  ExecutionException(errorResult.getErrorMessage());
+        }else {
+            return (com.stratio.meta.common.result.QueryResult) result;
+        }
     }
 
     public String parseQuery() {
@@ -110,13 +127,14 @@ public class CassandraQueryEngine implements IQueryEngine {
                 if (i!=0)
                     sb.append(",");
                 i=1;
-                String aliasColumnQuealified=columnName.getQualifiedName();
+                sb.append(columnName.getName());
+                /*String aliasColumnQuealified=columnName.getQualifiedName();
                 if(aliasColumns.get(aliasColumnQuealified)!=null) {
                     sb.append(columnName.getName()).append(" AS ")
                         .append(aliasColumns.get(aliasColumnQuealified));
                 }else{
                     sb.append(columnName.getName());
-                }
+                }*/
             }
 
         }

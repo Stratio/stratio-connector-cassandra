@@ -26,6 +26,7 @@ import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.meta.common.metadata.structures.ColumnType;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
+import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.IndexType;
 import com.stratio.meta2.common.metadata.TableMetadata;
 
@@ -78,6 +79,11 @@ public class CreateIndexStatement {
     private String usingClass = null;
 
     /**
+     * The map of parameters passed to the index during its creation.
+     */
+    private Map<String, Object> parameters = new LinkedHashMap<>();
+
+    /**
      * The map of options passed to the index during its creation.
      */
     private Map<ValueProperty, ValueProperty> options = new LinkedHashMap<>();
@@ -107,19 +113,17 @@ public class CreateIndexStatement {
     }
 
 
-
-
-    public CreateIndexStatement(List<ColumnMetadata> columnsIndex, IndexType indexType, boolean createIfNotExists, String indexName) {
+    public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists) {
         targetColumns = new ArrayList<>();
-        //this.options = options;
-        this.targetColumns=columnsIndex;
+        this.parameters = indexMetadata.getOptions();
+        this.targetColumns=indexMetadata.getColumns();
         this.createIfNotExists=createIfNotExists;
-        this.type=indexType;
-        this.tableName=columnsIndex.get(0).getName().getTableName().getName();
-        this.keyspace=columnsIndex.get(0).getName().getTableName().getCatalogName().getName();
+        this.type=indexMetadata.getType();
+        this.tableName=targetColumns.get(0).getName().getTableName().getName();
+        this.keyspace=targetColumns.get(0).getName().getTableName().getCatalogName().getName();
         if (keyspace!=null)
             this.keyspaceIncluded=true;
-        this.name=indexName;
+        this.name=indexMetadata.getName().getName();
 
         if (type==IndexType.FULL_TEXT) {
             usingClass = "'com.stratio.cassandra.index.RowIndex'";
@@ -185,6 +189,7 @@ public class CreateIndexStatement {
             if (i!=0)
                 sb.append(",");
             sb.append(columnName.getName().getName());
+            i=1;
         }
         sb.append(")");
 
@@ -243,7 +248,8 @@ public class CreateIndexStatement {
         sb.append("{default_analyzer:\"org.apache.lucene.analysis.standard.StandardAnalyzer\",");
         sb.append("fields:{");
 
-
+        //getting the columns from the options
+        List<ColumnMetadata> targetColumns=(List<ColumnMetadata>)parameters.get("columnsIndex");
 
         // Iterate throught the columns.
         for (ColumnMetadata column : targetColumns) {
