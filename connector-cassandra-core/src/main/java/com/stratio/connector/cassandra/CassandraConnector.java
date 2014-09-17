@@ -28,12 +28,23 @@ import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 public class CassandraConnector implements IConnector {
 
     private Map<String, Session> sessions;
+    private String connectorName;
+
 
     /**
      * Class logger.
@@ -47,9 +58,24 @@ public class CassandraConnector implements IConnector {
     }
 
 
+    public CassandraConnector(){
+        try {
+            InputStream inputStream=getClass().getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
+            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+            this.connectorName=d.getElementsByTagName("ConnectorName").item(0).getTextContent();
+
+        } catch (SAXException e) {
+            LOG.trace("Impossible to read Manifest with connector configuration");
+        } catch (IOException e) {
+            LOG.trace("Impossible to read Manifest with connector configuration");
+        } catch (ParserConfigurationException e) {
+            LOG.trace("Impossible to read Manifest with connector configuration");
+        }
+    }
+
     @Override
     public String getConnectorName() {
-        return "Cassandra";
+        return connectorName;
     }
 
     /**
@@ -59,7 +85,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public String[] getDatastoreName() {
-        return new String[] {"Cassandra"};
+        return new String[] {"CassandraConnector"};
     }
 
     @Override
