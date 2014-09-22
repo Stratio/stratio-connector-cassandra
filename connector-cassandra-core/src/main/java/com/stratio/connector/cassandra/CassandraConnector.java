@@ -18,32 +18,36 @@
 
 package com.stratio.connector.cassandra;
 
+import com.datastax.driver.core.CloseFuture;
 import com.datastax.driver.core.Session;
-import com.stratio.connector.ConnectorApp;
 import com.stratio.connector.cassandra.engine.*;
+import com.stratio.connectors.ConnectorApp;
 import com.stratio.meta.common.connector.*;
 import com.stratio.meta.common.exceptions.ConnectionException;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CassandraConnector implements IConnector {
 
     private Map<String, Session> sessions;
     private String connectorName;
+    private boolean closeSignal=false;
 
 
     /**
@@ -59,17 +63,18 @@ public class CassandraConnector implements IConnector {
 
 
     public CassandraConnector(){
+        sessions=new HashMap<>();
         try {
             InputStream inputStream=getClass().getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
             Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
             this.connectorName=d.getElementsByTagName("ConnectorName").item(0).getTextContent();
 
         } catch (SAXException e) {
-            LOG.trace("Impossible to read Manifest with connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration");
         } catch (IOException e) {
-            LOG.trace("Impossible to read Manifest with connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration");
         } catch (ParserConfigurationException e) {
-            LOG.trace("Impossible to read Manifest with connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration");
         }
     }
 
@@ -117,15 +122,20 @@ public class CassandraConnector implements IConnector {
     }
 
     @Override
+    public void shutdown() throws ExecutionException {
+        List<CloseFuture> closeFutureList=new ArrayList<>();
+        for (Session s:sessions.values()) {
+            closeFutureList.add(s.closeAsync());
+        }
+        sessions=new HashMap<>();
+    }
+
+
+
+
+    @Override
     public boolean isConnected(ClusterName name) {
         boolean connected;
-        /*
-        if (sessions.get(name.getName()) != null) {
-            connected = true;
-        } else {
-            connected = false;
-        }
-        */
 
         if (sessions.get(name.getName()) != null) {
             if (sessions.get(name.getName()).getCluster()!=null){
@@ -175,4 +185,7 @@ public class CassandraConnector implements IConnector {
         return metadataEngine;
     }
 
+    public boolean isCloseSignal() {
+        return closeSignal;
+    }
 }
