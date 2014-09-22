@@ -29,6 +29,7 @@ import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -68,7 +69,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
 
         TableName targetTable=new TableName("demo", "users");
-        Map<String, Object> options=new HashMap<>();
+        Map<Selector, Selector> options=new HashMap<>();
         Map< ColumnName, ColumnMetadata > columns=new HashMap<>();
         ClusterName clusterRef=new ClusterName("cluster");
         List<ColumnName> partitionKey=new ArrayList<>();
@@ -112,7 +113,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         int initialCount = select2InsertTest(_session, query);
 
         TableName targetTable=new TableName("demo", "users");
-        Map<String, Object> options=new HashMap<>();
+        Map<Selector,Selector> options=new HashMap<>();
         Map< ColumnName, ColumnMetadata > columns=new HashMap<>();
         ClusterName clusterRef=new ClusterName("cluster");
         List<ColumnName> partitionKey=new ArrayList<>();

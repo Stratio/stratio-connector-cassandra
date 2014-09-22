@@ -11,6 +11,9 @@ import com.stratio.meta2.common.data.*;
 import com.stratio.meta2.common.metadata.*;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -51,7 +54,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
     public void createTable(){
         CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
 
-        Map<String, Object> options=new HashMap<>();
+        Map<Selector,Selector> options=new HashMap<>();
         TableName targetTable=new TableName("demometadata", "users1");
 
         Map< ColumnName, ColumnMetadata > columns=new HashMap<>();
@@ -87,7 +90,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
     public void createCatalog(){
         CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
 
-        Map<String, Object> options=new HashMap<>();
+        Map<Selector, Selector> options=new HashMap<>();
         Map<TableName, TableMetadata> tables=new HashMap<>();
 
         CatalogMetadata catalogmetadata=new CatalogMetadata(new CatalogName("demoMetadata"), options, tables );
@@ -133,7 +136,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         int rowsInitial= assertCatalog();
         CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
 
-        Map<String, Object> options=new HashMap<>();
+        Map<Selector, Selector> options=new HashMap<>();
         Map<TableName, TableMetadata> tables=new HashMap<>();
 
         CatalogMetadata catalogmetadata=new CatalogMetadata(new CatalogName("demoMetadata"), options, tables );
@@ -158,7 +161,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         int rowsInitial= assertTable();
         CassandraMetadataEngine cme=new CassandraMetadataEngine(sessions);
 
-        Map<String, Object> options=new HashMap<>();
+        Map<Selector, Selector> options=new HashMap<>();
 
 
         TableName targetTable=new TableName("demometadata", "users");
@@ -281,13 +284,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         Object[] parameters=null;
         columns.add(new ColumnMetadata(new ColumnName(new TableName("demometadata","users1"),"phrase"),parameters, ColumnType.TEXT));
 
-        Map <String,Object> options=new LinkedHashMap<>();
+        Map <Selector,Selector> options=new LinkedHashMap<>();
+        ColumnSelector columnSelector=new ColumnSelector(new ColumnName(new TableName("demometadata","users1"),"name"));
         List<ColumnMetadata> columnsIndex=new ArrayList<>();
         columnsIndex.add(new ColumnMetadata(new ColumnName(new TableName("demometadata","users1"),"name"),parameters, ColumnType.TEXT));
         columnsIndex.add(new ColumnMetadata(new ColumnName(new TableName("demometadata","users1"),"age"),parameters, ColumnType.INT));
         columnsIndex.add(new ColumnMetadata(new ColumnName(new TableName("demometadata","users1"),"email"),parameters, ColumnType.TEXT));
 
-        options.put("columnsIndex", columnsIndex);
+
+
 
         IndexMetadata indexMetadata=new IndexMetadata(new IndexName("demometadata","users1","IndiceLucene"),columns,IndexType.FULL_TEXT,options);
         try {

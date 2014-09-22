@@ -47,7 +47,6 @@ public class CassandraConnector implements IConnector {
 
     private Map<String, Session> sessions;
     private String connectorName;
-    private boolean closeSignal=false;
 
 
     /**
@@ -57,8 +56,16 @@ public class CassandraConnector implements IConnector {
 
     public static void main(String[] args) {
 
+        CassandraConnector cassandraConnector=new CassandraConnector();
+
         ConnectorApp connectorApp = new ConnectorApp();
-        connectorApp.startup(new CassandraConnector());
+        connectorApp.startup(cassandraConnector);
+
+        /*Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+
+            }
+        });*/
     }
 
 
@@ -130,6 +137,14 @@ public class CassandraConnector implements IConnector {
         sessions=new HashMap<>();
     }
 
+    public void uncontrolledShutdown(){
+        List<CloseFuture> closeFutureList=new ArrayList<>();
+        for (Session s:sessions.values()) {
+            s.close();
+        }
+        sessions=new HashMap<>();
+    }
+
 
 
 
@@ -185,7 +200,5 @@ public class CassandraConnector implements IConnector {
         return metadataEngine;
     }
 
-    public boolean isCloseSignal() {
-        return closeSignal;
-    }
+
 }

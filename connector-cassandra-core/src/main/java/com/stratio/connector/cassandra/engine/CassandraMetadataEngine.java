@@ -31,6 +31,8 @@ import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.*;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,12 +58,22 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         String catalogName = catalogMetadata.getName().getQualifiedName();
-        Map<String, Object> catalogOptions = catalogMetadata.getOptions();
+        Map<Selector, Selector> catalogOptions = catalogMetadata.getOptions();
 
+        StringBuilder createCatalogOptions=new StringBuilder();
+        if (catalogOptions.size()>0) {
+            int i=0;
+            for (Selector options : catalogOptions.values()) {
+                if (i!=0)
+                    createCatalogOptions.append(",");
 
+                StringSelector str=(StringSelector)options;
+                createCatalogOptions.append(str.getValue());
+            }
+        }
 
         CreateCatalogStatement catalogStatement =
-            new CreateCatalogStatement(catalogName, true, catalogOptions.size()==0?null:catalogOptions.toString());
+            new CreateCatalogStatement(catalogName, true, catalogOptions.size()==0?null:createCatalogOptions.toString());
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
     }
@@ -71,7 +83,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         String tableName = tableMetadata.getName().getQualifiedName();
-        Map<String, Object> tableOptions = tableMetadata.getOptions();
+        Map<Selector, Selector> tableOptions = tableMetadata.getOptions();
         List<ColumnName> primaryKey = tableMetadata.getPrimaryKey();
         List<ColumnName> clusterKey = tableMetadata.getClusterKey();
 
@@ -115,7 +127,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata) throws UnsupportedException, ExecutionException{
         session = sessions.get(targetCluster.getName());
-        CreateIndexStatement indexStatement = new CreateIndexStatement(indexMetadata, true );
+        CreateIndexStatement indexStatement = new CreateIndexStatement(indexMetadata, true, session );
         CassandraExecutor.execute(indexStatement.toString(), session);
     }
 

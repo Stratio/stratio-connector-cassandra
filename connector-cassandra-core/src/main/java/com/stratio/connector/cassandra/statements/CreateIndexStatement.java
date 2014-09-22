@@ -21,6 +21,7 @@ package com.stratio.connector.cassandra.statements;
 
 import com.datastax.driver.core.DataType;
 
+import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.IdentifierProperty;
 import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.meta.common.metadata.structures.ColumnType;
@@ -29,6 +30,8 @@ import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.IndexType;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -81,7 +84,7 @@ public class CreateIndexStatement {
     /**
      * The map of parameters passed to the index during its creation.
      */
-    private Map<String, Object> parameters = new LinkedHashMap<>();
+    private Map<Selector, Selector> parameters = new LinkedHashMap<>();
 
     /**
      * The map of options passed to the index during its creation.
@@ -113,7 +116,7 @@ public class CreateIndexStatement {
     }
 
 
-    public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists) {
+    public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists, Session session) {
         targetColumns = new ArrayList<>();
         this.parameters = indexMetadata.getOptions();
         this.targetColumns=indexMetadata.getColumns();
@@ -128,6 +131,13 @@ public class CreateIndexStatement {
         if (type==IndexType.FULL_TEXT) {
             usingClass = "'com.stratio.cassandra.index.RowIndex'";
             options=generateLuceneOptions();
+            //Create the new column for the Lucene Index
+            try {
+                session.execute(
+                    "ALTER TABLE " + this.tableName + " ADD " + getIndexName() + " varchar");
+            }catch (Exception e){
+
+            }
         }
     }
 
@@ -248,8 +258,6 @@ public class CreateIndexStatement {
         sb.append("{default_analyzer:\"org.apache.lucene.analysis.standard.StandardAnalyzer\",");
         sb.append("fields:{");
 
-        //getting the columns from the options
-        List<ColumnMetadata> targetColumns=(List<ColumnMetadata>)parameters.get("columnsIndex");
 
         // Iterate throught the columns.
         for (ColumnMetadata column : targetColumns) {
