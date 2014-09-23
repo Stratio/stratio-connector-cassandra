@@ -19,9 +19,6 @@ package com.stratio.connector.cassandra.utils;
 
 import com.stratio.meta2.common.metadata.ColumnType;
 
-/**
- * Created by jjlopez on 1/09/14.
- */
 public class ColumnInsertCassandra {
 
     private ColumnType type;

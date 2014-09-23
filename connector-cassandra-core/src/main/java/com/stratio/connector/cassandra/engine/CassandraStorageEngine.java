@@ -35,9 +35,7 @@ import com.stratio.meta2.common.metadata.ColumnType;
 
 import java.util.*;
 
-/**
- * Created by jjlopez on 26/08/14.
- */
+
 public class CassandraStorageEngine implements IStorageEngine {
     private Map<String, Session> sessions;
 

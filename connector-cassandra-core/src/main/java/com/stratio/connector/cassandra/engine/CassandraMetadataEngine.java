@@ -38,9 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by jjlopez on 26/08/14.
- */
+
 public class CassandraMetadataEngine implements IMetadataEngine {
 
     private Map<String, Session> sessions;

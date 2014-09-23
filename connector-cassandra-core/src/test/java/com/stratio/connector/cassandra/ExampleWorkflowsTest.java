@@ -17,9 +17,6 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
-/**
- * Created by jjlopez on 16/09/14.
- */
 public class ExampleWorkflowsTest extends BasicCoreCassandraTest {
 
     @BeforeClass

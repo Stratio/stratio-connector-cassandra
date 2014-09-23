@@ -37,9 +37,7 @@ import org.testng.annotations.Test;
 
 import java.util.*;
 
-/**
- * Created by jjlopez on 29/08/14.
- */
+
 public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
     private Map<String, Session> sessions;
