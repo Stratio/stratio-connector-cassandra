@@ -22,7 +22,6 @@ package com.stratio.connector.cassandra.engine;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.connector.cassandra.statements.*;
-import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -30,11 +29,12 @@ import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.*;
+import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.IndexMetadata;
+import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,20 +58,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String catalogName = catalogMetadata.getName().getQualifiedName();
         Map<Selector, Selector> catalogOptions = catalogMetadata.getOptions();
 
-        StringBuilder createCatalogOptions=new StringBuilder();
-        if (catalogOptions.size()>0) {
-            int i=0;
-            for (Selector options : catalogOptions.values()) {
-                if (i!=0)
-                    createCatalogOptions.append(",");
-
-                StringSelector str=(StringSelector)options;
-                createCatalogOptions.append(str.getValue());
-            }
-        }
+        String stringOptions = getStringOptions(catalogOptions);
 
         CreateCatalogStatement catalogStatement =
-            new CreateCatalogStatement(catalogName, true, catalogOptions.size()==0?null:createCatalogOptions.toString());
+            new CreateCatalogStatement(catalogName, true, stringOptions);
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
     }
@@ -86,12 +76,12 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         List<ColumnName> clusterKey = tableMetadata.getClusterKey();
 
         int primaryKeyType;
-        if (primaryKey.size()<=1){
-            primaryKeyType=PRIMARY_SINGLE;
-        }else{
-            if(clusterKey.size()>0) {
+        if (primaryKey.size() <= 1) {
+            primaryKeyType = PRIMARY_SINGLE;
+        } else {
+            if (clusterKey.size() > 0) {
                 primaryKeyType = PRIMARY_AND_CLUSTERING_SPECIFIED;
-            }else {
+            } else {
                 primaryKeyType = PRIMARY_COMPOSED;
             }
         }
@@ -99,8 +89,11 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         Map<ColumnName, com.stratio.meta2.common.metadata.ColumnMetadata> tableColumns =
             tableMetadata.getColumns();
 
+        String stringOptions = getStringOptions(tableOptions);
+
         CreateTableStatement tableStatement =
-            new CreateTableStatement(tableName, tableColumns, primaryKey, clusterKey, primaryKeyType, true);
+            new CreateTableStatement(tableName, tableColumns, primaryKey, clusterKey,
+                primaryKeyType, stringOptions, true);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
     }
@@ -123,17 +116,69 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     }
 
     @Override
-    public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata) throws UnsupportedException, ExecutionException{
+    public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
+        throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
-        CreateIndexStatement indexStatement = new CreateIndexStatement(indexMetadata, true, session );
+        CreateIndexStatement indexStatement =
+            new CreateIndexStatement(indexMetadata, true, session);
         CassandraExecutor.execute(indexStatement.toString(), session);
     }
 
     @Override
-    public void dropIndex(ClusterName targetCluster, IndexMetadata indexName) throws UnsupportedException, ExecutionException{
+    public void dropIndex(ClusterName targetCluster, IndexMetadata indexName)
+        throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
-        DropIndexStatement indexStatement=new DropIndexStatement(indexName, true);
+        DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
         CassandraExecutor.execute(indexStatement.toString(), session);
 
+    }
+
+
+    private String getStringOptions(Map<Selector, Selector> options) {
+        StringBuilder stringOptions = new StringBuilder();
+        if (options.size() > 0) {
+            int i = 0;
+            for (Selector keySelector : options.keySet()) {
+                StringSelector stringKeySelector = (StringSelector) keySelector;
+                StringSelector optionSelector = (StringSelector) options.get(keySelector);
+                if (i != 0) {
+                    stringOptions.append(" AND ");
+                }
+                i = 1;
+                //Analize if it is a pair {key,value} or its only a key
+                String key = stringKeySelector.getValue();
+                stringOptions.append(getStyleStringOption(key, optionSelector.getValue()));
+            }
+        }
+        return stringOptions.toString();
+    }
+
+    private StringBuilder getStyleStringOption(String key, String value) {
+        StringBuilder stringOption = new StringBuilder();
+
+        if (key.equals("COMPACT STORAGE")) {
+            stringOption.append(key);
+        } else if (key.equals("CLUSTERING ORDER BY")) {
+            stringOption.append(key).append(" (").append(value).append(")");
+        } else if ((key.equals("bloom_filter_fp_chance")) ||
+            key.equals("comment") ||
+            key.equals("dclocal_read_repair_chance") ||
+            key.equals("default_time_to_live") ||
+            key.equals("gc_grace_seconds") ||
+            key.equals("min_index_interval") ||
+            key.equals("max_index_interval") ||
+            key.equals("min_index_interval") ||
+            key.equals("populate_io_cache_on_flush") ||
+            key.equals("read_repair_chance") ||
+            key.equals("speculative_retry") ||
+            key.equals("durable_writes") ||
+            key.equals("populate_io_cache_on_flush")) {
+            stringOption.append(key).append(" = ").append(value).append("");
+        } else {
+            stringOption.append(key).append(" = {")
+                .append(value).append("}");
+        }
+
+        return stringOption;
     }
 }

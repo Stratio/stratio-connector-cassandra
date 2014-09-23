@@ -22,6 +22,8 @@ package com.stratio.connector.cassandra.statements;
 
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +54,11 @@ public class CreateTableStatement {
      * The list of columns that are part of the clustering key.
      */
     private List<ColumnName> clusterKey;
+
+    /**
+     * The list of properties of the table
+     */
+    private String properties;
 
 
     /**
@@ -103,7 +110,7 @@ public class CreateTableStatement {
      *
      */
     public CreateTableStatement(String tableName, Map<ColumnName, ColumnMetadata> tableColumns,
-        List<ColumnName> primaryKey, List<ColumnName> clusterKey, int primaryKeyType, boolean ifNotExists) {
+        List<ColumnName> primaryKey, List<ColumnName> clusterKey, int primaryKeyType, String properties,boolean ifNotExists) {
 
         if (tableName.contains(".")) {
             String[] ksAndTablename = tableName.split("\\.");
@@ -118,6 +125,25 @@ public class CreateTableStatement {
         this.clusterKey = clusterKey;
         this.primaryKeyType = primaryKeyType;
         this.ifNotExists=ifNotExists;
+
+
+        if (properties.length()>0){
+            this.withProperties=true;
+            this.properties=properties;
+        }
+    }
+
+    private String getStringProperties(Map<Selector,Selector> properties) {
+        StringBuilder str=new StringBuilder();
+
+        int i=0;
+        for(Selector s:properties.values()){
+            if (i!=0)
+                str.append(" AND ");
+            StringSelector sselector=(StringSelector)s;
+            str.append(sselector.getValue());
+        }
+        return str.toString();
     }
 
 
@@ -190,9 +216,9 @@ public class CreateTableStatement {
             sb.append(getCompositePKString());
         }
 
-    /*if (withProperties) {
-      sb.append(" WITH ").append(StringUtils.stringList(properties, " AND "));
-    }*/
+        if (withProperties) {
+            sb.append(" WITH ").append(properties);
+        }
         return sb.toString();
     }
 
