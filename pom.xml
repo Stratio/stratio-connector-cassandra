@@ -22,6 +22,7 @@
     <version>0.1.0-SNAPSHOT</version>
     <description>Connector for Cassandra Native</description>
     <modules>
+        <module>connector-cassandra-core</module>
         <module>connector-dist</module>
     </modules>
     <packaging>pom</packaging>
@@ -36,12 +37,14 @@
 
     </developers>
 
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0t</url>
         </license>
     </licenses>
+
 
     <properties>
         <cassandra.driver>2.0.0</cassandra.driver>

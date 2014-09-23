@@ -151,10 +151,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("'female'");
 
-        Relation relation2 = new Relation(selector2, Operator.COMPARE, rightTerm2);
+        Relation relation2 = new Relation(selector2, Operator.EQ, rightTerm2);
         Filter filter2 = new Filter(Operations.FILTER_INDEXED_EQ , relation2);
 
-        Relation relation = new Relation(selector, Operator.COMPARE, rightTerm);
+        Relation relation = new Relation(selector, Operator.EQ, rightTerm);
         Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
 
         Map<String, String> aliasColumns=new HashMap<>();

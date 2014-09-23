@@ -18,6 +18,7 @@
 
 package com.stratio.connector.cassandra;
 
+import akka.actor.ActorRef;
 import com.datastax.driver.core.CloseFuture;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.engine.*;
@@ -60,12 +61,8 @@ public class CassandraConnector implements IConnector {
 
         ConnectorApp connectorApp = new ConnectorApp();
         connectorApp.startup(cassandraConnector);
+        //cassandraConnector.attachShutDownHook();
 
-        /*Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-
-            }
-        });*/
     }
 
 
@@ -85,6 +82,18 @@ public class CassandraConnector implements IConnector {
         }
     }
 
+    public void attachShutDownHook() {
+        for (int i = 0; i < 10; i++) {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    System.out
+                        .println("Shutdown Hook : " + Thread.currentThread().getName());
+                    uncontrolledShutdown();
+                }
+            });
+        }
+    }
     @Override
     public String getConnectorName() {
         return connectorName;

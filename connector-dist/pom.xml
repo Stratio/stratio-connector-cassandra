@@ -37,13 +37,6 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0t</url>
         </license>
     </licenses>
-    <dependencies>
-        <dependency>
-            <groupId>com.stratio.connector</groupId>
-            <artifactId>connector-cassandra-core</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
