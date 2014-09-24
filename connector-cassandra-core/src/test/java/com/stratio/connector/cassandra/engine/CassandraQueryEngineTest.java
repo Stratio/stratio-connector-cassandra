@@ -79,7 +79,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName);
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster);
         ColumnName selectColumn=new ColumnName("demo","users","name");
         project.addColumn(selectColumn);
 
@@ -142,7 +142,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName);
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster);
         ColumnName selectColumn=new ColumnName("demo","users","name");
         project.addColumn(selectColumn);
 
@@ -218,7 +218,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName);
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster);
         ColumnName selectColumn=new ColumnName("demo","users","name");
         project.addColumn(selectColumn);
 

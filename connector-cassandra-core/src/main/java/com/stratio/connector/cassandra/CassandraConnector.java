@@ -83,16 +83,16 @@ public class CassandraConnector implements IConnector {
     }
 
     public void attachShutDownHook() {
-        for (int i = 0; i < 10; i++) {
+
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
                     System.out
-                        .println("Shutdown Hook : " + Thread.currentThread().getName());
+                        .println("Shutdown Hook : Closing all sessions now!");
                     uncontrolledShutdown();
                 }
             });
-        }
+
     }
     @Override
     public String getConnectorName() {
