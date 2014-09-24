@@ -24,14 +24,11 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.IdentifierProperty;
 import com.stratio.connector.cassandra.utils.ValueProperty;
-import com.stratio.meta.common.metadata.structures.ColumnType;
-import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.IndexType;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -263,7 +260,7 @@ public class CreateIndexStatement {
         for (ColumnMetadata column : targetColumns) {
             sb.append(column.getName().getName());
             sb.append(":");
-            sb.append(luceneTypes.get(column.getColumnType().getStandardType()));
+            sb.append(luceneTypes.get(column.getColumnType().getDbType()));
             sb.append(",");
         }
 

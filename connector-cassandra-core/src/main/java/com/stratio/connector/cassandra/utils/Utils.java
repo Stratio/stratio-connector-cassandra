@@ -18,14 +18,12 @@
 
 package com.stratio.connector.cassandra.utils;
 
-import com.datastax.driver.core.*;
-
-import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.ColumnDefinitions;
+import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 import com.stratio.connector.cassandra.data.CassandraResultSet;
-import com.stratio.meta.common.data.*;
-import com.stratio.meta.common.metadata.structures.ColumnType;
-
+import com.stratio.meta.common.data.Cell;
+import com.stratio.meta2.common.metadata.ColumnType;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;

@@ -19,7 +19,7 @@
 package com.stratio.connector.cassandra.utils;
 
 import com.datastax.driver.core.DataType;
-import com.stratio.meta.common.metadata.structures.ColumnType;
+import com.stratio.meta2.common.metadata.ColumnType;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;

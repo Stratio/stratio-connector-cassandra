@@ -25,7 +25,7 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.stratio.meta.common.result.ErrorResult;
 import com.stratio.meta.common.result.Result;
-import com.stratio.meta.test.CCMHandler;
+
 import org.apache.log4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

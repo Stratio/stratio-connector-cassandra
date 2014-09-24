@@ -20,6 +20,7 @@ package com.stratio.connector.cassandra.utils;
 
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.stratio.meta.common.metadata.structures.*;
+import com.stratio.meta2.common.metadata.ColumnType;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,7 +78,7 @@ public abstract class AbstractMetadataHelper {
      * Obtain the ColumnType associated with a database type.
      *
      * @param dbTypeName The name of the database type.
-     * @return A {@link com.stratio.meta.common.metadata.structures.ColumnType}.
+     * @return A {@link com.stratio.meta2.common.metadata.ColumnType}.
      */
     public abstract ColumnType toColumnType(String dbTypeName);
 

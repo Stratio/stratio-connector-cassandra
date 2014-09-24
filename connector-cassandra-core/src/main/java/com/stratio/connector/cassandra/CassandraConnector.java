@@ -61,7 +61,7 @@ public class CassandraConnector implements IConnector {
 
         ConnectorApp connectorApp = new ConnectorApp();
         connectorApp.startup(cassandraConnector);
-        //cassandraConnector.attachShutDownHook();
+        cassandraConnector.attachShutDownHook();
 
     }
 

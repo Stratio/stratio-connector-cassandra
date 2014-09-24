@@ -34,6 +34,7 @@ import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
@@ -160,7 +161,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<String, String> aliasColumns=new HashMap<>();
         aliasColumns.put("demo.users.name", "nameAlias");
 
-        Select aliasSelect=new Select(Operations.SELECT_LIMIT, aliasColumns);
+        Map<String, ColumnType> typeMap=new HashMap<>();
+        typeMap.put("demo.users.name", ColumnType.VARCHAR);
+        Select aliasSelect=new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap);
 
         //Compound workflow
         filter2.setNextStep(aliasSelect);
