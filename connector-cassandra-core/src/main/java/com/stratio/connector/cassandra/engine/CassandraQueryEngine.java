@@ -106,9 +106,9 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         Result result=null;
         if (aliasColumns.isEmpty()) {
-            result = CassandraExecutor.executeSelect(query, session);
+            result = CassandraExecutor.execute(query, session);
         }else{
-            result = CassandraExecutor.executeSelect(query, aliasColumns, session);
+            result = CassandraExecutor.execute(query, aliasColumns, session);
         }
 
         if (result.hasError()){

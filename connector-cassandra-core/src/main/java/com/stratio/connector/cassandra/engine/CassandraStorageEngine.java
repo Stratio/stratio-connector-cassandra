@@ -27,6 +27,8 @@ import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta.common.result.ErrorResult;
+import com.stratio.meta.common.result.Result;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
@@ -62,7 +64,18 @@ public class CassandraStorageEngine implements IStorageEngine {
         InsertIntoStatement insertStatement =
             new InsertIntoStatement(targetTable, columnsMetadata, true);
         String query=insertStatement.toString();
-        CassandraExecutor.execute(query, session);
+        Result result=CassandraExecutor.execute(query, session);
+        if (result.hasError()) {
+            ErrorResult error=(ErrorResult)result;
+            switch(error.getType()){
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
+        }
     }
 
     @Override
@@ -87,7 +100,18 @@ public class CassandraStorageEngine implements IStorageEngine {
             InsertIntoStatement insertStatement =
                 new InsertIntoStatement(targetTable, columnsMetadata, true);
             String query=insertStatement.toString();
-            CassandraExecutor.execute(query, session);
+            Result result=CassandraExecutor.execute(query, session);
+            if (result.hasError()) {
+                ErrorResult error=(ErrorResult)result;
+                switch(error.getType()){
+                    case EXECUTION:
+                        throw new ExecutionException(error.getErrorMessage());
+                    case NOT_SUPPORTED:
+                        throw new UnsupportedException(error.getErrorMessage());
+                    default:
+                        throw new UnsupportedException(error.getErrorMessage());
+                }
+            }
         }
     }
 

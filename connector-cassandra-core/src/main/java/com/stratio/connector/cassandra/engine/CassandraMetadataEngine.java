@@ -25,6 +25,8 @@ import com.stratio.connector.cassandra.statements.*;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta.common.result.ErrorResult;
+import com.stratio.meta.common.result.Result;
 import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
@@ -62,9 +64,24 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         CreateCatalogStatement catalogStatement =
             new CreateCatalogStatement(catalogName, true, stringOptions);
-        CassandraExecutor.execute(catalogStatement.toString(), session);
+        Result result=CassandraExecutor.execute(catalogStatement.toString(), session);
 
+        if (result.hasError()) {
+            ErrorResult error=(ErrorResult)result;
+            switch(error.getType()){
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
+        }
     }
+
+
+
+
 
     @Override
     public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
@@ -94,7 +111,18 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateTableStatement tableStatement =
             new CreateTableStatement(tableName, tableColumns, primaryKey, clusterKey,
                 primaryKeyType, stringOptions, true);
-        CassandraExecutor.execute(tableStatement.toString(), session);
+        Result result=CassandraExecutor.execute(tableStatement.toString(), session);
+        if (result.hasError()) {
+            ErrorResult error=(ErrorResult)result;
+            switch(error.getType()){
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
+        }
 
     }
 
@@ -103,7 +131,18 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
-        CassandraExecutor.execute(catalogStatement.toString(), session);
+        Result result=CassandraExecutor.execute(catalogStatement.toString(), session);
+        if (result.hasError()) {
+            ErrorResult error=(ErrorResult)result;
+            switch(error.getType()){
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
+        }
     }
 
     @Override
@@ -111,7 +150,18 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
-        CassandraExecutor.execute(tableStatement.toString(), session);
+        Result result=CassandraExecutor.execute(tableStatement.toString(), session);
+        if (result.hasError()) {
+            ErrorResult error=(ErrorResult)result;
+            switch(error.getType()){
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
+        }
 
     }
 
@@ -121,7 +171,18 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
             new CreateIndexStatement(indexMetadata, true, session);
-        CassandraExecutor.execute(indexStatement.toString(), session);
+        Result result=CassandraExecutor.execute(indexStatement.toString(), session);
+        if (result.hasError()) {
+            ErrorResult error=(ErrorResult)result;
+            switch(error.getType()){
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
+        }
     }
 
     @Override
@@ -129,7 +190,18 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
-        CassandraExecutor.execute(indexStatement.toString(), session);
+        Result result=CassandraExecutor.execute(indexStatement.toString(), session);
+        if (result.hasError()) {
+            ErrorResult error=(ErrorResult)result;
+            switch(error.getType()){
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
+        }
 
     }
 
