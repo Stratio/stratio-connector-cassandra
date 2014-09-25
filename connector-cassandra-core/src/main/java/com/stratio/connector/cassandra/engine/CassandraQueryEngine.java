@@ -20,19 +20,18 @@ package com.stratio.connector.cassandra.engine;
 
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
-
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.meta.common.connector.IQueryEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.*;
+import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
 import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,30 +41,27 @@ import java.util.regex.Pattern;
 
 
 public class CassandraQueryEngine implements IQueryEngine {
+    Map<String, String> aliasColumns = new HashMap<>();
+    Session session=null;
     private List<ColumnName> selectionClause;
     private boolean catalogInc;
     private String catalog;
     private TableName tableName;
-
     private boolean whereInc = false;
     private boolean limitInc = false;
-
     private List<Relation> where = new ArrayList<Relation>();
-    private StringBuffer alias=new StringBuffer();
-    Map<String,String> aliasColumns=new HashMap<>();
+    private StringBuffer alias = new StringBuffer();
     private int limit = 100;
     private Map<String, Session> sessions;
-    Session session;
 
     public CassandraQueryEngine(Map<String, Session> sessions) {
         this.sessions = sessions;
     }
 
     @Override
-    public com.stratio.meta.common.result.QueryResult execute(ClusterName targetCluster,
-        LogicalWorkflow workflow)
+    public com.stratio.meta.common.result.QueryResult execute(LogicalWorkflow workflow)
         throws UnsupportedException, ExecutionException {
-        session = sessions.get(targetCluster.getName());
+        //session = sessions.get(targetCluster.getName());
 
         if (workflow.getInitialSteps().size() > 1) {
             throw new UnsupportedException("");
@@ -76,6 +72,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                     TransformationStep transformation = (TransformationStep) logicalStep;
                     if (transformation instanceof Project) {
                         Project project = (Project) transformation;
+                        session=sessions.get(project.getClusterName().getName());
 
                         tableName = project.getTableName();
 
@@ -92,9 +89,9 @@ public class CassandraQueryEngine implements IQueryEngine {
                             Relation relation = filter.getRelation();
                             where.add(relation);
                         } else {
-                            if (transformation instanceof Select){
-                                Select select=(Select)transformation;
-                                aliasColumns=select.getColumnMap();
+                            if (transformation instanceof Select) {
+                                Select select = (Select) transformation;
+                                aliasColumns = select.getColumnMap();
                             }
                         }
                     }
@@ -104,37 +101,42 @@ public class CassandraQueryEngine implements IQueryEngine {
         }
         String query = parseQuery();
 
-        Result result=null;
-        if (aliasColumns.isEmpty()) {
-            result = CassandraExecutor.execute(query, session);
+        Result result = null;
+        if (session!=null) {
+            if (aliasColumns.isEmpty()) {
+                result = CassandraExecutor.execute(query, session);
+            } else {
+                result = CassandraExecutor.execute(query, aliasColumns, session);
+            }
         }else{
-            result = CassandraExecutor.execute(query, aliasColumns, session);
+            throw new ExecutionException("No session to cluster established");
         }
 
-        if (result.hasError()){
-            com.stratio.meta.common.result.ErrorResult errorResult=(com.stratio.meta.common.result.ErrorResult)result;
-            throw new  ExecutionException(errorResult.getErrorMessage());
-        }else {
+        if (result.hasError()) {
+            com.stratio.meta.common.result.ErrorResult errorResult =
+                (com.stratio.meta.common.result.ErrorResult) result;
+            throw new ExecutionException(errorResult.getErrorMessage());
+        } else {
             return (com.stratio.meta.common.result.QueryResult) result;
         }
+    }
+
+    @Override public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow)
+        throws UnsupportedException, ExecutionException {
+        return null;
     }
 
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
         if (selectionClause != null) {
-            int i=0;
+            int i = 0;
             for (ColumnName columnName : selectionClause) {
-                if (i!=0)
+                if (i != 0) {
                     sb.append(",");
-                i=1;
+                }
+                i = 1;
                 sb.append(columnName.getName());
-                /*String aliasColumnQuealified=columnName.getQualifiedName();
-                if(aliasColumns.get(aliasColumnQuealified)!=null) {
-                    sb.append(columnName.getName()).append(" AS ")
-                        .append(aliasColumns.get(aliasColumnQuealified));
-                }else{
-                    sb.append(columnName.getName());
-                }*/
+
             }
 
         }
@@ -146,32 +148,30 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         if (whereInc) {
             sb.append(" WHERE ");
-            int count=0;
-            for(Relation relation:where) {
-                if (count>0)
+            int count = 0;
+            for (Relation relation : where) {
+                if (count > 0) {
                     sb.append(" AND ");
-                count=1;
-                switch (relation.getOperator()){
+                }
+                count = 1;
+                switch (relation.getOperator()) {
                     case IN:
                     case BETWEEN:
                         break;
                     case MATCH:
-                        String nameIndex=getLuceneIndex();
-                        //sb.append(relation.getLeftTerm().toString().substring(relation.getLeftTerm().toString().lastIndexOf(".")+1)).append(" = ");
+                        String nameIndex = getLuceneIndex();
                         sb.append(nameIndex).append(" = '");
                         sb.append(getLuceneWhereClause(relation));
                         sb.append("'");
-                        //SELECT name FROM demo.users WHERE stratio_lucene_index_1 = {filter:{type:"boolean",must:[{type:"wildcard",field:"demo.users.stratio_lucene_index_1",value:"*"}]}}
                         break;
                     default:
-                        //SELECT name FROM demo.users WHERE demo.users.name = 'name_5' AND demo.users.gender = 'female'
-                        String whereWithQualification=relation.toString();
-                        String parts[]=whereWithQualification.split(" ");
-                        String columnName=parts[0].substring(parts[0].lastIndexOf(".")+1);
+                        String whereWithQualification = relation.toString();
+                        String parts[] = whereWithQualification.split(" ");
+                        String columnName = parts[0].substring(parts[0].lastIndexOf(".") + 1);
                         sb.append(columnName);
-                        for (int i=1;i<parts.length;i++)
+                        for (int i = 1; i < parts.length; i++) {
                             sb.append(" ").append(parts[i]);
-                        //sb.append(relation.toString());
+                        }
                         break;
                 }
             }
@@ -183,14 +183,16 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private String getLuceneIndex() {
-        String indexName="";
-        List<ColumnMetadata> columns= session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName()).getColumns();
-        for(ColumnMetadata column:columns){
+        String indexName = "";
+        List<ColumnMetadata> columns =
+            session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
+                .getColumns();
+        for (ColumnMetadata column : columns) {
             try {
                 if (column.getIndex().isCustomIndex()) {
                     indexName = column.getIndex().getName();
                 }
-            }catch(NullPointerException e){
+            } catch (NullPointerException e) {
 
             }
         }
@@ -203,7 +205,8 @@ public class CassandraQueryEngine implements IQueryEngine {
         StringBuilder sb = new StringBuilder("{filter:{type:\"boolean\",must:[");
 
 
-        String column = relation.getLeftTerm().toString().substring(relation.getLeftTerm().toString().lastIndexOf(".")+1);
+        String column = relation.getLeftTerm().toString()
+            .substring(relation.getLeftTerm().toString().lastIndexOf(".") + 1);
         String value = relation.getRightTerm().toString();
         // Generate query for column
         String[] processedQuery = processLuceneQueryType(value);
@@ -220,7 +223,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         result = sb.toString();
 
-    return result;
+        return result;
 
     }
 
@@ -255,7 +258,8 @@ public class CassandraQueryEngine implements IQueryEngine {
         if (escaped.matcher(query).matches()) {
             result[0] = "match";
             result[1] =
-                query.replace("\\*", "*").replace("\\?", "?").replace("\\]", "]").replace("\\[", "[");
+                query.replace("\\*", "*").replace("\\?", "?").replace("\\]", "]")
+                    .replace("\\[", "[");
         } else if (regex.matcher(query).matches()) {
             result[0] = "regex";
             result[1] = query;
@@ -273,8 +277,6 @@ public class CassandraQueryEngine implements IQueryEngine {
         result[1] = result[1].replaceAll("^'", "").replaceAll("'$", "");
         return result;
     }
-
-
 
 
 

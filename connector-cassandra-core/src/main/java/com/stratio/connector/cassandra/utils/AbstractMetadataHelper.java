@@ -19,7 +19,10 @@
 package com.stratio.connector.cassandra.utils;
 
 import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.TableMetadata;
 import com.stratio.meta.common.metadata.structures.*;
+import com.stratio.meta2.common.data.CatalogName;
+import com.stratio.meta2.common.metadata.CatalogMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 
 import java.util.HashMap;
@@ -39,40 +42,9 @@ public abstract class AbstractMetadataHelper {
      */
     protected static Map<ColumnType, Class<?>> dbClass = new HashMap<>();
 
-    /**
-     * Transform a Cassandra {@link com.datastax.driver.core.KeyspaceMetadata} into a META
-     * CatalogMetadata.
-     *
-     * @param keyspaceMetadata The keyspace metadata.
-     * @return A {@link com.stratio.meta.common.metadata.structures.CatalogMetadata}.
-     */
-    public CatalogMetadata toCatalogMetadata(KeyspaceMetadata keyspaceMetadata) {
-        Set<TableMetadata> tables = new HashSet<>(keyspaceMetadata.getTables().size());
-        for (com.datastax.driver.core.TableMetadata table : keyspaceMetadata.getTables()) {
-            tables.add(toTableMetadata(keyspaceMetadata.getName(), table));
-        }
-        CatalogMetadata result = new CatalogMetadata(keyspaceMetadata.getName(), tables);
-        return result;
-    }
 
-    public TableMetadata toTableMetadata(String parentCatalog,
-        com.datastax.driver.core.TableMetadata tableMetadata) {
-        Set<ColumnMetadata> columns = new HashSet<>(tableMetadata.getColumns().size());
-        for (com.datastax.driver.core.ColumnMetadata column : tableMetadata.getColumns()) {
-            columns.add(toColumnMetadata(tableMetadata.getName(), column));
-        }
-        TableMetadata result =
-            new TableMetadata(tableMetadata.getName(), parentCatalog, TableType.DATABASE, columns);
-        return result;
-    }
 
-    public ColumnMetadata toColumnMetadata(String parentTable,
-        com.datastax.driver.core.ColumnMetadata columnMetadata) {
-        ColumnMetadata result = new ColumnMetadata(parentTable, columnMetadata.getName());
-        ColumnType type = toColumnType(columnMetadata.getType().getName().toString());
-        result.setType(type);
-        return result;
-    }
+
 
     /**
      * Obtain the ColumnType associated with a database type.

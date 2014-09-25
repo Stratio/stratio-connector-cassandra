@@ -41,12 +41,14 @@ import java.util.Map;
  * <tr><td>TEXT</td><td>String</td><td>TEXT</td></tr>
  * </table>
  */
-public class CassandraMetadataHelper extends AbstractMetadataHelper {
+public class CassandraMetadataHelper {
 
     /**
      * Mapping of native datatypes to SQL types
      */
     private static Map<DataType.Name, String> nativeODBCType = new HashMap<>();
+    static Map<ColumnType, String> dbType = new HashMap<>();
+    static Map<ColumnType, Class<?>> dbClass = new HashMap<>();
 
     static {
 
@@ -89,7 +91,7 @@ public class CassandraMetadataHelper extends AbstractMetadataHelper {
         }
     }
 
-    @Override
+
     public ColumnType toColumnType(String dbTypeName) {
         ColumnType result = typeMapping.get(dbTypeName.toUpperCase());
         if (result == null) {

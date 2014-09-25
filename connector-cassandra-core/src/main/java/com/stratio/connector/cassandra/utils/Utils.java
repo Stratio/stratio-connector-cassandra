@@ -115,7 +115,7 @@ public class Utils {
     public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(com.datastax.driver.core.ResultSet resultSet) {
         CassandraResultSet crs = new CassandraResultSet();
 
-        AbstractMetadataHelper helper = new CassandraMetadataHelper();
+        CassandraMetadataHelper helper = new CassandraMetadataHelper();
 
         //Get the columns in order
         List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
@@ -163,7 +163,7 @@ public class Utils {
     public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(com.datastax.driver.core.ResultSet resultSet, Map<String,String> alias) {
         CassandraResultSet crs = new CassandraResultSet();
 
-        AbstractMetadataHelper helper = new CassandraMetadataHelper();
+        CassandraMetadataHelper helper = new CassandraMetadataHelper();
 
         //Get the columns in order
         List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
