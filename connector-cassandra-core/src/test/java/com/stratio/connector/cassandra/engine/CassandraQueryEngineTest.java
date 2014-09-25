@@ -57,13 +57,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     public static void setUpBeforeClass() {
         BasicCoreCassandraTest.setUpBeforeClass();
         BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
-        //metadataManager = new MetadataManager(_session, null);
-        //metadataManager.loadMetadata();
     }
-
-
-
-
 
     @Test
     public void basicSelectTest() {
@@ -79,9 +73,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster);
-        ColumnName selectColumn=new ColumnName("demo","users","name");
-        project.addColumn(selectColumn);
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster,columnList);
+
+
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("'name_5'");
@@ -108,7 +102,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(targetCluster, workflow);
+            qr = cqe.execute(workflow);
         } catch (UnsupportedException e) {
             e.printStackTrace();
         } catch (com.stratio.meta.common.exceptions.ExecutionException e) {
@@ -142,9 +136,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster);
-        ColumnName selectColumn=new ColumnName("demo","users","name");
-        project.addColumn(selectColumn);
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("'name_5'");
@@ -179,7 +172,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(targetCluster, workflow);
+            qr = cqe.execute(workflow);
         } catch (UnsupportedException e) {
             e.printStackTrace();
         } catch (com.stratio.meta.common.exceptions.ExecutionException e) {
@@ -218,9 +211,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster);
-        ColumnName selectColumn=new ColumnName("demo","users","name");
-        project.addColumn(selectColumn);
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "phrase"));
         Selector rightTerm = new StringSelector("*");
@@ -240,7 +232,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(targetCluster, workflow);
+            qr = cqe.execute(workflow);
         } catch (UnsupportedException e) {
             e.printStackTrace();
         } catch (com.stratio.meta.common.exceptions.ExecutionException e) {

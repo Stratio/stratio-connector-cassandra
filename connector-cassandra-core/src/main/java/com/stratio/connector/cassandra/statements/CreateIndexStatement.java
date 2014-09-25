@@ -24,6 +24,7 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.IdentifierProperty;
 import com.stratio.connector.cassandra.utils.ValueProperty;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.IndexType;
@@ -32,6 +33,7 @@ import com.stratio.meta2.common.statements.structures.selectors.Selector;
 
 import java.util.*;
 import java.util.Map.Entry;
+
 
 /**
  * Class that models a {@code CREATE INDEX} statement of the META language to CQL native. T
@@ -99,21 +101,19 @@ public class CreateIndexStatement {
     private transient TableMetadata metadata = null;
 
     static {
-        luceneTypes.put("SQL_VARCHAR", "{type:\"string\"}");
-        luceneTypes.put(DataType.varchar().toString(), "{type:\"string\"}");
-        luceneTypes.put(DataType.inet().toString(), "{type:\"string\"}");
-        luceneTypes.put(DataType.ascii().toString(), "{type:\"string\"}");
-        luceneTypes.put(DataType.bigint().toString(), "{type:\"long\"}");
-        luceneTypes.put(DataType.counter().toString(), "{type:\"long\"}");
+        luceneTypes.put("VARCHAR", "{type:\"string\"}");
+        luceneTypes.put("TEXT", "{type:\"string\"}");
         luceneTypes.put("BOOLEAN", "{type:\"boolean\"}");
-        luceneTypes.put("SQL_DOUBLE", "{type:\"double\"}");
-        luceneTypes.put("SQL_FLOAT", "{type:\"float\"}");
-        luceneTypes.put("SQL_INTEGER", "{type:\"integer\"}");
+        luceneTypes.put("DOUBLE", "{type:\"double\"}");
+        luceneTypes.put("BIGINT", "{type:\"long\"}");
+        luceneTypes.put("FLOAT", "{type:\"float\"}");
+        luceneTypes.put("INT", "{type:\"integer\"}");
         luceneTypes.put(DataType.uuid().toString(), "{type:\"uuid\"}");
     }
 
 
-    public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists, Session session) {
+    public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists, Session session)
+        throws ExecutionException {
         targetColumns = new ArrayList<>();
         this.parameters = indexMetadata.getOptions();
         this.targetColumns=indexMetadata.getColumns();
@@ -131,9 +131,9 @@ public class CreateIndexStatement {
             //Create the new column for the Lucene Index
             try {
                 session.execute(
-                    "ALTER TABLE " + this.tableName + " ADD " + getIndexName() + " varchar");
+                    "ALTER TABLE " + targetColumns.get(0).getName().getTableName() + " ADD " + getIndexName() + " varchar;");
             }catch (Exception e){
-
+                throw new ExecutionException("Cannot generate a new Column to insert the Lucene Index. " + e.getMessage() );
             }
         }
     }
@@ -260,7 +260,7 @@ public class CreateIndexStatement {
         for (ColumnMetadata column : targetColumns) {
             sb.append(column.getName().getName());
             sb.append(":");
-            sb.append(luceneTypes.get(column.getColumnType().getDbType()));
+            sb.append(luceneTypes.get(column.getColumnType().name()));
             sb.append(",");
         }
 
