@@ -47,12 +47,16 @@
                 <configuration>
                     <configurationDirectory>conf</configurationDirectory>
                     <copyConfigurationDirectory>true</copyConfigurationDirectory>
-                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
-                    <assembleDirectory>${project.build.directory}/meta-dist-${project.parent.version}</assembleDirectory>
+                    <includeConfigurationDirectoryInClasspath>true
+                    </includeConfigurationDirectoryInClasspath>
+                    <assembleDirectory>
+                        ${project.build.directory}/meta-dist-${project.parent.version}
+                    </assembleDirectory>
                     <extraJvmArguments>-Xms512m</extraJvmArguments>
                     <repositoryLayout>flat</repositoryLayout>
                     <generateRepository>true</generateRepository>
-                    <licenseHeaderFile>${project.basedir}/src/main/template/license-header.txt</licenseHeaderFile>
+                    <licenseHeaderFile>${project.basedir}/src/main/template/license-header.txt
+                    </licenseHeaderFile>
                     <repositoryName>lib</repositoryName>
                     <platforms>
                         <platform>unix</platform>
@@ -64,7 +68,9 @@
                         <id>Assembler-Script</id>
                         <phase>package</phase>
                         <configuration>
-                            <unixScriptTemplate>${project.basedir}/src/main/template/unix-script.sh</unixScriptTemplate>
+                            <unixScriptTemplate>
+                                ${project.basedir}/src/main/template/unix-script.sh
+                            </unixScriptTemplate>
                             <programs>
                                 <program>
                                     <mainClass>com.stratio.meta.server.MetaApplication</mainClass>
@@ -74,7 +80,9 @@
                                     </platforms>
                                     <jvmSettings>
                                         <systemProperties>
-                                            <systemProperty>log4j.configuration=server-log.properties</systemProperty>
+                                            <systemProperty>
+                                                log4j.configuration=server-log.properties
+                                            </systemProperty>
                                         </systemProperties>
                                     </jvmSettings>
                                 </program>
@@ -86,7 +94,9 @@
                                     </platforms>
                                     <jvmSettings>
                                         <systemProperties>
-                                            <systemProperty>log4j.configuration=driver-log.properties</systemProperty>
+                                            <systemProperty>
+                                                log4j.configuration=driver-log.properties
+                                            </systemProperty>
                                         </systemProperties>
                                     </jvmSettings>
                                 </program>
@@ -101,7 +111,9 @@
                         <id>Assembler-Daemon</id>
                         <phase>package</phase>
                         <configuration>
-                            <unixScriptTemplate>${project.basedir}/src/main/template/unix-daemon.sh</unixScriptTemplate>
+                            <unixScriptTemplate>
+                                ${project.basedir}/src/main/template/unix-daemon.sh
+                            </unixScriptTemplate>
                             <programs>
                                 <program>
                                     <mainClass>com.stratio.meta.server.MetaServer</mainClass>
@@ -111,7 +123,9 @@
                                     </platforms>
                                     <jvmSettings>
                                         <systemProperties>
-                                            <systemProperty>log4j.configuration=server-log.properties</systemProperty>
+                                            <systemProperty>
+                                                log4j.configuration=server-log.properties
+                                            </systemProperty>
                                         </systemProperties>
                                     </jvmSettings>
                                 </program>
@@ -134,7 +148,9 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/meta-dist-${project.parent.version}</outputDirectory>
+                            <outputDirectory>
+                                ${project.build.directory}/meta-dist-${project.parent.version}
+                            </outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/src/main/include</directory>

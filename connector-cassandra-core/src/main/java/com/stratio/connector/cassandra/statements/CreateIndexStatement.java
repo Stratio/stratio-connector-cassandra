@@ -20,7 +20,6 @@ package com.stratio.connector.cassandra.statements;
 
 
 import com.datastax.driver.core.DataType;
-
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.IdentifierProperty;
 import com.stratio.connector.cassandra.utils.ValueProperty;
@@ -42,9 +41,8 @@ public class CreateIndexStatement {
 
 
 
-
     private String keyspace = null;
-    private boolean keyspaceIncluded =false;
+    private boolean keyspaceIncluded = false;
 
     private IndexType type = null;
 
@@ -112,28 +110,32 @@ public class CreateIndexStatement {
     }
 
 
-    public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists, Session session)
+    public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists,
+        Session session)
         throws ExecutionException {
         targetColumns = new ArrayList<>();
         this.parameters = indexMetadata.getOptions();
-        this.targetColumns=indexMetadata.getColumns();
-        this.createIfNotExists=createIfNotExists;
-        this.type=indexMetadata.getType();
-        this.tableName=targetColumns.get(0).getName().getTableName().getName();
-        this.keyspace=targetColumns.get(0).getName().getTableName().getCatalogName().getName();
-        if (keyspace!=null)
-            this.keyspaceIncluded=true;
-        this.name=indexMetadata.getName().getName();
+        this.targetColumns = indexMetadata.getColumns();
+        this.createIfNotExists = createIfNotExists;
+        this.type = indexMetadata.getType();
+        this.tableName = targetColumns.get(0).getName().getTableName().getName();
+        this.keyspace = targetColumns.get(0).getName().getTableName().getCatalogName().getName();
+        if (keyspace != null) {
+            this.keyspaceIncluded = true;
+        }
+        this.name = indexMetadata.getName().getName();
 
-        if (type==IndexType.FULL_TEXT) {
+        if (type == IndexType.FULL_TEXT) {
             usingClass = "'com.stratio.cassandra.index.RowIndex'";
-            options=generateLuceneOptions();
+            options = generateLuceneOptions();
             //Create the new column for the Lucene Index
             try {
                 session.execute(
-                    "ALTER TABLE " + targetColumns.get(0).getName().getTableName() + " ADD " + getIndexName() + " varchar;");
-            }catch (Exception e){
-                throw new ExecutionException("Cannot generate a new Column to insert the Lucene Index. " + e.getMessage() );
+                    "ALTER TABLE " + targetColumns.get(0).getName().getTableName() + " ADD "
+                        + getIndexName() + " varchar;");
+            } catch (Exception e) {
+                throw new ExecutionException(
+                    "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage());
             }
         }
     }
@@ -175,8 +177,9 @@ public class CreateIndexStatement {
 
     public String toString() {
         StringBuilder sb = new StringBuilder("CREATE ");
-        if (type==(IndexType.FULL_TEXT))
+        if (type == (IndexType.FULL_TEXT)) {
             sb.append("CUSTOM");
+        }
         sb.append(" INDEX ");
         if (createIfNotExists) {
             sb.append("IF NOT EXISTS ");
@@ -191,12 +194,13 @@ public class CreateIndexStatement {
         }
         sb.append(tableName);
         sb.append(" (");
-        int i=0;
-        for(ColumnMetadata columnName:targetColumns){
-            if (i!=0)
+        int i = 0;
+        for (ColumnMetadata columnName : targetColumns) {
+            if (i != 0) {
                 sb.append(",");
+            }
             sb.append(columnName.getName().getName());
-            i=1;
+            i = 1;
         }
         sb.append(")");
 

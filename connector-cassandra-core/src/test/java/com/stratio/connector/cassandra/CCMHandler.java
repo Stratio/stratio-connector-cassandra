@@ -34,7 +34,7 @@ public class CCMHandler {
     /**
      * Private class constructor as all methods are static.
      */
-    private CCMHandler(){
+    private CCMHandler() {
     }
 
     /**
@@ -42,17 +42,19 @@ public class CCMHandler {
      * temporal file with the contents of {@code /com/stratio/meta/test/test.sh} and proceeds
      * with its execution.
      */
-    public static void startCCM(){
+    public static void startCCM() {
         BufferedReader in = null;
         try {
-            File tempFile = File.createTempFile("stratio-start-ccm",".sh");
-            InputStream resourceStream = CCMHandler.class.getResourceAsStream("/com/stratio/meta/test/test.sh");
-            FileUtils.copyInputStreamToFile(resourceStream,tempFile);
+            File tempFile = File.createTempFile("stratio-start-ccm", ".sh");
+            InputStream resourceStream =
+                CCMHandler.class.getResourceAsStream("/com/stratio/meta/test/test.sh");
+            FileUtils.copyInputStreamToFile(resourceStream, tempFile);
             tempFile.setExecutable(true);
 
             Process p = Runtime.getRuntime().exec(tempFile.getAbsolutePath());
 
-            in = new BufferedReader(new InputStreamReader(p.getInputStream(), Charset.forName("UTF-8")));
+            in = new BufferedReader(
+                new InputStreamReader(p.getInputStream(), Charset.forName("UTF-8")));
 
             String line;
             while ((line = in.readLine()) != null) {
@@ -63,7 +65,7 @@ public class CCMHandler {
         } catch (IOException e) {
             LOG.error("Error starting CCM", e);
         } finally {
-            if(in != null) {
+            if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {

@@ -112,7 +112,8 @@ public class Utils {
      * @param resultSet The input Cassandra result set.
      * @return An equivalent Meta ResultSet
      */
-    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(com.datastax.driver.core.ResultSet resultSet) {
+    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(
+        com.datastax.driver.core.ResultSet resultSet) {
         CassandraResultSet crs = new CassandraResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
@@ -160,7 +161,8 @@ public class Utils {
      * @param resultSet The input Cassandra result set.
      * @return An equivalent Meta ResultSet
      */
-    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(com.datastax.driver.core.ResultSet resultSet, Map<String,String> alias) {
+    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(
+        com.datastax.driver.core.ResultSet resultSet, Map<String, String> alias) {
         CassandraResultSet crs = new CassandraResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
@@ -173,12 +175,13 @@ public class Utils {
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
-            if (alias.containsKey(def.getKeyspace() + "." + def.getTable()+ "." + def.getName())){
+            if (alias.containsKey(def.getKeyspace() + "." + def.getTable() + "." + def.getName())) {
                 columnMetadata =
                     new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
                         def.getName());
-                columnMetadata.setColumnAlias(def.getKeyspace() + "." + def.getTable()+ "." + def.getName());
-            }else {
+                columnMetadata
+                    .setColumnAlias(def.getKeyspace() + "." + def.getTable() + "." + def.getName());
+            } else {
 
                 columnMetadata =
                     new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
@@ -199,9 +202,12 @@ public class Utils {
                         continue;
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
-                    if (alias.containsKey(def.getKeyspace() + "." + def.getTable()+ "." + def.getName())){
-                        metaRow.addCell(alias.get(def.getKeyspace() + "." + def.getTable()+ "." + def.getName()), metaCell);
-                    }else {
+                    if (alias.containsKey(
+                        def.getKeyspace() + "." + def.getTable() + "." + def.getName())) {
+                        metaRow.addCell(alias
+                            .get(def.getKeyspace() + "." + def.getTable() + "." + def.getName()),
+                            metaCell);
+                    } else {
                         metaRow.addCell(def.getName(), metaCell);
                     }
                 }
@@ -213,8 +219,6 @@ public class Utils {
         }
         return crs;
     }
-
-
 
 
 

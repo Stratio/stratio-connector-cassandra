@@ -70,7 +70,7 @@ public class CreateCatalogStatement {
 
         if ((options != null) && (options.length() > 0)) {
             sb.append(" WITH ").append(options);
-        }else{
+        } else {
             sb.append(" WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};");
         }
         return sb.toString();

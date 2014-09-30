@@ -18,7 +18,6 @@
 
 package com.stratio.connector.cassandra.statements;
 
-import com.datastax.driver.core.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 
 /**
@@ -45,27 +44,27 @@ public class DropIndexStatement {
     /**
      * Class constructor.
      *
-     * @param index  The name of the index.
+     * @param index    The name of the index.
      * @param ifExists Whether it should be removed only if exists.
      */
     public DropIndexStatement(IndexMetadata index, boolean ifExists) {
 
         this.index = index;
 
-        if (index.getColumns()!=null && index.getColumns().size()!=0) {
+        if (index.getColumns() != null && index.getColumns().size() != 0) {
             this.catalogInc = true;
             this.catalog =
                 index.getColumns().get(0).getName().getTableName().getCatalogName().getName();
-        }else{
-            String[] indexQ=index.getName().getQualifiedName().split(".");
-            if (indexQ.length>1) {
+        } else {
+            String[] indexQ = index.getName().getQualifiedName().split(".");
+            if (indexQ.length > 1) {
                 this.catalog = indexQ[0];
-                catalogInc=true;
-            }else{
-                catalogInc=false;
+                catalogInc = true;
+            } else {
+                catalogInc = false;
             }
         }
-        this.indexName=index.getName().getName();
+        this.indexName = index.getName().getName();
 
         this.ifExists = ifExists;
     }
@@ -76,10 +75,11 @@ public class DropIndexStatement {
         if (ifExists) {
             sb.append("IF EXISTS ");
         }
-        if (catalogInc)
+        if (catalogInc) {
             sb.append(catalog).append(".\"").append(indexName).append("\"");
-        else
+        } else {
             sb.append("\"").append(indexName).append("\"");
+        }
 
         return sb.toString();
     }

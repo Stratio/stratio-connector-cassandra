@@ -20,6 +20,7 @@ package com.stratio.connector.cassandra.statements;
 
 
 
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
@@ -35,32 +36,29 @@ import java.util.Set;
  */
 public class CreateTableStatement {
 
+    private static final int PRIMARY_SINGLE = 1;
+    private static final int PRIMARY_COMPOSED = 2;
+    private static final int PRIMARY_AND_CLUSTERING_SPECIFIED = 3;
     /**
      * The name of the target table.
      */
     private String tableName;
-
     /**
      * A map with the name of the columns in the table and the associated data type.
      */
     private Map<ColumnName, ColumnMetadata> tableColumns;
-
     /**
      * The list of columns that are part of the primary key.
      */
     private List<ColumnName> primaryKey;
-
     /**
      * The list of columns that are part of the clustering key.
      */
     private List<ColumnName> clusterKey;
-
     /**
      * The list of properties of the table
      */
     private String properties;
-
-
     /**
      * The type of primary key. Accepted values are:
      * <ul>
@@ -71,11 +69,6 @@ public class CreateTableStatement {
      * </ul>
      */
     private int primaryKeyType;
-
-    private static final int PRIMARY_SINGLE = 1;
-    private static final int PRIMARY_COMPOSED = 2;
-    private static final int PRIMARY_AND_CLUSTERING_SPECIFIED = 3;
-
     /**
      * Whether the table should be created only if not exists.
      */
@@ -103,14 +96,15 @@ public class CreateTableStatement {
      * Class constructor.
      *
      * @param tableName      The name of the table.
-     * @param tableColumns        A map with the name of the columns in the table and the associated data type.
+     * @param tableColumns   A map with the name of the columns in the table and the associated data type.
      * @param primaryKey     The list of columns that are part of the primary key.
      * @param clusterKey     The list of columns that are part of the clustering key.
      * @param primaryKeyType The type of primary key.
-     *
      */
     public CreateTableStatement(String tableName, Map<ColumnName, ColumnMetadata> tableColumns,
-        List<ColumnName> primaryKey, List<ColumnName> clusterKey, int primaryKeyType, String properties,boolean ifNotExists) {
+        List<ColumnName> primaryKey, List<ColumnName> clusterKey, int primaryKeyType,
+        String properties, boolean ifNotExists)
+        throws ExecutionException {
 
         if (tableName.contains(".")) {
             String[] ksAndTablename = tableName.split("\\.");
@@ -120,27 +114,35 @@ public class CreateTableStatement {
         } else {
             this.tableName = tableName;
         }
-        this.tableColumns=tableColumns;
+        this.tableColumns = tableColumns;
         this.primaryKey = primaryKey;
         this.clusterKey = clusterKey;
         this.primaryKeyType = primaryKeyType;
-        this.ifNotExists=ifNotExists;
+        this.ifNotExists = ifNotExists;
 
 
-        if (properties.length()>0){
-            this.withProperties=true;
-            this.properties=properties;
+        if (properties.length() > 0) {
+            this.withProperties = true;
+            this.properties = properties;
+        }
+
+        if (primaryKey == null || primaryKey.size() == 0) {
+            throw new ExecutionException("PrimaryKey must exist");
+        } else if (clusterKey == null && primaryKeyType == PRIMARY_AND_CLUSTERING_SPECIFIED) {
+            throw new ExecutionException(
+                "ClusterKey must exist with the type og primaryKey specified");
         }
     }
 
-    private String getStringProperties(Map<Selector,Selector> properties) {
-        StringBuilder str=new StringBuilder();
+    private String getStringProperties(Map<Selector, Selector> properties) {
+        StringBuilder str = new StringBuilder();
 
-        int i=0;
-        for(Selector s:properties.values()){
-            if (i!=0)
+        int i = 0;
+        for (Selector s : properties.values()) {
+            if (i != 0) {
                 str.append(" AND ");
-            StringSelector sselector=(StringSelector)s;
+            }
+            StringSelector sselector = (StringSelector) s;
             str.append(sselector.getValue());
         }
         return str.toString();
@@ -150,17 +152,19 @@ public class CreateTableStatement {
     public String getSinglePKString() {
         StringBuilder sb = new StringBuilder(" (");
         Set<ColumnName> keySet = tableColumns.keySet();
-        int i=0;
-        for (ColumnName column:keySet) {
-            if (i!=0)
+        int i = 0;
+        for (ColumnName column : keySet) {
+            if (i != 0) {
                 sb.append(", ");
-            i=1;
-            String key = column.getName().substring(column.getName().lastIndexOf(".")+1);
-            String vp = column.getType().toString();
+            }
+            i = 1;
+            String key = column.getName().substring(column.getName().lastIndexOf(".") + 1);
+            String vp = tableColumns.get(column).getColumnType().toString();
             sb.append(key).append(" ").append(vp);
 
-            if (key.equals(primaryKey.get(0).getName()))
+            if (key.equals(primaryKey.get(0).getName())) {
                 sb.append(" PRIMARY KEY");
+            }
 
         }
         sb.append(")");
@@ -168,27 +172,38 @@ public class CreateTableStatement {
     }
 
     public String getCompositePKString() {
-        StringBuilder sb = new StringBuilder("PRIMARY KEY (");
-        if (primaryKeyType == PRIMARY_AND_CLUSTERING_SPECIFIED) {
+        StringBuilder sb = new StringBuilder("PRIMARY KEY");
+        if (primaryKeyType == PRIMARY_COMPOSED) {
             sb.append("(");
-        }
 
-        Iterator<ColumnName> pks = primaryKey.iterator();
-        while (pks.hasNext()) {
-            sb.append(pks.next().getName());
-            if (pks.hasNext()) {
-                sb.append(", ");
+
+            Iterator<ColumnName> pks = primaryKey.iterator();
+            while (pks.hasNext()) {
+                sb.append(pks.next().getName());
+                if (pks.hasNext()) {
+                    sb.append(", ");
+                }
             }
+            sb.append(")");
         }
 
         if (primaryKeyType == PRIMARY_AND_CLUSTERING_SPECIFIED) {
+            sb.append("((");
+            Iterator<ColumnName> pks = primaryKey.iterator();
+            while (pks.hasNext()) {
+                sb.append(pks.next().getName());
+                if (pks.hasNext()) {
+                    sb.append(", ");
+                }
+            }
             sb.append(")");
+
             for (ColumnName key : clusterKey) {
                 sb.append(", ").append(key.getName());
             }
-        }
+            sb.append(")");
 
-        sb.append("))");
+        }
         return sb.toString();
     }
 
@@ -213,7 +228,7 @@ public class CreateTableStatement {
                 String vp = tableColumns.get(key).getColumnType().toString();
                 sb.append(key.getName()).append(" ").append(vp).append(", ");
             }
-            sb.append(getCompositePKString());
+            sb.append(getCompositePKString()).append(")");
         }
 
         if (withProperties) {

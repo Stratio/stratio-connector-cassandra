@@ -3,7 +3,7 @@
     <ConnectorName>CassandraConnector</ConnectorName>
     <DataStoresName>
         <Datastore>Cassandra</Datastore>
-     </DataStoresName>
+    </DataStoresName>
     <Version>0.1.0</Version>
     <RequiredProperties>
         <Property>

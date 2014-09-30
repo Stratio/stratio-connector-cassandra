@@ -18,7 +18,6 @@
 
 package com.stratio.connector.cassandra;
 
-import akka.actor.ActorRef;
 import com.datastax.driver.core.CloseFuture;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.engine.*;
@@ -36,7 +35,6 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -57,7 +55,7 @@ public class CassandraConnector implements IConnector {
 
     public static void main(String[] args) {
 
-        CassandraConnector cassandraConnector=new CassandraConnector();
+        CassandraConnector cassandraConnector = new CassandraConnector();
 
         ConnectorApp connectorApp = new ConnectorApp();
         connectorApp.startup(cassandraConnector);
@@ -66,12 +64,14 @@ public class CassandraConnector implements IConnector {
     }
 
 
-    public CassandraConnector(){
-        sessions=new HashMap<>();
+    public CassandraConnector() {
+        sessions = new HashMap<>();
         try {
-            InputStream inputStream=getClass().getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
-            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
-            this.connectorName=d.getElementsByTagName("ConnectorName").item(0).getTextContent();
+            InputStream inputStream = getClass()
+                .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
+            Document d =
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+            this.connectorName = d.getElementsByTagName("ConnectorName").item(0).getTextContent();
 
         } catch (SAXException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration");
@@ -84,16 +84,17 @@ public class CassandraConnector implements IConnector {
 
     public void attachShutDownHook() {
 
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    System.out
-                        .println("Shutdown Hook : Closing all sessions now!");
-                    uncontrolledShutdown();
-                }
-            });
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                System.out
+                    .println("Shutdown Hook : Closing all sessions now!");
+                uncontrolledShutdown();
+            }
+        });
 
     }
+
     @Override
     public String getConnectorName() {
         return connectorName;
@@ -123,7 +124,9 @@ public class CassandraConnector implements IConnector {
 
         EngineConfig engineConfig = new EngineConfig();
         //the hosts are received as [host1,host2,host3...]
-        engineConfig.setCassandraHosts(clusterOptions.get("Hosts").substring(1,clusterOptions.get("Hosts").length()-1).split(","));
+        engineConfig.setCassandraHosts(
+            clusterOptions.get("Hosts").substring(1, clusterOptions.get("Hosts").length() - 1)
+                .split(","));
         engineConfig.setCassandraPort(Integer.parseInt(clusterOptions.get("Port")));
         engineConfig.setCredentials(credentials);
 
@@ -139,21 +142,20 @@ public class CassandraConnector implements IConnector {
 
     @Override
     public void shutdown() throws ExecutionException {
-        List<CloseFuture> closeFutureList=new ArrayList<>();
-        for (Session s:sessions.values()) {
+        List<CloseFuture> closeFutureList = new ArrayList<>();
+        for (Session s : sessions.values()) {
             closeFutureList.add(s.closeAsync());
         }
-        sessions=new HashMap<>();
+        sessions = new HashMap<>();
     }
 
-    public void uncontrolledShutdown(){
-        List<CloseFuture> closeFutureList=new ArrayList<>();
-        for (Session s:sessions.values()) {
+    public void uncontrolledShutdown() {
+        List<CloseFuture> closeFutureList = new ArrayList<>();
+        for (Session s : sessions.values()) {
             s.close();
         }
-        sessions=new HashMap<>();
+        sessions = new HashMap<>();
     }
-
 
 
 
@@ -162,10 +164,10 @@ public class CassandraConnector implements IConnector {
         boolean connected;
 
         if (sessions.get(name.getName()) != null) {
-            if (sessions.get(name.getName()).getCluster()!=null){
-                connected=true;
-            }else{
-                connected=false;
+            if (sessions.get(name.getName()).getCluster() != null) {
+                connected = true;
+            } else {
+                connected = false;
             }
         } else {
             connected = false;

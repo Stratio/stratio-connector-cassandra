@@ -16,11 +16,11 @@
     <packaging>jar</packaging>
     <version>0.1.0-SNAPSHOT</version>
     <dependencies>
-    	<dependency>
-    		  <groupId>com.stratio.meta</groupId>
-    		  <artifactId>meta-connector</artifactId>
-  			  <version>1.0</version>
-	          <type>jar</type>
+        <dependency>
+            <groupId>com.stratio.meta</groupId>
+            <artifactId>meta-connector</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
             <exclusions>
                 <exclusion>
                     <groupId>com.stratio.deep</groupId>
@@ -31,7 +31,7 @@
                     <artifactId>streaming-api</artifactId>
                 </exclusion>
             </exclusions>
-    	</dependency>
+        </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -130,7 +130,7 @@
     <build>
         <pluginManagement>
             <plugins>
-                 <plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
@@ -160,14 +160,17 @@
                     </descriptors>
                     <archive>
                         <manifest>
-                            <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
+                            <mainClass>com.stratio.connector.cassandra.CassandraConnector
+                            </mainClass>
                         </manifest>
                     </archive>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                        <!-- bind to the packaging phase -->
                         <goals>
                             <goal>single</goal>
                         </goals>

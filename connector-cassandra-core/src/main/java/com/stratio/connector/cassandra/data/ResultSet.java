@@ -43,7 +43,7 @@ public abstract class ResultSet implements Iterable<Row> {
      *
      * @return {@code true} if is empty
      */
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return size() < 1;
     }
 }

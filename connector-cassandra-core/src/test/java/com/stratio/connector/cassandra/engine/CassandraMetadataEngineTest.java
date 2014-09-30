@@ -288,7 +288,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         //options.put(new StringSelector("CLUSTERING ORDER BY"), option1);
         //options.put(new StringSelector("COMPACT STORAGE"), option2);
         //options.put(new StringSelector("comment"), option3);
-        options.put(new StringSelector("compression"), new StringSelector("'sstable_compression' : 'DeflateCompressor', 'chunk_length_kb' : 64"));
+        options.put(new StringSelector("compression"), new StringSelector(
+            "'sstable_compression' : 'DeflateCompressor', 'chunk_length_kb' : 64"));
 
         TableName targetTable = new TableName("demometadata", "users3");
 

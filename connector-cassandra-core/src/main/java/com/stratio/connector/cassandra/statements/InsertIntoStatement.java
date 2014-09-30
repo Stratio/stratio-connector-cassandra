@@ -77,13 +77,14 @@ public class InsertIntoStatement {
     /**
      * InsertIntoStatement general constructor.
      *
-     * @param targetTable Table target.
-     * @param columnsMetadata  List of {@link com.stratio.connector.cassandra.utils.ColumnInsertCassandra} to insert.
-     * @param ifNotExists Boolean that indicates if IF NOT EXISTS clause is included in the query.
+     * @param targetTable     Table target.
+     * @param columnsMetadata List of {@link com.stratio.connector.cassandra.utils.ColumnInsertCassandra} to insert.
+     * @param ifNotExists     Boolean that indicates if IF NOT EXISTS clause is included in the query.
      */
-    public InsertIntoStatement(TableMetadata targetTable, Map<String, ColumnInsertCassandra> columnsMetadata,
+    public InsertIntoStatement(TableMetadata targetTable,
+        Map<String, ColumnInsertCassandra> columnsMetadata,
         boolean ifNotExists) {
-        ids=new ArrayList<>();
+        ids = new ArrayList<>();
         this.tableName = targetTable.getName().getQualifiedName();
         if (tableName.contains(".")) {
             String[] ksAndTableName = tableName.split("\\.");
@@ -92,7 +93,7 @@ public class InsertIntoStatement {
             catalogInc = true;
         }
 
-        for(String id:columnsMetadata.keySet()) {
+        for (String id : columnsMetadata.keySet()) {
             ids.add(id);
         }
         this.cellValues = columnsMetadata;
@@ -110,18 +111,19 @@ public class InsertIntoStatement {
 
         sb.append("VALUES (");
 
-        int cont=0;
-        for(String column:cellValues.keySet()){
-            String value=cellValues.get(column).getValue();
-            ColumnType type=cellValues.get(column).getType();
-            if (cont>0)
+        int cont = 0;
+        for (String column : cellValues.keySet()) {
+            String value = cellValues.get(column).getValue();
+            ColumnType type = cellValues.get(column).getType();
+            if (cont > 0) {
                 sb.append(", ");
-            cont=1;
+            }
+            cont = 1;
 
-            switch(type){
+            switch (type) {
                 case TEXT:
                 case VARCHAR:
-                    sb.append("'"+value+"'");
+                    sb.append("'" + value + "'");
                     break;
                 default:
                     sb.append(value);

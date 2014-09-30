@@ -25,7 +25,6 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
 import com.stratio.meta.common.result.ErrorResult;
 import com.stratio.meta.common.result.Result;
-
 import org.apache.log4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -97,7 +96,8 @@ public class BasicCoreCassandraTest {
      * Initialize the connection to Cassandra using the host specified by {@code DEFAULT_HOST}.
      */
     public static void initCassandraConnection() {
-        assertTrue(connect(getHost()), "Cannot connect to com.stratio.connector.cassandra.com.stratio.connector.cassandra");
+        assertTrue(connect(getHost()),
+            "Cannot connect to com.stratio.connector.cassandra.com.stratio.connector.cassandra");
     }
 
     /**
@@ -134,6 +134,7 @@ public class BasicCoreCassandraTest {
     /**
      * Load a {@code keyspace} in Cassandra using the CQL sentences in the script path. The script is
      * executed if the keyspace does not exist in Cassandra.     *
+     *
      * @param keyspace The name of the keyspace.
      * @param path     The path of the CQL script.
      */

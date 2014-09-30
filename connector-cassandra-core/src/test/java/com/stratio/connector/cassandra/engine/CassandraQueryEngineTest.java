@@ -21,7 +21,6 @@ package com.stratio.connector.cassandra.engine;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
-import com.stratio.connector.cassandra.data.CassandraResultSet;
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
@@ -30,7 +29,6 @@ import com.stratio.meta.common.logicalplan.*;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
@@ -47,9 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
@@ -73,7 +70,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster,columnList);
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
 
 
 
@@ -146,17 +143,17 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector rightTerm2 = new StringSelector("'female'");
 
         Relation relation2 = new Relation(selector2, Operator.EQ, rightTerm2);
-        Filter filter2 = new Filter(Operations.FILTER_INDEXED_EQ , relation2);
+        Filter filter2 = new Filter(Operations.FILTER_INDEXED_EQ, relation2);
 
         Relation relation = new Relation(selector, Operator.EQ, rightTerm);
         Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
 
-        Map<String, String> aliasColumns=new HashMap<>();
+        Map<String, String> aliasColumns = new HashMap<>();
         aliasColumns.put("demo.users.name", "nameAlias");
 
-        Map<String, ColumnType> typeMap=new HashMap<>();
+        Map<String, ColumnType> typeMap = new HashMap<>();
         typeMap.put("demo.users.name", ColumnType.VARCHAR);
-        Select aliasSelect=new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap);
+        Select aliasSelect = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap);
 
         //Compound workflow
         filter2.setNextStep(aliasSelect);
@@ -189,7 +186,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
             assertEquals(cqe.parseQuery(),
                 "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("No alias found");
         }
 
@@ -244,8 +241,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Cell cell = row.getCell("name");
             value = cell.getValue().toString();
         }
-        if (value!=null && !value.equals(""))
+        if (value != null && !value.equals("")) {
             assertEquals(true, true);
+        }
 
         //assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
 
@@ -254,33 +252,33 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
     @Test
-    public void processLuceneQueryType(){
+    public void processLuceneQueryType() {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
 
         CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
-        String [][] queries = {
+        String[][] queries = {
             //Input    Type       parsed
-            {"?",     "wildcard", "?"},
-            {"*",     "wildcard", "*"},
-            {"\\?",   "match",    "?"},
-            {"\\*",   "match",    "*"},
-            {"\\?sf", "match",    "?sf"},
-            {"af\\?", "match",    "af?"},
-            {"s\\?f", "match",    "s?f"},
-            {"sdf",   "match",    "sdf"},
+            {"?", "wildcard", "?"},
+            {"*", "wildcard", "*"},
+            {"\\?", "match", "?"},
+            {"\\*", "match", "*"},
+            {"\\?sf", "match", "?sf"},
+            {"af\\?", "match", "af?"},
+            {"s\\?f", "match", "s?f"},
+            {"sdf", "match", "sdf"},
             {"*asd*", "wildcard", "*asd*"},
-            {"?as?",  "wildcard", "?as?"},
-            {"?as*",  "wildcard", "?as*"},
-            {"[asd",  "regex",    "[asd"},
-            {"fa]",   "regex",    "fa]"},
-            {"]*sf",  "regex",    "]*sf"},
-            {"~as",   "match",    "~as"},
-            {"as~2",  "fuzzy",    "as~2"}};
+            {"?as?", "wildcard", "?as?"},
+            {"?as*", "wildcard", "?as*"},
+            {"[asd", "regex", "[asd"},
+            {"fa]", "regex", "fa]"},
+            {"]*sf", "regex", "]*sf"},
+            {"~as", "match", "~as"},
+            {"as~2", "fuzzy", "as~2"}};
 
-        for(String [] query : queries) {
-            String [] result = cqe.processLuceneQueryType(query[0]);
+        for (String[] query : queries) {
+            String[] result = cqe.processLuceneQueryType(query[0]);
             assertEquals(result[0], query[1], "Query type does not match");
             assertEquals(result[1], query[2], "Parsed does not match");
         }
@@ -288,7 +286,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     }
 
     @AfterClass
-    public void restore(){
+    public void restore() {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
     }
 

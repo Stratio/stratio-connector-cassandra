@@ -66,23 +66,37 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
 
 
-        TableName targetTable=new TableName("demo", "users");
-        Map<Selector, Selector> options=new HashMap<>();
-        Map< ColumnName, ColumnMetadata > columns=new HashMap<>();
-        ClusterName clusterRef=new ClusterName("cluster");
-        List<ColumnName> partitionKey=new ArrayList<>();
-        List<ColumnName> clusterKey=new ArrayList<>();
-        Object[] parameters=null;
-        columns.put(new ColumnName(new TableName("demo","users"),"name"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"name"),parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demo","users"),"gender"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"gender"),parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demo","users"),"age"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"age"),parameters, ColumnType.INT));
-        columns.put(new ColumnName(new TableName("demo","users"),"bool"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"bool"),parameters, ColumnType.BOOLEAN));
-        columns.put(new ColumnName(new TableName("demo","users"),"phrase"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"phrase"),parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demo","users"),"email"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"email"),parameters, ColumnType.TEXT));
+        TableName targetTable = new TableName("demo", "users");
+        Map<Selector, Selector> options = new HashMap<>();
+        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        ClusterName clusterRef = new ClusterName("cluster");
+        List<ColumnName> partitionKey = new ArrayList<>();
+        List<ColumnName> clusterKey = new ArrayList<>();
+        Object[] parameters = null;
+        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+                ColumnType.INT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+                ColumnType.BOOLEAN));
+        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+                ColumnType.TEXT));
 
 
-        Map<IndexName, IndexMetadata> indexes=new HashMap<>();
-        TableMetadata table=new TableMetadata(targetTable,options,columns,indexes,clusterRef,partitionKey,clusterKey);
+        Map<IndexName, IndexMetadata> indexes = new HashMap<>();
+        TableMetadata table =
+            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                clusterKey);
 
         //INSERT INTO demo.users (name, gender, email, age, bool, phrase) VALUES ('name_0', 'male', 'name_0@domain.com', 10, true, '');
         Row row = new Row();
@@ -93,7 +107,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         row.addCell("bool", new Cell(false));
         row.addCell("phrase", new Cell("insert phase"));
 
-        int finalCount=initialCount;
+        int finalCount = initialCount;
         try {
             cse.insert(new ClusterName("cluster"), table, row);
             finalCount = select2InsertTest(_session, query);
@@ -102,31 +116,110 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Assert.assertNotEquals(initialCount,finalCount);
+        Assert.assertNotEquals(initialCount, finalCount);
     }
+
+
+
+    @Test
+    public void InsertInExistingTableUnknownColumn() {
+        String query = "SELECT * FROM demo.users;";
+        int initialCount = select2InsertTest(_session, query);
+
+        CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
+
+
+        TableName targetTable = new TableName("demo", "users");
+        Map<Selector, Selector> options = new HashMap<>();
+        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        ClusterName clusterRef = new ClusterName("cluster");
+        List<ColumnName> partitionKey = new ArrayList<>();
+        List<ColumnName> clusterKey = new ArrayList<>();
+        Object[] parameters = null;
+        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+                ColumnType.INT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+                ColumnType.BOOLEAN));
+        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+                ColumnType.TEXT));
+
+
+        Map<IndexName, IndexMetadata> indexes = new HashMap<>();
+        TableMetadata table =
+            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                clusterKey);
+
+        //INSERT INTO demo.users (name, gender, email, age, bool, phrase) VALUES ('name_0', 'male', 'name_0@domain.com', 10, true, '');
+        Row row = new Row();
+        row.addCell("name", new Cell("insertName"));
+        row.addCell("gender", new Cell("male"));
+        row.addCell("email", new Cell("insertName@doamin.com"));
+        row.addCell("age", new Cell(20));
+        row.addCell("bool", new Cell(false));
+        //WRONG COLUMN
+        row.addCell("prase", new Cell("insert phase"));
+
+        int finalCount = initialCount;
+        try {
+            cse.insert(new ClusterName("cluster"), table, row);
+            Assert.fail("Trying to add in a not existing column");
+        } catch (UnsupportedException e) {
+            finalCount = select2InsertTest(_session, query);
+        } catch (ExecutionException e) {
+            finalCount = select2InsertTest(_session, query);
+        }
+        Assert.assertEquals(initialCount, finalCount);
+    }
+
 
     @Test
     public void multipleInsert() {
         String query = "SELECT * FROM demo.users;";
         int initialCount = select2InsertTest(_session, query);
 
-        TableName targetTable=new TableName("demo", "users");
-        Map<Selector,Selector> options=new HashMap<>();
-        Map< ColumnName, ColumnMetadata > columns=new HashMap<>();
-        ClusterName clusterRef=new ClusterName("cluster");
-        List<ColumnName> partitionKey=new ArrayList<>();
-        List<ColumnName> clusterKey=new ArrayList<>();
-        Object[] parameters=null;
-        columns.put(new ColumnName(new TableName("demo","users"),"name"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"name"),parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demo","users"),"gender"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"gender"),parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demo","users"),"age"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"age"),parameters, ColumnType.INT));
-        columns.put(new ColumnName(new TableName("demo","users"),"bool"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"bool"),parameters, ColumnType.BOOLEAN));
-        columns.put(new ColumnName(new TableName("demo","users"),"phrase"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"phrase"),parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demo","users"),"email"),new ColumnMetadata(new ColumnName(new TableName("demo","users"),"email"),parameters, ColumnType.TEXT));
+        TableName targetTable = new TableName("demo", "users");
+        Map<Selector, Selector> options = new HashMap<>();
+        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        ClusterName clusterRef = new ClusterName("cluster");
+        List<ColumnName> partitionKey = new ArrayList<>();
+        List<ColumnName> clusterKey = new ArrayList<>();
+        Object[] parameters = null;
+        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+                ColumnType.INT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+                ColumnType.BOOLEAN));
+        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+                ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
+            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+                ColumnType.TEXT));
 
 
-        Map<IndexName, IndexMetadata> indexes=new HashMap<>();
-        TableMetadata table=new TableMetadata(targetTable,options,columns,indexes,clusterRef,partitionKey,clusterKey);
+        Map<IndexName, IndexMetadata> indexes = new HashMap<>();
+        TableMetadata table =
+            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                clusterKey);
 
         CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
 
@@ -151,7 +244,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         rows.add(row);
         rows.add(row2);
 
-        int finalCount=initialCount;
+        int finalCount = initialCount;
         try {
             cse.insert(new ClusterName("cluster"), table, rows);
             finalCount = select2InsertTest(_session, query);
@@ -160,11 +253,11 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Assert.assertNotEquals(initialCount,finalCount);
+        Assert.assertNotEquals(initialCount, finalCount);
     }
 
     @AfterClass
-    public void restore(){
+    public void restore() {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
     }
 

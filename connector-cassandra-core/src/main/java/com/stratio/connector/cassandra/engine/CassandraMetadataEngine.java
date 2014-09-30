@@ -64,11 +64,11 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         CreateCatalogStatement catalogStatement =
             new CreateCatalogStatement(catalogName, true, stringOptions);
-        Result result=CassandraExecutor.execute(catalogStatement.toString(), session);
+        Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
 
         if (result.hasError()) {
-            ErrorResult error=(ErrorResult)result;
-            switch(error.getType()){
+            ErrorResult error = (ErrorResult) result;
+            switch (error.getType()) {
                 case EXECUTION:
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
@@ -78,8 +78,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             }
         }
     }
-
-
 
 
 
@@ -111,10 +109,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateTableStatement tableStatement =
             new CreateTableStatement(tableName, tableColumns, primaryKey, clusterKey,
                 primaryKeyType, stringOptions, true);
-        Result result=CassandraExecutor.execute(tableStatement.toString(), session);
+        Result result = CassandraExecutor.execute(tableStatement.toString(), session);
         if (result.hasError()) {
-            ErrorResult error=(ErrorResult)result;
-            switch(error.getType()){
+            ErrorResult error = (ErrorResult) result;
+            switch (error.getType()) {
                 case EXECUTION:
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
@@ -131,10 +129,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
-        Result result=CassandraExecutor.execute(catalogStatement.toString(), session);
+        Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
         if (result.hasError()) {
-            ErrorResult error=(ErrorResult)result;
-            switch(error.getType()){
+            ErrorResult error = (ErrorResult) result;
+            switch (error.getType()) {
                 case EXECUTION:
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
@@ -150,10 +148,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
-        Result result=CassandraExecutor.execute(tableStatement.toString(), session);
+        Result result = CassandraExecutor.execute(tableStatement.toString(), session);
         if (result.hasError()) {
-            ErrorResult error=(ErrorResult)result;
-            switch(error.getType()){
+            ErrorResult error = (ErrorResult) result;
+            switch (error.getType()) {
                 case EXECUTION:
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
@@ -171,10 +169,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
             new CreateIndexStatement(indexMetadata, true, session);
-        Result result=CassandraExecutor.execute(indexStatement.toString(), session);
+        Result result = CassandraExecutor.execute(indexStatement.toString(), session);
         if (result.hasError()) {
-            ErrorResult error=(ErrorResult)result;
-            switch(error.getType()){
+            ErrorResult error = (ErrorResult) result;
+            switch (error.getType()) {
                 case EXECUTION:
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
@@ -190,10 +188,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
-        Result result=CassandraExecutor.execute(indexStatement.toString(), session);
+        Result result = CassandraExecutor.execute(indexStatement.toString(), session);
         if (result.hasError()) {
-            ErrorResult error=(ErrorResult)result;
-            switch(error.getType()){
+            ErrorResult error = (ErrorResult) result;
+            switch (error.getType()) {
                 case EXECUTION:
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:

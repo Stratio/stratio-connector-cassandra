@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 public class CassandraQueryEngine implements IQueryEngine {
     Map<String, String> aliasColumns = new HashMap<>();
-    Session session=null;
+    Session session = null;
     private List<ColumnName> selectionClause;
     private boolean catalogInc;
     private String catalog;
@@ -72,7 +72,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                     TransformationStep transformation = (TransformationStep) logicalStep;
                     if (transformation instanceof Project) {
                         Project project = (Project) transformation;
-                        session=sessions.get(project.getClusterName().getName());
+                        session = sessions.get(project.getClusterName().getName());
 
                         tableName = project.getTableName();
 
@@ -102,13 +102,13 @@ public class CassandraQueryEngine implements IQueryEngine {
         String query = parseQuery();
 
         Result result = null;
-        if (session!=null) {
+        if (session != null) {
             if (aliasColumns.isEmpty()) {
                 result = CassandraExecutor.execute(query, session);
             } else {
                 result = CassandraExecutor.execute(query, aliasColumns, session);
             }
-        }else{
+        } else {
             throw new ExecutionException("No session to cluster established");
         }
 

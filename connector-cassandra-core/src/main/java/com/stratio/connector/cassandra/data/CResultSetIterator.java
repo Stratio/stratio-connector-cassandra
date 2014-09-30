@@ -37,6 +37,7 @@ public class CResultSetIterator implements Iterator<Row> {
 
     /**
      * Build a {@link com.stratio.meta.common.data.CResultSetIterator} from a {@link com.stratio.meta.common.data.CassandraResultSet}.
+     *
      * @param cResultSet Cassandra Result Set.
      */
     public CResultSetIterator(CassandraResultSet cResultSet) {
@@ -50,12 +51,12 @@ public class CResultSetIterator implements Iterator<Row> {
     }
 
     @Override
-    public com.stratio.meta.common.data.Row next() throws NoSuchElementException{
+    public com.stratio.meta.common.data.Row next() throws NoSuchElementException {
         return cResultSet.getRows().get(current++);
     }
 
     @Override
-    public void remove() throws UnsupportedOperationException, IllegalStateException{
+    public void remove() throws UnsupportedOperationException, IllegalStateException {
         cResultSet.remove(current);
     }
 }
