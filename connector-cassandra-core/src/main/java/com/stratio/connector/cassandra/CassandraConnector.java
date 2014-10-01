@@ -31,10 +31,14 @@ import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -46,6 +50,7 @@ public class CassandraConnector implements IConnector {
 
     private Map<String, Session> sessions;
     private String connectorName;
+    private int limitDefault;
 
 
     /**
@@ -71,7 +76,30 @@ public class CassandraConnector implements IConnector {
                 .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
             Document d =
                 DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
-            this.connectorName = d.getElementsByTagName("ConnectorName").item(0).getTextContent();
+
+            //Search for the limit properties and connectorName
+            XPathFactory xFactory = XPathFactory.newInstance();
+
+            // create an XPath object
+            XPath xpath = xFactory.newXPath();
+            Object result;
+            XPathExpression expr = null;
+            try {
+                expr = xpath.compile("//ConnectorName/text()");
+                result = expr.evaluate(d, XPathConstants.NODESET);
+                this.connectorName=((NodeList)result).item(0).getNodeValue();
+            } catch (XPathExpressionException e) {
+            }
+
+
+            try {
+                expr = xpath.compile("//RequiredProperties/Property[Name='limit']/Value/text()");
+                result = expr.evaluate(d, XPathConstants.NODESET);
+                limitDefault=Integer.parseInt(((NodeList)result).item(0).getNodeValue());
+            } catch (XPathExpressionException e) {
+                limitDefault=100;
+            }
+
 
         } catch (SAXException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration");
@@ -150,7 +178,6 @@ public class CassandraConnector implements IConnector {
     }
 
     public void uncontrolledShutdown() {
-        List<CloseFuture> closeFutureList = new ArrayList<>();
         for (Session s : sessions.values()) {
             s.close();
         }
@@ -195,7 +222,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IQueryEngine getQueryEngine() throws UnsupportedException {
-        IQueryEngine queryEngine = new CassandraQueryEngine(sessions);
+        IQueryEngine queryEngine = new CassandraQueryEngine(sessions, limitDefault);
         return queryEngine;
     }
 

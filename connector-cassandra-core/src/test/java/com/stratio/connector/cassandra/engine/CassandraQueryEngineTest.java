@@ -94,7 +94,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions,100);
 
 
         QueryResult qr = null;
@@ -114,7 +114,72 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         assertEquals(value, "name_5");
 
         assertEquals(cqe.parseQuery(),
-            "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
+            "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
+
+    }
+
+
+    @Test
+    public void basicSelectWithOwnLimitTest() {
+
+        ClusterName targetCluster = new ClusterName("cluster");
+
+        List<LogicalStep> logicalSteps = new ArrayList<>();
+
+        TableName tableName = new TableName("demo", "users");
+
+        List<ColumnName> columnList = new ArrayList<>();
+        ColumnName columnName = new ColumnName(tableName, "name");
+        columnList.add(columnName);
+
+        //Generation of Data
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+
+
+
+        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector rightTerm = new StringSelector("'name_5'");
+
+        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector rightTerm2 = new StringSelector("'female'");
+
+        Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
+        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+
+        Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
+        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+
+        Limit limit=new Limit(Operations.SELECT_LIMIT, 50);
+        //Compound workflow
+        filter2.setNextStep(limit);
+        filter.setNextStep(filter2);
+        project.setNextStep(filter);
+        logicalSteps.add(project);
+        LogicalWorkflow workflow = new LogicalWorkflow(logicalSteps);
+
+        Map<String, Session> sessions = new HashMap<>();
+        sessions.put("cluster", this._session);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions,100);
+
+
+        QueryResult qr = null;
+        try {
+            qr = cqe.execute(workflow);
+        } catch (UnsupportedException e) {
+            e.printStackTrace();
+        } catch (com.stratio.meta.common.exceptions.ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        String value = "";
+        for (Row row : qr.getResultSet()) {
+            Cell cell = row.getCell("name");
+            value = cell.getValue().toString();
+        }
+        assertEquals(value, "name_5");
+
+        assertEquals(cqe.parseQuery(),
+            "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 50");
 
     }
 
@@ -164,7 +229,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions,100);
 
 
         QueryResult qr = null;
@@ -185,7 +250,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             assertEquals(value, "name_5");
 
             assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
+                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
         } catch (Exception ex) {
             Assert.fail("No alias found");
         }
@@ -224,7 +289,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions,100);
 
 
         QueryResult qr = null;
@@ -257,7 +322,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
 
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions,100);
         String[][] queries = {
             //Input    Type       parsed
             {"?", "wildcard", "?"},

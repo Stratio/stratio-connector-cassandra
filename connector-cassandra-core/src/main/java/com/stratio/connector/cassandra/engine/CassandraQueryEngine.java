@@ -48,14 +48,15 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String catalog;
     private TableName tableName;
     private boolean whereInc = false;
-    private boolean limitInc = false;
+    private boolean limitInc = true;
     private List<Relation> where = new ArrayList<Relation>();
     private StringBuffer alias = new StringBuffer();
     private int limit = 100;
     private Map<String, Session> sessions;
 
-    public CassandraQueryEngine(Map<String, Session> sessions) {
+    public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
         this.sessions = sessions;
+        this.limit=limitDefault;
     }
 
     @Override
@@ -88,6 +89,9 @@ public class CassandraQueryEngine implements IQueryEngine {
                             whereInc = true;
                             Relation relation = filter.getRelation();
                             where.add(relation);
+                        }else if (transformation instanceof Limit) {
+                            Limit limitClause =(Limit) transformation;
+                            limit=limitClause.getLimit();
                         } else {
                             if (transformation instanceof Select) {
                                 Select select = (Select) transformation;

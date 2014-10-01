@@ -114,12 +114,11 @@ public class EngineConfig {
         return cassandraHosts[rand.nextInt(cassandraHosts.length)];
     }
 
+    public ICredentials getCredentials() {
+        return credentials;
+    }
 
     public void setCredentials(ICredentials credentials) {
         this.credentials = credentials;
-    }
-
-    public ICredentials getCredentials() {
-        return credentials;
     }
 }

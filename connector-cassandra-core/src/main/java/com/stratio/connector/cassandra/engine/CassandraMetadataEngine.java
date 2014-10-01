@@ -43,11 +43,11 @@ import java.util.Map;
 
 public class CassandraMetadataEngine implements IMetadataEngine {
 
-    private Map<String, Session> sessions;
-    private Session session = null;
     private static final int PRIMARY_SINGLE = 1;
     private static final int PRIMARY_COMPOSED = 2;
     private static final int PRIMARY_AND_CLUSTERING_SPECIFIED = 3;
+    private Map<String, Session> sessions;
+    private Session session = null;
 
     public CassandraMetadataEngine(Map<String, Session> sessions) {
         this.sessions = sessions;
@@ -88,10 +88,11 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String tableName = tableMetadata.getName().getQualifiedName();
         Map<Selector, Selector> tableOptions = tableMetadata.getOptions();
         List<ColumnName> primaryKey = tableMetadata.getPrimaryKey();
+        List<ColumnName> partitionKey = tableMetadata.getPartitionKey();
         List<ColumnName> clusterKey = tableMetadata.getClusterKey();
 
         int primaryKeyType;
-        if (primaryKey.size() <= 1) {
+        if (primaryKey.size() == 1) {
             primaryKeyType = PRIMARY_SINGLE;
         } else {
             if (clusterKey.size() > 0) {
@@ -107,7 +108,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String stringOptions = getStringOptions(tableOptions);
 
         CreateTableStatement tableStatement =
-            new CreateTableStatement(tableName, tableColumns, primaryKey, clusterKey,
+            new CreateTableStatement(tableName, tableColumns, primaryKey, partitionKey, clusterKey,
                 primaryKeyType, stringOptions, true);
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
         if (result.hasError()) {

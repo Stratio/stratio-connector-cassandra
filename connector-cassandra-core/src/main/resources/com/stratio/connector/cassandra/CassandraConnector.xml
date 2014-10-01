@@ -8,18 +8,10 @@
     <RequiredProperties>
         <Property>
             <Name>limit</Name>
-        </Property>
-        <Property>
-            <Name></Name>
+            <Value>500</Value>
         </Property>
     </RequiredProperties>
     <OptionalProperties>
-        <Property>
-            <Name></Name>
-        </Property>
-        <Property>
-            <Name></Name>
-        </Property>
     </OptionalProperties>
     <SupportedOperations>
         <operation>CREATE_CATALOG</operation>
@@ -42,4 +34,7 @@
         <operation>FILTER_INDEXED_DISTINCT</operation>
         <operation>FILTER_FULLTEXT</operation>
     </SupportedOperations>
+    <Behaviors>
+        <Behavior>UPSERT_ON_INSERT</Behavior>
+    </Behaviors>
 </Connector>

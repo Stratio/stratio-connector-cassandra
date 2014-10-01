@@ -14,9 +14,11 @@
     <OptionalProperties>
         <Property>
             <Name></Name>
+            <Value></Value>
         </Property>
         <Property>
             <Name></Name>
+            <Value></Value>
         </Property>
     </OptionalProperties>
 </DataStore>

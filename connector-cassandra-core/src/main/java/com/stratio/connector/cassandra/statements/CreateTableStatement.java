@@ -102,7 +102,7 @@ public class CreateTableStatement {
      * @param primaryKeyType The type of primary key.
      */
     public CreateTableStatement(String tableName, Map<ColumnName, ColumnMetadata> tableColumns,
-        List<ColumnName> primaryKey, List<ColumnName> clusterKey, int primaryKeyType,
+        List<ColumnName> primaryKey, List<ColumnName> partitionKey,List<ColumnName> clusterKey, int primaryKeyType,
         String properties, boolean ifNotExists)
         throws ExecutionException {
 
@@ -126,8 +126,8 @@ public class CreateTableStatement {
             this.properties = properties;
         }
 
-        if (primaryKey == null || primaryKey.size() == 0) {
-            throw new ExecutionException("PrimaryKey must exist");
+        if (partitionKey == null || partitionKey.size() == 0) {
+            throw new ExecutionException("PrimaryKey must contain partition Key");
         } else if (clusterKey == null && primaryKeyType == PRIMARY_AND_CLUSTERING_SPECIFIED) {
             throw new ExecutionException(
                 "ClusterKey must exist with the type og primaryKey specified");
