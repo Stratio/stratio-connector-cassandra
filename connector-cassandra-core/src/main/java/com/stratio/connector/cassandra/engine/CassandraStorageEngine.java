@@ -24,6 +24,7 @@ import com.stratio.connector.cassandra.statements.InsertIntoStatement;
 import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.exceptions.CriticalExecutionException;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.result.ErrorResult;
@@ -79,6 +80,8 @@ public class CassandraStorageEngine implements IStorageEngine {
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
                     throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
                 default:
                     throw new UnsupportedException(error.getErrorMessage());
             }
@@ -113,6 +116,8 @@ public class CassandraStorageEngine implements IStorageEngine {
                         throw new ExecutionException(error.getErrorMessage());
                     case NOT_SUPPORTED:
                         throw new UnsupportedException(error.getErrorMessage());
+                    case CRITICAL:
+                        throw new CriticalExecutionException(error.getErrorMessage());
                     default:
                         throw new UnsupportedException(error.getErrorMessage());
                 }

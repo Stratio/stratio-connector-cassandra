@@ -23,6 +23,7 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.connector.cassandra.statements.*;
 import com.stratio.meta.common.connector.IMetadataEngine;
+import com.stratio.meta.common.exceptions.CriticalExecutionException;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.result.ErrorResult;
@@ -73,6 +74,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
                     throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
                 default:
                     throw new UnsupportedException(error.getErrorMessage());
             }
@@ -118,6 +121,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
                     throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
                 default:
                     throw new UnsupportedException(error.getErrorMessage());
             }
@@ -138,6 +143,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
                     throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
                 default:
                     throw new UnsupportedException(error.getErrorMessage());
             }
@@ -157,6 +164,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
                     throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
                 default:
                     throw new UnsupportedException(error.getErrorMessage());
             }
@@ -178,6 +187,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
                     throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
                 default:
                     throw new UnsupportedException(error.getErrorMessage());
             }
@@ -197,6 +208,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                     throw new ExecutionException(error.getErrorMessage());
                 case NOT_SUPPORTED:
                     throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
                 default:
                     throw new UnsupportedException(error.getErrorMessage());
             }

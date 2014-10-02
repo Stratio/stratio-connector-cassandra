@@ -22,14 +22,16 @@ import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.meta.common.connector.IQueryEngine;
+import com.stratio.meta.common.exceptions.CriticalExecutionException;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.*;
+import com.stratio.meta.common.result.ErrorResult;
+import com.stratio.meta.common.result.IResultHandler;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
 import com.stratio.meta2.common.data.CatalogName;
-import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 
@@ -115,18 +117,32 @@ public class CassandraQueryEngine implements IQueryEngine {
         }
 
         if (result.hasError()) {
-            com.stratio.meta.common.result.ErrorResult errorResult =
-                (com.stratio.meta.common.result.ErrorResult) result;
-            throw new ExecutionException(errorResult.getErrorMessage());
+            ErrorResult error = (ErrorResult) result;
+            switch (error.getType()) {
+                case EXECUTION:
+                    throw new ExecutionException(error.getErrorMessage());
+                case NOT_SUPPORTED:
+                    throw new UnsupportedException(error.getErrorMessage());
+                case CRITICAL:
+                    throw new CriticalExecutionException(error.getErrorMessage());
+                default:
+                    throw new UnsupportedException(error.getErrorMessage());
+            }
         } else {
-            return (com.stratio.meta.common.result.QueryResult) result;
+            return (QueryResult) result;
         }
     }
 
-    @Override public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow)
-        throws UnsupportedException, ExecutionException {
-        return null;
+    @Override public void asyncExecute(String queryId, LogicalWorkflow workflow,
+        IResultHandler resultHandler) throws UnsupportedException, ExecutionException {
+
     }
+
+    @Override public void stop(String queryId) throws UnsupportedException, ExecutionException {
+
+    }
+
+
 
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");

@@ -20,6 +20,7 @@ package com.stratio.connector.cassandra;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.exceptions.DriverException;
 import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -65,6 +66,9 @@ public final class CassandraExecutor {
             LOG.debug("Cassandra executor failed", unSupportException);
             return com.stratio.meta.common.result.Result.createExecutionErrorResult(
                 "Unsupported operation by C*: " + unSupportException.getMessage());
+        } catch (DriverException dex) {
+            return com.stratio.meta.common.result.Result
+                .createCriticalOperationErrorResult(dex.getMessage());
         } catch (Exception ex) {
             return processException(ex);
         }
@@ -93,6 +97,9 @@ public final class CassandraExecutor {
             LOG.debug("Cassandra executor failed", unSupportException);
             return com.stratio.meta.common.result.Result.createExecutionErrorResult(
                 "Unsupported operation by C*: " + unSupportException.getMessage());
+        } catch (DriverException dex) {
+            return com.stratio.meta.common.result.Result
+                .createCriticalOperationErrorResult(dex.getMessage());
         } catch (Exception ex) {
             return processException(ex);
         }
