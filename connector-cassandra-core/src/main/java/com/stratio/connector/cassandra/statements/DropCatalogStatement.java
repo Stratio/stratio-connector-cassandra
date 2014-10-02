@@ -27,10 +27,6 @@ public class DropCatalogStatement {
      */
     private String catalog;
 
-    /**
-     * Indicates if there is a catalog specified in the table name
-     */
-    private boolean catalogInc;
 
     /**
      * Whether the keyspace should be removed only if exists.
@@ -46,7 +42,6 @@ public class DropCatalogStatement {
     public DropCatalogStatement(String catalog, boolean ifExists) {
 
         this.catalog = catalog;
-        this.catalogInc = true;
         this.ifExists = ifExists;
     }
 

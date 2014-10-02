@@ -26,11 +26,7 @@ import java.util.Random;
 
 public class EngineConfig {
 
-    /**
-     * Class logger.
-     */
-    private static final Logger LOG = Logger.getLogger(EngineConfig.class.getName());
-
+   
     /**
      * Cassandra hosts.
      */

@@ -26,10 +26,7 @@ import com.stratio.meta2.common.metadata.IndexMetadata;
 public class DropIndexStatement {
     private String catalog;
     private String indexName;
-    /**
-     * Catalog
-     */
-    private IndexMetadata index;
+
 
     /**
      * Indicates if there is a catalog specified in the table name
@@ -49,7 +46,7 @@ public class DropIndexStatement {
      */
     public DropIndexStatement(IndexMetadata index, boolean ifExists) {
 
-        this.index = index;
+
 
         if (index.getColumns() != null && index.getColumns().size() != 0) {
             this.catalogInc = true;

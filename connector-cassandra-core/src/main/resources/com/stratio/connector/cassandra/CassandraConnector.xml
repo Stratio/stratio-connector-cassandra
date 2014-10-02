@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Connector>
     <ConnectorName>CassandraConnector</ConnectorName>
-    <DataStoresName>
-        <Datastore>Cassandra</Datastore>
-    </DataStoresName>
+    <DataStoresName>Cassandra</DataStoresName>
     <Version>0.1.0</Version>
     <RequiredProperties>
-        <Property>
-            <Name>limit</Name>
-            <Value>500</Value>
-        </Property>
     </RequiredProperties>
     <OptionalProperties>
     </OptionalProperties>
@@ -24,17 +18,10 @@
         <operation>SELECT_LIMIT</operation>
         <operation>SELECT_ORDER_BY</operation>
         <operation>FILTER_PK_EQ</operation>
-        <operation>FILTER_NON_INDEXED_EQ</operation>
-        <operation>FILTER_NON_INDEXED_GT</operation>
-        <operation>FILTER_NON_INDEXED_LT</operation>
-        <operation>FILTER_NON_INDEXED_DISTINCT</operation>
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_GT</operation>
         <operation>FILTER_INDEXED_LT</operation>
         <operation>FILTER_INDEXED_DISTINCT</operation>
         <operation>FILTER_FULLTEXT</operation>
     </SupportedOperations>
-    <Behaviors>
-        <Behavior>UPSERT_ON_INSERT</Behavior>
-    </Behaviors>
 </Connector>

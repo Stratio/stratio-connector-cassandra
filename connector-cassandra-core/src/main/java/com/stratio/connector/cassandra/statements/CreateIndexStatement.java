@@ -63,10 +63,7 @@ public class CreateIndexStatement {
      */
     private String tableName = null;
 
-    /**
-     * The tableMetadata of the target table.
-     */
-    private TableMetadata tableMetadata = null;
+
     /**
      * The list of columns covered by the index. Only one column is allowed for {@code DEFAULT}
      * indexes.
@@ -93,10 +90,7 @@ public class CreateIndexStatement {
      */
     private static Map<String, String> luceneTypes = new HashMap<>();
 
-    /**
-     * Table metadata cached on the validate function.
-     */
-    private transient TableMetadata metadata = null;
+
 
     static {
         luceneTypes.put("VARCHAR", "{type:\"string\"}");
@@ -236,7 +230,6 @@ public class CreateIndexStatement {
     protected Map<ValueProperty, ValueProperty> generateLuceneOptions() {
         Map<ValueProperty, ValueProperty> result = new HashMap<>();
 
-        // TODO: Read parameters from default configuration and merge with the user specification.
         result.put(new IdentifierProperty("'refresh_seconds'"), new IdentifierProperty("'1'"));
         result.put(new IdentifierProperty("'num_cached_filters'"), new IdentifierProperty("'1'"));
         result.put(new IdentifierProperty("'ram_buffer_mb'"), new IdentifierProperty("'32'"));

@@ -4,7 +4,7 @@
   <xs:complexType name="ConnectorType">
     <xs:sequence>
       <xs:element type="xs:string" name="ConnectorName"/>
-      <xs:element type="DataStoresNameType" name="DataStoresName"/>
+      <xs:element type="xs:string" name="DataStoresName"/>
       <xs:element type="xs:string" name="Version"/>
       <xs:element type="RequiredPropertiesType" name="RequiredProperties"/>
       <xs:element type="OptionalPropertiesType" name="OptionalProperties"/>
@@ -13,37 +13,12 @@
   </xs:complexType>
   <xs:complexType name="OptionalPropertiesType">
     <xs:sequence>
-      <xs:element type="PropertyType" name="Property" maxOccurs="unbounded" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="PropertyType">
-    <xs:sequence>
-      <xs:element name="Name">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="defaultlimit"/>
-            <xs:enumeration value=""/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-      <xs:element name="Value">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="50"/>
-            <xs:enumeration value=""/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element type="xs:string" name="Property" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="RequiredPropertiesType">
     <xs:sequence>
-      <xs:element type="PropertyType" name="Property" maxOccurs="unbounded" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="DataStoresNameType">
-    <xs:sequence>
-      <xs:element type="xs:string" name="Datastore"/>
+      <xs:element type="xs:string" name="Property" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="SupportedOperationsType">

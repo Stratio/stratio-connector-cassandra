@@ -213,8 +213,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Relation relation = new Relation(selector, Operator.EQ, rightTerm);
         Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
 
-        Map<String, String> aliasColumns = new HashMap<>();
-        aliasColumns.put("demo.users.name", "nameAlias");
+        Map<ColumnName, String> aliasColumns = new HashMap<>();
+        aliasColumns.put(new ColumnName("demo","users","name"), "nameAlias");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
         typeMap.put("demo.users.name", ColumnType.VARCHAR);

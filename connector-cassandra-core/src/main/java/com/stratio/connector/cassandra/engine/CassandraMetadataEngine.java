@@ -95,7 +95,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         if (primaryKey.size() == 1) {
             primaryKeyType = PRIMARY_SINGLE;
         } else {
-            if (clusterKey.size() > 0) {
+            if (clusterKey.isEmpty()) {
                 primaryKeyType = PRIMARY_AND_CLUSTERING_SPECIFIED;
             } else {
                 primaryKeyType = PRIMARY_COMPOSED;
@@ -207,7 +207,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     private String getStringOptions(Map<Selector, Selector> options) {
         StringBuilder stringOptions = new StringBuilder();
-        if (options.size() > 0) {
+        if (options.isEmpty()) {
             int i = 0;
             for (Selector keySelector : options.keySet()) {
                 StringSelector stringKeySelector = (StringSelector) keySelector;
@@ -227,23 +227,23 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     private StringBuilder getStyleStringOption(String key, String value) {
         StringBuilder stringOption = new StringBuilder();
 
-        if (key.equals("COMPACT STORAGE")) {
+        if ("COMPACT STORAGE".equals(key)) {
             stringOption.append(key);
-        } else if (key.equals("CLUSTERING ORDER BY")) {
+        } else if ("CLUSTERING ORDER BY".equals(key)) {
             stringOption.append(key).append(" (").append(value).append(")");
-        } else if ((key.equals("bloom_filter_fp_chance")) ||
-            key.equals("comment") ||
-            key.equals("dclocal_read_repair_chance") ||
-            key.equals("default_time_to_live") ||
-            key.equals("gc_grace_seconds") ||
-            key.equals("min_index_interval") ||
-            key.equals("max_index_interval") ||
-            key.equals("min_index_interval") ||
-            key.equals("populate_io_cache_on_flush") ||
-            key.equals("read_repair_chance") ||
-            key.equals("speculative_retry") ||
-            key.equals("durable_writes") ||
-            key.equals("populate_io_cache_on_flush")) {
+        } else if ((("bloom_filter_fp_chance")).equals(key) ||
+            ("comment").equals(key) ||
+            ("dclocal_read_repair_chance").equals(key) ||
+            ("default_time_to_live").equals(key) ||
+            ("gc_grace_seconds").equals(key) ||
+            ("min_index_interval").equals(key) ||
+            ("max_index_interval").equals(key) ||
+            ("min_index_interval").equals(key) ||
+            ("populate_io_cache_on_flush").equals(key) ||
+            ("read_repair_chance").equals(key) ||
+            ("speculative_retry").equals(key) ||
+            ("durable_writes").equals(key) ||
+            ("populate_io_cache_on_flush").equals(key)) {
             stringOption.append(key).append(" = ").append(value).append("");
         } else {
             stringOption.append(key).append(" = {")

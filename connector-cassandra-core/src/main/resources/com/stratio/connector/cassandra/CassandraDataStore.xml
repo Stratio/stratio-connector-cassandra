@@ -5,22 +5,17 @@
     <RequiredProperties>
         <cluster>
             <name>CassandraCluster</name>
-            <hosts>
+            <node>
                 <host>127.0.0.1</host>
                 <port>9042</port>
-            </hosts>
+            </node>
         </cluster>
     </RequiredProperties>
     <OptionalProperties>
-        <Property>
-            <Name></Name>
-            <Value></Value>
-        </Property>
-        <Property>
-            <Name></Name>
-            <Value></Value>
-        </Property>
     </OptionalProperties>
+    <Behaviors>
+        <Behavior>UPSERT_ON_INSERT</Behavior>
+    </Behaviors>
 </DataStore>
 
 

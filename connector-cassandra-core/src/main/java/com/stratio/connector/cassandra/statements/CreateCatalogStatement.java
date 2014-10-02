@@ -30,12 +30,7 @@ public class CreateCatalogStatement {
      */
     private String catalog;
 
-    /**
-     * Indicates if there is a catalog specified in the table name
-     */
-    private boolean catalogInc;
-
-    /**
+       /**
      * Whether the keyspace should be created only if it not exists.
      */
     private final boolean ifNotExists;
@@ -55,7 +50,6 @@ public class CreateCatalogStatement {
     public CreateCatalogStatement(String catalogName, boolean ifNotExists,
         String options) {
         this.catalog = catalogName;
-        this.catalogInc = true;
         this.ifNotExists = ifNotExists;
         this.options = options;
     }

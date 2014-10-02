@@ -23,6 +23,7 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 import com.stratio.connector.cassandra.data.CassandraResultSet;
 import com.stratio.meta.common.data.Cell;
+import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnType;
 import org.apache.log4j.Logger;
 
@@ -32,10 +33,6 @@ import java.util.*;
 
 public class Utils {
 
-    public static final List<String> supportedTypes = Arrays.asList("bigint", "boolean", "counter",
-        "double", "float", "int",
-        "integer", "varchar");
-    // SOON: "date", "uuid", "timeuuid"
 
     /**
      * Map of methods required to transform a {@link com.datastax.driver.core.DataType} into the
@@ -162,7 +159,7 @@ public class Utils {
      * @return An equivalent Meta ResultSet
      */
     public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(
-        com.datastax.driver.core.ResultSet resultSet, Map<String, String> alias) {
+        com.datastax.driver.core.ResultSet resultSet, Map<ColumnName, String> alias) {
         CassandraResultSet crs = new CassandraResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
@@ -175,7 +172,7 @@ public class Utils {
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
-            if (alias.containsKey(def.getKeyspace() + "." + def.getTable() + "." + def.getName())) {
+            if (alias.containsKey(new ColumnName(def.getKeyspace(), def.getTable() , def.getName()))) {
                 columnMetadata =
                     new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
                         def.getName());
@@ -203,9 +200,9 @@ public class Utils {
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
                     if (alias.containsKey(
-                        def.getKeyspace() + "." + def.getTable() + "." + def.getName())) {
+                        new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
                         metaRow.addCell(alias
-                            .get(def.getKeyspace() + "." + def.getTable() + "." + def.getName()),
+                            .get(new ColumnName(def.getKeyspace(),def.getTable(),def.getName())),
                             metaCell);
                     } else {
                         metaRow.addCell(def.getName(), metaCell);

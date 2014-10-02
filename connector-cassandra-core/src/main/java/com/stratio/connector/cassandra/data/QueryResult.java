@@ -23,7 +23,7 @@ package com.stratio.connector.cassandra.data;
 /**
  * Result of the execution of a query in META.
  */
-public class QueryResult extends com.stratio.meta.common.result.Result {
+public final class QueryResult extends com.stratio.meta.common.result.Result {
 
     /**
      * Serial version UID in order to be {@link java.io.Serializable}.
@@ -53,13 +53,6 @@ public class QueryResult extends com.stratio.meta.common.result.Result {
      * Whether the session catalog has changed.
      */
     private boolean catalogChanged = false;
-
-    /**
-     * Whether the execution of the query has been ignored due to some constraints not being
-     * satisfied (e.g., IF NOT EXISTS).
-     */
-    //TODO Return this type of query for IF NOT EXISTS
-    private boolean ignoredQuery = false;
 
     /**
      * Private class constructor of the factory.

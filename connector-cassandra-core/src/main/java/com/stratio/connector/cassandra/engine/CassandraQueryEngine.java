@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 
 
 public class CassandraQueryEngine implements IQueryEngine {
-    Map<String, String> aliasColumns = new HashMap<>();
+    Map<ColumnName, String> aliasColumns = new HashMap<>();
     Session session = null;
     private List<ColumnName> selectionClause;
     private boolean catalogInc;
@@ -49,20 +49,18 @@ public class CassandraQueryEngine implements IQueryEngine {
     private TableName tableName;
     private boolean whereInc = false;
     private boolean limitInc = true;
-    private List<Relation> where = new ArrayList<Relation>();
-    private StringBuffer alias = new StringBuffer();
+    private List<Relation> where = new ArrayList<>();
     private int limit = 100;
     private Map<String, Session> sessions;
 
     public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
         this.sessions = sessions;
-        this.limit=limitDefault;
+        this.limit = limitDefault;
     }
 
     @Override
     public com.stratio.meta.common.result.QueryResult execute(LogicalWorkflow workflow)
         throws UnsupportedException, ExecutionException {
-        //session = sessions.get(targetCluster.getName());
 
         if (workflow.getInitialSteps().size() > 1) {
             throw new UnsupportedException("");
@@ -89,9 +87,9 @@ public class CassandraQueryEngine implements IQueryEngine {
                             whereInc = true;
                             Relation relation = filter.getRelation();
                             where.add(relation);
-                        }else if (transformation instanceof Limit) {
-                            Limit limitClause =(Limit) transformation;
-                            limit=limitClause.getLimit();
+                        } else if (transformation instanceof Limit) {
+                            Limit limitClause = (Limit) transformation;
+                            limit = limitClause.getLimit();
                         } else {
                             if (transformation instanceof Select) {
                                 Select select = (Select) transformation;
@@ -192,13 +190,13 @@ public class CassandraQueryEngine implements IQueryEngine {
             session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
                 .getColumns();
         for (ColumnMetadata column : columns) {
-            try {
+
+            if (column.getIndex() != null) {
                 if (column.getIndex().isCustomIndex()) {
                     indexName = column.getIndex().getName();
                 }
-            } catch (NullPointerException e) {
-
             }
+
         }
         return indexName;
     }

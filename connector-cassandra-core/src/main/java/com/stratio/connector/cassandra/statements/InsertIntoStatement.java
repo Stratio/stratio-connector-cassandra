@@ -47,10 +47,7 @@ public class InsertIntoStatement {
     private List<String> ids;
 
 
-    /**
-     * A list of {@link com.stratio.meta2.common.statements.structures.terms.GenericTerm} with the literal values to be
-     * assigned if the insert type matches {@code TYPE_VALUES_CLAUSE}.
-     */
+
     private Map<String, ColumnInsertCassandra> cellValues;
 
     /**
@@ -69,10 +66,7 @@ public class InsertIntoStatement {
      */
     private boolean catalogInc;
 
-    /**
-     * Class logger.
-     */
-    private static final Logger LOG = Logger.getLogger(InsertIntoStatement.class);
+
 
     /**
      * InsertIntoStatement general constructor.

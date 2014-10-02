@@ -4,13 +4,13 @@
   <xs:complexType name="clusterType">
     <xs:sequence>
       <xs:element type="xs:string" name="name"/>
-      <xs:element type="hostsType" name="hosts"/>
+      <xs:element type="NodeType" name="node" maxOccurs="unbounded" minOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="hostsType">
+  <xs:complexType name="NodeType">
     <xs:sequence>
       <xs:element type="xs:string" name="host"/>
-      <xs:element type="xs:string" name="port"/>
+      <xs:element type="xs:int" name="port"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="DataStoreType">
@@ -19,17 +19,17 @@
       <xs:element type="xs:string" name="Version"/>
       <xs:element type="RequiredPropertiesType" name="RequiredProperties"/>
       <xs:element type="OptionalPropertiesType" name="OptionalProperties"/>
+      <xs:element type="BehaviorsType" name="Behaviors"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="OptionalPropertiesType">
     <xs:sequence>
-      <xs:element type="PropertyType" name="Property" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="xs:string" name="Property" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="PropertyType">
+  <xs:complexType name="BehaviorsType">
     <xs:sequence>
-      <xs:element type="xs:string" name="Name"/>
-      <xs:element type="xs:string" name="Value"/>
+      <xs:element type="xs:string" name="Behavior" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="RequiredPropertiesType">

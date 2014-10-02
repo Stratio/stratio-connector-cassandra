@@ -90,22 +90,16 @@ public class CassandraStorageEngine implements IStorageEngine {
         com.stratio.meta2.common.metadata.TableMetadata targetTable, Collection<Row> rows)
         throws UnsupportedException, ExecutionException {
         Session session = sessions.get(targetCluster.getName());
-        String tableName = targetTable.getName().getQualifiedName();
-
         for (Row row : rows) {
-
             Set<String> keys = row.getCells().keySet();
-
             Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
             Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
-
             for (String key : keys) {
                 ColumnName col = new ColumnName(targetTable.getName().getCatalogName().getName(),
                     targetTable.getName().getName(), key);
                 columnsMetadata.put(key,
                     new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
                         row.getCell(key).getValue().toString(), key));
-
             }
 
             InsertIntoStatement insertStatement =

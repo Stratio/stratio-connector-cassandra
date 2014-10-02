@@ -41,10 +41,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CassandraConnector implements IConnector {
 
@@ -89,14 +86,15 @@ public class CassandraConnector implements IConnector {
                 result = expr.evaluate(d, XPathConstants.NODESET);
                 this.connectorName=((NodeList)result).item(0).getNodeValue();
             } catch (XPathExpressionException e) {
+                this.connectorName="UNKNOWN";
             }
 
 
             try {
-                expr = xpath.compile("//RequiredProperties/Property[Name='limit']/Value/text()");
-                result = expr.evaluate(d, XPathConstants.NODESET);
-                limitDefault=Integer.parseInt(((NodeList)result).item(0).getNodeValue());
-            } catch (XPathExpressionException e) {
+                Properties props= new Properties();
+                props.load(getClass().getResourceAsStream("/connector-properties.conf"));
+                limitDefault= Integer.parseInt(props.get("limit").toString());
+            } catch (Exception e) {
                 limitDefault=100;
             }
 
@@ -115,8 +113,6 @@ public class CassandraConnector implements IConnector {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                System.out
-                    .println("Shutdown Hook : Closing all sessions now!");
                 uncontrolledShutdown();
             }
         });
@@ -210,8 +206,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IStorageEngine getStorageEngine() throws UnsupportedException {
-        IStorageEngine storageEngine = new CassandraStorageEngine(sessions);
-        return storageEngine;
+        return  new CassandraStorageEngine(sessions);
     }
 
     /**
@@ -222,8 +217,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IQueryEngine getQueryEngine() throws UnsupportedException {
-        IQueryEngine queryEngine = new CassandraQueryEngine(sessions, limitDefault);
-        return queryEngine;
+        return new CassandraQueryEngine(sessions, limitDefault);
     }
 
     /**
@@ -234,8 +228,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IMetadataEngine getMetadataEngine() throws UnsupportedException {
-        IMetadataEngine metadataEngine = new CassandraMetadataEngine(sessions);
-        return metadataEngine;
+        return new CassandraMetadataEngine(sessions);
     }
 
 
