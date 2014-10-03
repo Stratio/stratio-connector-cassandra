@@ -47,6 +47,7 @@ public class CassandraConnector implements IConnector {
 
     private Map<String, Session> sessions;
     private String connectorName;
+    private String[] datastoreName;
     private int limitDefault;
 
 
@@ -89,6 +90,19 @@ public class CassandraConnector implements IConnector {
                 this.connectorName="UNKNOWN";
             }
 
+            try {
+                expr = xpath.compile("//DataStores/DataStoreName/text()");
+                result = expr.evaluate(d, XPathConstants.NODESET);
+                datastoreName=new String[((NodeList) result).getLength()];
+                for (int i=0; i<((NodeList) result).getLength();i++) {
+                    this.datastoreName[i] = ((NodeList) result).item(i).getNodeValue();
+
+                }
+            } catch (XPathExpressionException e) {
+                datastoreName=new String[1];
+                this.datastoreName[0]="UNKNOWN";
+            }
+
 
             try {
                 Properties props= new Properties();
@@ -119,19 +133,24 @@ public class CassandraConnector implements IConnector {
 
     }
 
+    /**
+     * Get the name of the connector
+     *
+     * @return The name.
+     */
     @Override
     public String getConnectorName() {
         return connectorName;
     }
 
     /**
-     * Get the name of the datastore required by the connector.
+     * Get the name of the datastores required by the connector.
      *
-     * @return The name.
+     * @return The names.
      */
     @Override
     public String[] getDatastoreName() {
-        return new String[] {"CassandraConnector"};
+        return datastoreName;
     }
 
     @Override

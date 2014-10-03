@@ -306,6 +306,128 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
 
     @Test
+    public void createTableSinglePKTest() {
+        int rowsInitial = assertTable();
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+
+
+        TableName targetTable = new TableName("demometadata", "users4");
+
+        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        ClusterName clusterRef = new ClusterName("cluster");
+        List<ColumnName> partitionKey = new ArrayList<>();
+        ColumnName partitionColumn1 = new ColumnName("demometadata", "users4", "name");
+        ColumnName clusterColumn1 = new ColumnName("demometadata", "users4", "bool");
+
+        partitionKey.add(partitionColumn1);
+
+        List<ColumnName> clusterKey = new ArrayList<>();
+        clusterKey.add(clusterColumn1);
+
+        Object[] parameters = null;
+        columns.put(new ColumnName(new TableName("demometadata", "users4"), "name"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "name"),
+                parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demometadata", "users4"), "gender"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "gender"),
+                parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demometadata", "users4"), "age"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "age"),
+                parameters, ColumnType.INT));
+        columns.put(new ColumnName(new TableName("demometadata", "users4"), "bool"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "bool"),
+                parameters, ColumnType.BOOLEAN));
+        columns.put(new ColumnName(new TableName("demometadata", "users4"), "phrase"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "phrase"),
+                parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demometadata", "users4"), "email"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "email"),
+                parameters, ColumnType.TEXT));
+
+        Map<IndexName, IndexMetadata> indexes = new HashMap<>();
+        TableMetadata table =
+            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                clusterKey);
+
+        int rowsFinal = rowsInitial;
+        try {
+            cme.createTable(new ClusterName("cluster"), table);
+            rowsFinal = assertTable();
+
+        } catch (UnsupportedException e) {
+
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+
+            e.printStackTrace();
+        }
+        Assert.assertNotEquals(rowsInitial, rowsFinal);
+    }
+
+
+    @Test
+    public void createTablePKwihtClusterKeyTest() {
+        int rowsInitial = assertTable();
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+
+
+        TableName targetTable = new TableName("demometadata", "users5");
+
+        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        ClusterName clusterRef = new ClusterName("cluster");
+        List<ColumnName> partitionKey = new ArrayList<>();
+        ColumnName partitionColumn1 = new ColumnName("demometadata", "users5", "name");
+
+        partitionKey.add(partitionColumn1);
+
+
+        List<ColumnName> clusterKey = new ArrayList<>();
+        Object[] parameters = null;
+        columns.put(new ColumnName(new TableName("demometadata", "users5"), "name"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "name"),
+                parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demometadata", "users5"), "gender"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "gender"),
+                parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demometadata", "users5"), "age"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "age"),
+                parameters, ColumnType.INT));
+        columns.put(new ColumnName(new TableName("demometadata", "users5"), "bool"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "bool"),
+                parameters, ColumnType.BOOLEAN));
+        columns.put(new ColumnName(new TableName("demometadata", "users5"), "phrase"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "phrase"),
+                parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName("demometadata", "users5"), "email"),
+            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "email"),
+                parameters, ColumnType.TEXT));
+
+        Map<IndexName, IndexMetadata> indexes = new HashMap<>();
+        TableMetadata table =
+            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                clusterKey);
+
+        int rowsFinal = rowsInitial;
+        try {
+            cme.createTable(new ClusterName("cluster"), table);
+            rowsFinal = assertTable();
+
+        } catch (UnsupportedException e) {
+
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+
+            e.printStackTrace();
+        }
+        Assert.assertNotEquals(rowsInitial, rowsFinal);
+    }
+
+
+    @Test
     public void createTableTestWithOptions() {
         int rowsInitial = assertTable();
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
@@ -494,16 +616,9 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @AfterClass
     public void restore() {
-        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
-        try {
-            cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata"));
-            cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata2"));
-            cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata3"));
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata2");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata3");
     }
 
 
