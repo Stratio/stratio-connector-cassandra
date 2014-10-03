@@ -22,12 +22,13 @@ import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.meta.common.connector.IQueryEngine;
+import com.stratio.meta.common.connector.IResultHandler;
 import com.stratio.meta.common.exceptions.CriticalExecutionException;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.*;
 import com.stratio.meta.common.result.ErrorResult;
-import com.stratio.meta.common.result.IResultHandler;
+
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
