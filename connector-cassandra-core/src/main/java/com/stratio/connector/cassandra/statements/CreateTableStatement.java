@@ -134,20 +134,6 @@ public class CreateTableStatement {
         }
     }
 
-    private String getStringProperties(Map<Selector, Selector> properties) {
-        StringBuilder str = new StringBuilder();
-
-        int i = 0;
-        for (Selector s : properties.values()) {
-            if (i != 0) {
-                str.append(" AND ");
-            }
-            StringSelector sselector = (StringSelector) s;
-            str.append(sselector.getValue());
-        }
-        return str.toString();
-    }
-
 
     public String getSinglePKString() {
         StringBuilder sb = new StringBuilder(" (");

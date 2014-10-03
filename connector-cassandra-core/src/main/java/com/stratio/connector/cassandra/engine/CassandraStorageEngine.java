@@ -66,7 +66,7 @@ public class CassandraStorageEngine implements IStorageEngine {
                         row.getCell(key).getValue().toString(), key));
             }
         } catch (Exception e) {
-            throw new ExecutionException("Trying insert data in a not existing column");
+            throw new ExecutionException("Trying insert data in a not existing column",e);
         }
 
         InsertIntoStatement insertStatement =
@@ -75,16 +75,21 @@ public class CassandraStorageEngine implements IStorageEngine {
         Result result = CassandraExecutor.execute(query, session);
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
-            }
+            getTypeErrorException(error);
+        }
+    }
+
+    private void getTypeErrorException(ErrorResult error)
+        throws ExecutionException, UnsupportedException {
+        switch (error.getType()) {
+            case EXECUTION:
+                throw new ExecutionException(error.getErrorMessage());
+            case NOT_SUPPORTED:
+                throw new UnsupportedException(error.getErrorMessage());
+            case CRITICAL:
+                throw new CriticalExecutionException(error.getErrorMessage());
+            default:
+                throw new UnsupportedException(error.getErrorMessage());
         }
     }
 
@@ -111,16 +116,7 @@ public class CassandraStorageEngine implements IStorageEngine {
             Result result = CassandraExecutor.execute(query, session);
             if (result.hasError()) {
                 ErrorResult error = (ErrorResult) result;
-                switch (error.getType()) {
-                    case EXECUTION:
-                        throw new ExecutionException(error.getErrorMessage());
-                    case NOT_SUPPORTED:
-                        throw new UnsupportedException(error.getErrorMessage());
-                    case CRITICAL:
-                        throw new CriticalExecutionException(error.getErrorMessage());
-                    default:
-                        throw new UnsupportedException(error.getErrorMessage());
-                }
+                getTypeErrorException(error);
             }
         }
     }

@@ -28,7 +28,6 @@ import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.*;
 import com.stratio.meta.common.result.ErrorResult;
-
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
@@ -65,48 +64,17 @@ public class CassandraQueryEngine implements IQueryEngine {
     public com.stratio.meta.common.result.QueryResult execute(LogicalWorkflow workflow)
         throws UnsupportedException, ExecutionException {
 
-        if (workflow.getInitialSteps().size() > 1) {
-            throw new UnsupportedException("");
-        } else {
-            LogicalStep logicalStep = workflow.getInitialSteps().get(0);
-            while (logicalStep != null) {
-                if (logicalStep instanceof TransformationStep) {
-                    TransformationStep transformation = (TransformationStep) logicalStep;
-                    if (transformation instanceof Project) {
-                        Project project = (Project) transformation;
-                        session = sessions.get(project.getClusterName().getName());
-
-                        tableName = project.getTableName();
-
-                        catalogInc = tableName.isCompletedName();
-                        if (catalogInc) {
-                            CatalogName catalogName = tableName.getCatalogName();
-                            catalog = catalogName.getName();
-                        }
-                        selectionClause = project.getColumnList();
-                    } else {
-                        if (transformation instanceof Filter) {
-                            Filter filter = (Filter) transformation;
-                            whereInc = true;
-                            Relation relation = filter.getRelation();
-                            where.add(relation);
-                        } else if (transformation instanceof Limit) {
-                            Limit limitClause = (Limit) transformation;
-                            limit = limitClause.getLimit();
-                        } else {
-                            if (transformation instanceof Select) {
-                                Select select = (Select) transformation;
-                                aliasColumns = select.getColumnMap();
-                            }
-                        }
-                    }
-                }
-                logicalStep = logicalStep.getNextStep();
+        LogicalStep logicalStep = workflow.getInitialSteps().get(0);
+        while (logicalStep != null) {
+            if (logicalStep instanceof TransformationStep) {
+                getTransformationStep(logicalStep);
             }
+            logicalStep = logicalStep.getNextStep();
         }
+
         String query = parseQuery();
 
-        Result result = null;
+        Result result;
         if (session != null) {
             if (aliasColumns.isEmpty()) {
                 result = CassandraExecutor.execute(query, session);
@@ -119,18 +87,54 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
+            getTypeErrorException(error);
+        }
+
+        return (QueryResult) result;
+
+    }
+
+    private void getTypeErrorException(ErrorResult error)
+        throws ExecutionException, UnsupportedException {
+        switch (error.getType()) {
+            case EXECUTION:
+                throw new ExecutionException(error.getErrorMessage());
+            case NOT_SUPPORTED:
+                throw new UnsupportedException(error.getErrorMessage());
+            case CRITICAL:
+                throw new CriticalExecutionException(error.getErrorMessage());
+            default:
+                throw new UnsupportedException(error.getErrorMessage());
+        }
+    }
+
+    private void getTransformationStep(LogicalStep logicalStep) {
+        TransformationStep transformation = (TransformationStep) logicalStep;
+        if (transformation instanceof Project) {
+            Project project = (Project) transformation;
+            session = sessions.get(project.getClusterName().getName());
+
+            tableName = project.getTableName();
+
+            catalogInc = tableName.isCompletedName();
+            if (catalogInc) {
+                CatalogName catalogName = tableName.getCatalogName();
+                catalog = catalogName.getName();
             }
+            selectionClause = project.getColumnList();
         } else {
-            return (QueryResult) result;
+            if (transformation instanceof Filter) {
+                Filter filter = (Filter) transformation;
+                whereInc = true;
+                Relation relation = filter.getRelation();
+                where.add(relation);
+            } else if (transformation instanceof Limit) {
+                Limit limitClause = (Limit) transformation;
+                limit = limitClause.getLimit();
+            } else if (transformation instanceof Select) {
+                Select select = (Select) transformation;
+                aliasColumns = select.getColumnMap();
+            }
         }
     }
 
@@ -148,57 +152,76 @@ public class CassandraQueryEngine implements IQueryEngine {
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
         if (selectionClause != null) {
-            int i = 0;
-            for (ColumnName columnName : selectionClause) {
-                if (i != 0) {
-                    sb.append(",");
-                }
-                i = 1;
-                sb.append(columnName.getName());
-
-            }
-
+            sb.append(getSelectionClause());
         }
+        sb.append(getFromClause());
+
+        if (whereInc) {
+            sb.append(getWhereClause());
+        }
+
+        if (limitInc) {
+            sb.append(" LIMIT ").append(limit);
+        }
+        return sb.toString().replace("  ", " ");
+    }
+
+    private String getWhereClause() {
+        StringBuilder sb=new StringBuilder();
+        sb.append(" WHERE ");
+        int count = 0;
+        for (Relation relation : where) {
+            if (count > 0) {
+                sb.append(" AND ");
+            }
+            count = 1;
+            switch (relation.getOperator()) {
+                case IN:
+                case BETWEEN:
+                    break;
+                case MATCH:
+                    String nameIndex = getLuceneIndex();
+                    sb.append(nameIndex).append(" = '");
+                    sb.append(getLuceneWhereClause(relation));
+                    sb.append("'");
+                    break;
+                default:
+                    String whereWithQualification = relation.toString();
+                    String parts[] = whereWithQualification.split(" ");
+                    String columnName = parts[0].substring(parts[0].lastIndexOf(".") + 1);
+                    sb.append(columnName);
+                    for (int i = 1; i < parts.length; i++) {
+                        sb.append(" ").append(parts[i]);
+                    }
+                    break;
+            }
+        }
+
+        return sb.toString();
+
+    }
+
+    private String getFromClause() {
+        StringBuilder sb=new StringBuilder();
         sb.append(" FROM ");
         if (catalogInc) {
             sb.append(catalog).append(".");
         }
         sb.append(tableName.getName());
+        return sb.toString();
+    }
 
-        if (whereInc) {
-            sb.append(" WHERE ");
-            int count = 0;
-            for (Relation relation : where) {
-                if (count > 0) {
-                    sb.append(" AND ");
-                }
-                count = 1;
-                switch (relation.getOperator()) {
-                    case IN:
-                    case BETWEEN:
-                        break;
-                    case MATCH:
-                        String nameIndex = getLuceneIndex();
-                        sb.append(nameIndex).append(" = '");
-                        sb.append(getLuceneWhereClause(relation));
-                        sb.append("'");
-                        break;
-                    default:
-                        String whereWithQualification = relation.toString();
-                        String parts[] = whereWithQualification.split(" ");
-                        String columnName = parts[0].substring(parts[0].lastIndexOf(".") + 1);
-                        sb.append(columnName);
-                        for (int i = 1; i < parts.length; i++) {
-                            sb.append(" ").append(parts[i]);
-                        }
-                        break;
-                }
+    private String getSelectionClause() {
+        StringBuilder sb=new StringBuilder();
+        int i = 0;
+        for (ColumnName columnName : selectionClause) {
+            if (i != 0) {
+                sb.append(",");
             }
+            i = 1;
+            sb.append(columnName.getName());
         }
-        if (limitInc) {
-            sb.append(" LIMIT ").append(limit);
-        }
-        return sb.toString().replace("  ", " ");
+        return sb.toString();
     }
 
     private String getLuceneIndex() {
@@ -225,7 +248,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
 
         String column = relation.getLeftTerm().toString()
-            .substring(relation.getLeftTerm().toString().lastIndexOf(".") + 1);
+            .substring(relation.getLeftTerm().toString().lastIndexOf('.') + 1);
         String value = relation.getRightTerm().toString();
         // Generate query for column
         String[] processedQuery = processLuceneQueryType(value);

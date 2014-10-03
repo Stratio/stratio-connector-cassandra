@@ -27,8 +27,6 @@ import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.IndexType;
-import com.stratio.meta2.common.metadata.TableMetadata;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -41,56 +39,10 @@ public class CreateIndexStatement {
 
 
 
-    private String keyspace = null;
-    private boolean keyspaceIncluded = false;
-
-    private IndexType type = null;
-
-    /**
-     * Whether the index should be created only if not exists.
-     */
-    private boolean createIfNotExists = false;
-
-
-
-    /**
-     * The name of the index.
-     */
-    private String name = null;
-
-    /**
-     * The name of the target table.
-     */
-    private String tableName = null;
-
-
-    /**
-     * The list of columns covered by the index. Only one column is allowed for {@code DEFAULT}
-     * indexes.
-     */
-    private List<ColumnMetadata> targetColumns = null;
-
-    /**
-     * The name of the class that implements the secondary index.
-     */
-    private String usingClass = null;
-
-    /**
-     * The map of parameters passed to the index during its creation.
-     */
-    private Map<Selector, Selector> parameters = new LinkedHashMap<>();
-
-    /**
-     * The map of options passed to the index during its creation.
-     */
-    private Map<ValueProperty, ValueProperty> options = new LinkedHashMap<>();
-
     /**
      * Map of lucene types associated with Cassandra data types.
      */
     private static Map<String, String> luceneTypes = new HashMap<>();
-
-
 
     static {
         luceneTypes.put("VARCHAR", "{type:\"string\"}");
@@ -103,12 +55,40 @@ public class CreateIndexStatement {
         luceneTypes.put(DataType.uuid().toString(), "{type:\"uuid\"}");
     }
 
+    private String keyspace = null;
+    private boolean keyspaceIncluded = false;
+    private IndexType type = null;
+    /**
+     * Whether the index should be created only if not exists.
+     */
+    private boolean createIfNotExists = false;
+    /**
+     * The name of the index.
+     */
+    private String name = null;
+    /**
+     * The name of the target table.
+     */
+    private String tableName = null;
+    /**
+     * The list of columns covered by the index. Only one column is allowed for {@code DEFAULT}
+     * indexes.
+     */
+    private List<ColumnMetadata> targetColumns = null;
+    /**
+     * The name of the class that implements the secondary index.
+     */
+    private String usingClass = null;
+    /**
+     * The map of options passed to the index during its creation.
+     */
+    private Map<ValueProperty, ValueProperty> options = new LinkedHashMap<>();
+
 
     public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists,
         Session session)
         throws ExecutionException {
         targetColumns = new ArrayList<>();
-        this.parameters = indexMetadata.getOptions();
         this.targetColumns = indexMetadata.getColumns();
         this.createIfNotExists = createIfNotExists;
         this.type = indexMetadata.getType();
@@ -129,7 +109,7 @@ public class CreateIndexStatement {
                         + getIndexName() + " varchar;");
             } catch (Exception e) {
                 throw new ExecutionException(
-                    "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage());
+                    "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),e);
             }
         }
     }
@@ -143,7 +123,7 @@ public class CreateIndexStatement {
      *
      * @return The name of the index.
      */
-    protected String getIndexName() {
+    private String getIndexName() {
         String result = null;
         if (name == null) {
             StringBuilder sb = new StringBuilder();
@@ -203,22 +183,30 @@ public class CreateIndexStatement {
             sb.append(usingClass);
         }
         if (!options.isEmpty()) {
-            sb.append(" WITH OPTIONS = {");
-            Iterator<Entry<ValueProperty, ValueProperty>> entryIt = options.entrySet().iterator();
-            Entry<ValueProperty, ValueProperty> e;
-            while (entryIt.hasNext()) {
-                e = entryIt.next();
-                sb.append(e.getKey()).append(": ").append(e.getValue());
-                if (entryIt.hasNext()) {
-                    sb.append(", ");
-                }
-            }
-            sb.append("}");
+            sb.append(getOptionsString());
         }
 
         return sb.toString();
     }
 
+    private String getOptionsString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(" WITH OPTIONS = {");
+        Iterator<Entry<ValueProperty, ValueProperty>> entryIt = options.entrySet().iterator();
+        Entry<ValueProperty, ValueProperty> e;
+        while (entryIt.hasNext()) {
+            e = entryIt.next();
+            sb.append(e.getKey()).append(": ").append(e.getValue());
+            if (entryIt.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        sb.append("}");
+
+        return sb.toString();
+
+    }
 
 
     /**
@@ -227,7 +215,7 @@ public class CreateIndexStatement {
      * @return The set of options.
      */
 
-    protected Map<ValueProperty, ValueProperty> generateLuceneOptions() {
+    private Map<ValueProperty, ValueProperty> generateLuceneOptions() {
         Map<ValueProperty, ValueProperty> result = new HashMap<>();
 
         result.put(new IdentifierProperty("'refresh_seconds'"), new IdentifierProperty("'1'"));

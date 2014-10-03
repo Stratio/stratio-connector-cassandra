@@ -69,16 +69,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
-            }
+            getTypeErrorException(error);
         }
     }
 
@@ -116,18 +107,23 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
-            }
+            getTypeErrorException(error);
         }
 
+    }
+
+    private void getTypeErrorException(ErrorResult error)
+        throws ExecutionException, UnsupportedException {
+        switch (error.getType()) {
+            case EXECUTION:
+                throw new ExecutionException(error.getErrorMessage());
+            case NOT_SUPPORTED:
+                throw new UnsupportedException(error.getErrorMessage());
+            case CRITICAL:
+                throw new CriticalExecutionException(error.getErrorMessage());
+            default:
+                throw new UnsupportedException(error.getErrorMessage());
+        }
     }
 
     @Override
@@ -138,16 +134,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
-            }
+            getTypeErrorException(error);
         }
     }
 
@@ -159,16 +146,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
-            }
+            getTypeErrorException(error);
         }
 
     }
@@ -182,16 +160,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         Result result = CassandraExecutor.execute(indexStatement.toString(), session);
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
-            }
+            getTypeErrorException(error);
         }
     }
 
@@ -203,16 +172,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         Result result = CassandraExecutor.execute(indexStatement.toString(), session);
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
-            switch (error.getType()) {
-                case EXECUTION:
-                    throw new ExecutionException(error.getErrorMessage());
-                case NOT_SUPPORTED:
-                    throw new UnsupportedException(error.getErrorMessage());
-                case CRITICAL:
-                    throw new CriticalExecutionException(error.getErrorMessage());
-                default:
-                    throw new UnsupportedException(error.getErrorMessage());
-            }
+            getTypeErrorException(error);
         }
 
     }
@@ -220,7 +180,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     private String getStringOptions(Map<Selector, Selector> options) {
         StringBuilder stringOptions = new StringBuilder();
-        if (options.isEmpty()) {
+        if (!options.isEmpty()) {
             int i = 0;
             for (Selector keySelector : options.keySet()) {
                 StringSelector stringKeySelector = (StringSelector) keySelector;

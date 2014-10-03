@@ -217,6 +217,35 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
     }
 
     @Test
+    public void createCatalogWithOptionsIncompleteTest() {
+
+        int rowsInitial = assertCatalog();
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+        options.put(new StringSelector("REPLICATION"),
+            new StringSelector("'class' : 'SimpleStrategy'"));
+
+        Map<TableName, TableMetadata> tables = new HashMap<>();
+
+        CatalogMetadata catalogmetadata =
+            new CatalogMetadata(new CatalogName("demoMetadata3"), options, tables);
+        int rowsFinal = rowsInitial;
+        try {
+            cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
+            Assert.fail("Options incomplete");
+        } catch (UnsupportedException e) {
+            Assert.assertTrue(true);
+        } catch (ExecutionException e) {
+            Assert.assertTrue(true);
+        }
+
+
+    }
+
+
+
+    @Test
     public void createTableTest() {
         int rowsInitial = assertTable();
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
@@ -469,6 +498,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         try {
             cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata"));
             cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata2"));
+            cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata3"));
         } catch (UnsupportedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
