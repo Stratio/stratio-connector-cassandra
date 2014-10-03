@@ -48,7 +48,7 @@
 
 
     <properties>
-        <cassandra.driver>2.0.0</cassandra.driver>
+        <cassandra.driver>2.0.6</cassandra.driver>
         <scala.version>2.10.4</scala.version>
         <akka.version>2.2.4</akka.version>
         <deep.version>0.3.2</deep.version>
