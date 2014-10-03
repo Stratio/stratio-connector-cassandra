@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Connector>
     <ConnectorName>CassandraConnector</ConnectorName>
-    <DataStoresName>Cassandra</DataStoresName>
+    <DataStores>
+        <DataStoreName>Cassandra</DataStoreName>
+    </DataStores>
     <Version>0.1.0</Version>
     <RequiredProperties>
+        <Property>
+            <PropertyName>DefaultLimit</PropertyName>
+            <Description>It is necessary to indicate de default limit for the queries</Description>
+        </Property>
     </RequiredProperties>
-    <OptionalProperties>
-    </OptionalProperties>
     <SupportedOperations>
         <operation>CREATE_CATALOG</operation>
         <operation>DROP_CATALOG</operation>

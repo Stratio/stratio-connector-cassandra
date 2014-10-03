@@ -3,13 +3,14 @@
     <Name>Cassandra</Name>
     <Version>2.0.0</Version>
     <RequiredProperties>
-        <cluster>
-            <name>CassandraCluster</name>
-            <node>
-                <host>127.0.0.1</host>
-                <port>9042</port>
-            </node>
-        </cluster>
+        <Property>
+            <PropertyName>Hosts</PropertyName>
+            <Description>Host list with its own port. Example: [host1,host2,host3]</Description>
+        </Property>
+        <Property>
+            <PropertyName>Port</PropertyName>
+            <Description>Cassandra Port</Description>
+        </Property>
     </RequiredProperties>
     <OptionalProperties>
     </OptionalProperties>

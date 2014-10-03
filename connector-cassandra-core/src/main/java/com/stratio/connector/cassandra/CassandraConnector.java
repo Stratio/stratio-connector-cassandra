@@ -147,7 +147,7 @@ public class CassandraConnector implements IConnector {
         Map<String, String> clusterOptions = config.getOptions();
 
         EngineConfig engineConfig = new EngineConfig();
-        //the hosts are received as [host1,host2,host3...]
+        //the hosts must be received as [host1:port,host2:port,host3:port...]
         engineConfig.setCassandraHosts(
             clusterOptions.get("Hosts").substring(1, clusterOptions.get("Hosts").length() - 1)
                 .split(","));
