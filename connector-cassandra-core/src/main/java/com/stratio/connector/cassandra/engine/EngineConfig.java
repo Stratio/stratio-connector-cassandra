@@ -19,14 +19,13 @@
 package com.stratio.connector.cassandra.engine;
 
 import com.stratio.meta.common.security.ICredentials;
-import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Random;
 
 public class EngineConfig {
 
-   
+
     /**
      * Cassandra hosts.
      */
@@ -44,6 +43,7 @@ public class EngineConfig {
 
     private String clusterName;
     private ICredentials credentials;
+
 
 
     /**
@@ -117,4 +117,6 @@ public class EngineConfig {
     public void setCredentials(ICredentials credentials) {
         this.credentials = credentials;
     }
+
+
 }

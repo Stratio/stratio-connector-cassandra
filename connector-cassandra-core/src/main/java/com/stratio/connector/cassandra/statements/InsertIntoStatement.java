@@ -23,7 +23,6 @@ import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.meta.common.utils.StringUtils;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

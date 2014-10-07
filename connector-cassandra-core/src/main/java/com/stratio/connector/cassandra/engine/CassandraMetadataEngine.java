@@ -6,7 +6,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -17,7 +17,6 @@
  */
 
 package com.stratio.connector.cassandra.engine;
-
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
@@ -38,6 +37,7 @@ import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +47,25 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     private static final int PRIMARY_SINGLE = 1;
     private static final int PRIMARY_COMPOSED = 2;
     private static final int PRIMARY_AND_CLUSTERING_SPECIFIED = 3;
+    private static List<String> createTableOptions = new ArrayList<>();
+
+    static {
+        createTableOptions.add("bloom_filter_fp_chance");
+        createTableOptions.add("comment");
+        createTableOptions.add("dclocal_read_repair_chance");
+        createTableOptions.add("default_time_to_live");
+        createTableOptions.add("gc_grace_seconds");
+        createTableOptions.add("min_index_interval");
+        createTableOptions.add("max_index_interval");
+        createTableOptions.add("min_index_interval");
+        createTableOptions.add("populate_io_cache_on_flush");
+        createTableOptions.add("read_repair_chance");
+        createTableOptions.add("speculative_retry");
+        createTableOptions.add("durable_writes");
+        createTableOptions.add("populate_io_cache_on_flush");
+
+    }
+
     private Map<String, Session> sessions;
     private Session session = null;
 
@@ -79,7 +98,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
-        String tableName = tableMetadata.getName().getQualifiedName();
+
         Map<Selector, Selector> tableOptions = tableMetadata.getOptions();
         List<ColumnName> primaryKey = tableMetadata.getPrimaryKey();
         List<ColumnName> partitionKey = tableMetadata.getPartitionKey();
@@ -95,14 +114,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                 primaryKeyType = PRIMARY_COMPOSED;
             }
         }
-
-        Map<ColumnName, com.stratio.meta2.common.metadata.ColumnMetadata> tableColumns =
-            tableMetadata.getColumns();
-
         String stringOptions = getStringOptions(tableOptions);
 
         CreateTableStatement tableStatement =
-            new CreateTableStatement(tableName, tableColumns, primaryKey, partitionKey, clusterKey,
+            new CreateTableStatement(tableMetadata, primaryKey, partitionKey, clusterKey,
                 primaryKeyType, stringOptions, true);
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
         if (result.hasError()) {
@@ -182,9 +197,11 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         StringBuilder stringOptions = new StringBuilder();
         if (!options.isEmpty()) {
             int i = 0;
-            for (Selector keySelector : options.keySet()) {
-                StringSelector stringKeySelector = (StringSelector) keySelector;
-                StringSelector optionSelector = (StringSelector) options.get(keySelector);
+
+            for (Map.Entry<Selector, Selector> entry : options.entrySet()) {
+                StringSelector stringKeySelector = (StringSelector) entry.getKey();
+                StringSelector optionSelector = (StringSelector) entry.getValue();
+
                 if (i != 0) {
                     stringOptions.append(" AND ");
                 }
@@ -204,19 +221,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             stringOption.append(key);
         } else if ("CLUSTERING ORDER BY".equals(key)) {
             stringOption.append(key).append(" (").append(value).append(")");
-        } else if ((("bloom_filter_fp_chance")).equals(key) ||
-            ("comment").equals(key) ||
-            ("dclocal_read_repair_chance").equals(key) ||
-            ("default_time_to_live").equals(key) ||
-            ("gc_grace_seconds").equals(key) ||
-            ("min_index_interval").equals(key) ||
-            ("max_index_interval").equals(key) ||
-            ("min_index_interval").equals(key) ||
-            ("populate_io_cache_on_flush").equals(key) ||
-            ("read_repair_chance").equals(key) ||
-            ("speculative_retry").equals(key) ||
-            ("durable_writes").equals(key) ||
-            ("populate_io_cache_on_flush").equals(key)) {
+        } else if  (createTableOptions.contains(key)){
             stringOption.append(key).append(" = ").append(value).append("");
         } else {
             stringOption.append(key).append(" = {")

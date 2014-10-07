@@ -50,10 +50,10 @@ public class DropIndexStatement {
 
         if (index.getColumns() != null && index.getColumns().size() != 0) {
             this.catalogInc = true;
-            this.catalog =
-                index.getColumns().get(0).getName().getTableName().getCatalogName().getName();
+            this.catalog = index.getName().getTableName().getCatalogName().getName();
+
         } else {
-            String[] indexQ = index.getName().getQualifiedName().split(".");
+            String[] indexQ = index.getName().getQualifiedName().split("\\.");
             if (indexQ.length > 1) {
                 this.catalog = indexQ[0];
                 catalogInc = true;

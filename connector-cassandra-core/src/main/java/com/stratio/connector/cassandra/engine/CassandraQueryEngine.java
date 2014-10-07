@@ -6,7 +6,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.stratio.connector.cassandra.engine;
 
 
@@ -43,8 +44,8 @@ import java.util.regex.Pattern;
 
 
 public class CassandraQueryEngine implements IQueryEngine {
-    Map<ColumnName, String> aliasColumns = new HashMap<>();
-    Session session = null;
+    private Map<ColumnName, String> aliasColumns = new HashMap<>();
+    private Session session = null;
     private List<ColumnName> selectionClause;
     private boolean catalogInc;
     private String catalog;
@@ -230,13 +231,11 @@ public class CassandraQueryEngine implements IQueryEngine {
             session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
                 .getColumns();
         for (ColumnMetadata column : columns) {
-
             if (column.getIndex() != null) {
                 if (column.getIndex().isCustomIndex()) {
                     indexName = column.getIndex().getName();
                 }
             }
-
         }
         return indexName;
     }
@@ -320,6 +319,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         return result;
     }
 
-
-
+    public Session getSession() {
+        return session;
+    }
 }

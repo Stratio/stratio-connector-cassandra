@@ -6,7 +6,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -31,8 +31,6 @@ import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -41,31 +39,21 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CassandraConnector implements IConnector {
-
-    private Map<String, Session> sessions;
-    private String connectorName;
-    private String[] datastoreName;
-    private int limitDefault;
-
 
     /**
      * Class logger.
      */
     private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
-
-    public static void main(String[] args) {
-
-        CassandraConnector cassandraConnector = new CassandraConnector();
-
-        ConnectorApp connectorApp = new ConnectorApp();
-        connectorApp.startup(cassandraConnector);
-        cassandraConnector.attachShutDownHook();
-
-    }
-
+    private Map<String, Session> sessions;
+    private String connectorName;
+    private String[] datastoreName;
+    private int defaultLimit;
 
     public CassandraConnector() {
         sessions = new HashMap<>();
@@ -85,33 +73,23 @@ public class CassandraConnector implements IConnector {
             try {
                 expr = xpath.compile("//ConnectorName/text()");
                 result = expr.evaluate(d, XPathConstants.NODESET);
-                this.connectorName=((NodeList)result).item(0).getNodeValue();
+                this.connectorName = ((NodeList) result).item(0).getNodeValue();
             } catch (XPathExpressionException e) {
-                this.connectorName="UNKNOWN";
+                this.connectorName = "UNKNOWN";
             }
 
             try {
                 expr = xpath.compile("//DataStores/DataStoreName/text()");
                 result = expr.evaluate(d, XPathConstants.NODESET);
-                datastoreName=new String[((NodeList) result).getLength()];
-                for (int i=0; i<((NodeList) result).getLength();i++) {
+                datastoreName = new String[((NodeList) result).getLength()];
+                for (int i = 0; i < ((NodeList) result).getLength(); i++) {
                     this.datastoreName[i] = ((NodeList) result).item(i).getNodeValue();
 
                 }
             } catch (XPathExpressionException e) {
-                datastoreName=new String[1];
-                this.datastoreName[0]="UNKNOWN";
+                datastoreName = new String[1];
+                this.datastoreName[0] = "UNKNOWN";
             }
-
-
-            try {
-                Properties props= new Properties();
-                props.load(getClass().getResourceAsStream("/connector-properties.conf"));
-                limitDefault= Integer.parseInt(props.get("limit").toString());
-            } catch (Exception e) {
-                limitDefault=100;
-            }
-
 
         } catch (SAXException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration");
@@ -120,6 +98,16 @@ public class CassandraConnector implements IConnector {
         } catch (ParserConfigurationException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration");
         }
+    }
+
+    public static void main(String[] args) {
+
+        CassandraConnector cassandraConnector = new CassandraConnector();
+
+        ConnectorApp connectorApp = new ConnectorApp();
+        connectorApp.startup(cassandraConnector);
+        cassandraConnector.attachShutDownHook();
+
     }
 
     public void attachShutDownHook() {
@@ -150,7 +138,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public String[] getDatastoreName() {
-        return datastoreName;
+        return datastoreName.clone();
     }
 
     @Override
@@ -172,6 +160,12 @@ public class CassandraConnector implements IConnector {
                 .split(","));
         engineConfig.setCassandraPort(Integer.parseInt(clusterOptions.get("Port")));
         engineConfig.setCredentials(credentials);
+
+        if (clusterOptions.get("DefaultLimit") == null) {
+            defaultLimit = 100;
+        } else {
+            defaultLimit = Integer.parseInt(clusterOptions.get("DefaultLimit"));
+        }
 
         Engine engine = new Engine(engineConfig);
         sessions.put(clusterName.getName(), engine.getSession());
@@ -225,7 +219,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IStorageEngine getStorageEngine() throws UnsupportedException {
-        return  new CassandraStorageEngine(sessions);
+        return new CassandraStorageEngine(sessions);
     }
 
     /**
@@ -236,7 +230,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IQueryEngine getQueryEngine() throws UnsupportedException {
-        return new CassandraQueryEngine(sessions, limitDefault);
+        return new CassandraQueryEngine(sessions, defaultLimit);
     }
 
     /**

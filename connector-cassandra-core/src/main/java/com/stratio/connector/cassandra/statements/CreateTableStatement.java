@@ -23,8 +23,7 @@ package com.stratio.connector.cassandra.statements;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
+import com.stratio.meta2.common.metadata.TableMetadata;
 
 import java.util.Iterator;
 import java.util.List;
@@ -95,31 +94,22 @@ public class CreateTableStatement {
     /**
      * Class constructor.
      *
-     * @param tableName      The name of the table.
-     * @param tableColumns   A map with the name of the columns in the table and the associated data type.
+     * @param tableMetadata  The metadata of the table.
      * @param primaryKey     The list of columns that are part of the primary key.
      * @param clusterKey     The list of columns that are part of the clustering key.
      * @param primaryKeyType The type of primary key.
      */
-    public CreateTableStatement(String tableName, Map<ColumnName, ColumnMetadata> tableColumns,
-        List<ColumnName> primaryKey, List<ColumnName> partitionKey,List<ColumnName> clusterKey, int primaryKeyType,
-        String properties, boolean ifNotExists)
-        throws ExecutionException {
-
-        if (tableName.contains(".")) {
-            String[] ksAndTablename = tableName.split("\\.");
-            catalog = ksAndTablename[0];
-            this.tableName = ksAndTablename[1];
-            catalogInc = true;
-        } else {
-            this.tableName = tableName;
-        }
-        this.tableColumns = tableColumns;
+    public CreateTableStatement(TableMetadata tableMetadata,
+        List<ColumnName> primaryKey, List<ColumnName> partitionKey, List<ColumnName> clusterKey,
+        int primaryKeyType, String properties, boolean ifNotExists) throws ExecutionException {
+        this.tableName = tableMetadata.getName().getName();
+        this.catalog = tableMetadata.getName().getCatalogName().getName();
+        this.catalogInc = true;
+        this.tableColumns = tableMetadata.getColumns();
         this.primaryKey = primaryKey;
         this.clusterKey = clusterKey;
         this.primaryKeyType = primaryKeyType;
         this.ifNotExists = ifNotExists;
-
 
         if (properties.length() > 0) {
             this.withProperties = true;

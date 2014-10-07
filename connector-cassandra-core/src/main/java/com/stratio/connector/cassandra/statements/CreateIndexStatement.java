@@ -24,11 +24,15 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.IdentifierProperty;
 import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.IndexType;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 
@@ -74,7 +78,7 @@ public class CreateIndexStatement {
      * The list of columns covered by the index. Only one column is allowed for {@code DEFAULT}
      * indexes.
      */
-    private List<ColumnMetadata> targetColumns = null;
+    private Map<ColumnName, ColumnMetadata> targetColumns = null;
     /**
      * The name of the class that implements the secondary index.
      */
@@ -88,12 +92,11 @@ public class CreateIndexStatement {
     public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists,
         Session session)
         throws ExecutionException {
-        targetColumns = new ArrayList<>();
         this.targetColumns = indexMetadata.getColumns();
         this.createIfNotExists = createIfNotExists;
         this.type = indexMetadata.getType();
-        this.tableName = targetColumns.get(0).getName().getTableName().getName();
-        this.keyspace = targetColumns.get(0).getName().getTableName().getCatalogName().getName();
+        this.tableName = indexMetadata.getName().getTableName().getName();
+        this.keyspace = indexMetadata.getName().getTableName().getCatalogName().getName();
         if (keyspace != null) {
             this.keyspaceIncluded = true;
         }
@@ -105,11 +108,11 @@ public class CreateIndexStatement {
             //Create the new column for the Lucene Index
             try {
                 session.execute(
-                    "ALTER TABLE " + targetColumns.get(0).getName().getTableName() + " ADD "
-                        + getIndexName() + " varchar;");
+                    "ALTER TABLE " + indexMetadata.getName().getTableName().getQualifiedName() + " ADD " + getIndexName() + " varchar;");
             } catch (Exception e) {
                 throw new ExecutionException(
-                    "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),e);
+                    "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),
+                    e);
             }
         }
     }
@@ -132,10 +135,12 @@ public class CreateIndexStatement {
                 sb.append(tableName);
             } else {
                 sb.append(tableName);
-                for (ColumnMetadata c : targetColumns) {
+
+                for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
                     sb.append("_");
-                    sb.append(c.getName());
+                    sb.append(entry.getValue());
                 }
+
                 sb.append("_idx");
             }
             result = sb.toString();
@@ -169,11 +174,11 @@ public class CreateIndexStatement {
         sb.append(tableName);
         sb.append(" (");
         int i = 0;
-        for (ColumnMetadata columnName : targetColumns) {
+        for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
             if (i != 0) {
                 sb.append(",");
             }
-            sb.append(columnName.getName().getName());
+            sb.append(entry.getValue().getName().getName());
             i = 1;
         }
         sb.append(")");
@@ -242,10 +247,10 @@ public class CreateIndexStatement {
 
 
         // Iterate throught the columns.
-        for (ColumnMetadata column : targetColumns) {
-            sb.append(column.getName().getName());
+        for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
+            sb.append(entry.getValue().getName().getName());
             sb.append(":");
-            sb.append(luceneTypes.get(column.getColumnType().name()));
+            sb.append(luceneTypes.get(entry.getValue().getColumnType().name()));
             sb.append(",");
         }
 

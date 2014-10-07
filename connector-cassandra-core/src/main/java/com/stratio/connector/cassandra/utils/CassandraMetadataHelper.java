@@ -44,11 +44,15 @@ import java.util.Map;
 public class CassandraMetadataHelper {
 
     /**
+     * Class logger.
+     */
+    private static final Logger LOG = Logger.getLogger(CassandraMetadataHelper.class.getName());
+    /**
      * Mapping of native datatypes to SQL types
      */
     private static Map<DataType.Name, String> nativeODBCType = new HashMap<>();
-    static Map<ColumnType, String> dbType = new HashMap<>();
-    static Map<ColumnType, Class<?>> dbClass = new HashMap<>();
+    private static Map<ColumnType, String> dbType = new HashMap<>();
+    private static Map<ColumnType, Class<?>> dbClass = new HashMap<>();
 
     static {
 
@@ -76,11 +80,6 @@ public class CassandraMetadataHelper {
      * Mapping between Cassandra datatypes and META datatypes.
      */
     private static Map<String, ColumnType> typeMapping = new HashMap<>();
-
-    /**
-     * Class logger.
-     */
-    private static final Logger LOG = Logger.getLogger(CassandraMetadataHelper.class.getName());
 
     /**
      * Class constructor.

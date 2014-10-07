@@ -72,7 +72,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         ClusterName clusterRef = new ClusterName("cluster");
         List<ColumnName> partitionKey = new ArrayList<>();
         List<ColumnName> clusterKey = new ArrayList<>();
-        Object[] parameters = null;
+        Object[] parameters = {};
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
             new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
                 ColumnType.TEXT));
@@ -135,7 +135,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         ClusterName clusterRef = new ClusterName("cluster");
         List<ColumnName> partitionKey = new ArrayList<>();
         List<ColumnName> clusterKey = new ArrayList<>();
-        Object[] parameters = null;
+        Object[] parameters = {};
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
             new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
                 ColumnType.TEXT));
@@ -195,7 +195,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         ClusterName clusterRef = new ClusterName("cluster");
         List<ColumnName> partitionKey = new ArrayList<>();
         List<ColumnName> clusterKey = new ArrayList<>();
-        Object[] parameters = null;
+        Object[] parameters = {};
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
             new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
                 ColumnType.TEXT));
