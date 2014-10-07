@@ -104,7 +104,7 @@ public class CreateIndexStatement {
 
         if (type == IndexType.FULL_TEXT) {
             usingClass = "'com.stratio.cassandra.index.RowIndex'";
-            options = generateLuceneOptions();
+
             //Create the new column for the Lucene Index
             try {
                 session.execute(
@@ -157,6 +157,7 @@ public class CreateIndexStatement {
     public String toString() {
         StringBuilder sb = new StringBuilder("CREATE ");
         if (type == (IndexType.FULL_TEXT)) {
+            options = generateLuceneOptions();
             sb.append("CUSTOM");
         }
         sb.append(" INDEX ");

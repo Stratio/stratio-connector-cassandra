@@ -189,7 +189,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                 default:
                     String whereWithQualification = relation.toString();
                     String parts[] = whereWithQualification.split(" ");
-                    String columnName = parts[0].substring(parts[0].lastIndexOf(".") + 1);
+                    String columnName = parts[0].substring(parts[0].lastIndexOf('.') + 1);
                     sb.append(columnName);
                     for (int i = 1; i < parts.length; i++) {
                         sb.append(" ").append(parts[i]);
