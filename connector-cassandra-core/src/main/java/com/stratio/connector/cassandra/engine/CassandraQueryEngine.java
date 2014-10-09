@@ -141,11 +141,12 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     @Override public void asyncExecute(String queryId, LogicalWorkflow workflow,
         IResultHandler resultHandler) throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Async execute not supported yet.");
 
     }
 
     @Override public void stop(String queryId) throws UnsupportedException, ExecutionException {
-
+        throw new UnsupportedException("Stop for Async execute not supported yet.");
     }
 
 
