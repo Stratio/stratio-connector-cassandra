@@ -12,8 +12,6 @@
             <Description>Cassandra Port</Description>
         </Property>
     </RequiredProperties>
-    <OptionalProperties>
-    </OptionalProperties>
     <Behaviors>
         <Behavior>UPSERT_ON_INSERT</Behavior>
     </Behaviors>
