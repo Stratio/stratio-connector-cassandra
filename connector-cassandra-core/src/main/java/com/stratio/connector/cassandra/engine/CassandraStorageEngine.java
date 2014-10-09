@@ -73,25 +73,11 @@ public class CassandraStorageEngine implements IStorageEngine {
             new InsertIntoStatement(targetTable, columnsMetadata, true);
         String query = insertStatement.toString();
         Result result = CassandraExecutor.execute(query, session);
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
+
+        checkError(result);
+
     }
 
-    private void getTypeErrorException(ErrorResult error)
-        throws ExecutionException, UnsupportedException {
-        switch (error.getType()) {
-            case EXECUTION:
-                throw new ExecutionException(error.getErrorMessage());
-            case NOT_SUPPORTED:
-                throw new UnsupportedException(error.getErrorMessage());
-            case CRITICAL:
-                throw new CriticalExecutionException(error.getErrorMessage());
-            default:
-                throw new UnsupportedException(error.getErrorMessage());
-        }
-    }
 
     @Override
     public void insert(ClusterName targetCluster,
@@ -114,10 +100,28 @@ public class CassandraStorageEngine implements IStorageEngine {
                 new InsertIntoStatement(targetTable, columnsMetadata, true);
             String query = insertStatement.toString();
             Result result = CassandraExecutor.execute(query, session);
-            if (result.hasError()) {
-                ErrorResult error = (ErrorResult) result;
-                getTypeErrorException(error);
-            }
+            checkError(result);
+        }
+    }
+
+    private void getTypeErrorException(ErrorResult error)
+        throws ExecutionException, UnsupportedException {
+        switch (error.getType()) {
+            case EXECUTION:
+                throw new ExecutionException(error.getErrorMessage());
+            case NOT_SUPPORTED:
+                throw new UnsupportedException(error.getErrorMessage());
+            case CRITICAL:
+                throw new CriticalExecutionException(error.getErrorMessage());
+            default:
+                throw new UnsupportedException(error.getErrorMessage());
+        }
+    }
+
+    private void checkError(Result result) throws ExecutionException, UnsupportedException {
+        if (result.hasError()) {
+            ErrorResult error = (ErrorResult) result;
+            getTypeErrorException(error);
         }
     }
 
