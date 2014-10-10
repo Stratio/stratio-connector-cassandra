@@ -66,16 +66,46 @@ public class CassandraStorageEngine implements IStorageEngine {
                         row.getCell(key).getValue().toString(), key));
             }
         } catch (Exception e) {
-            throw new ExecutionException("Trying insert data in a not existing column",e);
+            throw new ExecutionException("Trying insert data in a not existing column", e);
         }
 
         InsertIntoStatement insertStatement =
             new InsertIntoStatement(targetTable, columnsMetadata, true);
         String query = insertStatement.toString();
         Result result = CassandraExecutor.execute(query, session);
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
+
+        checkError(result);
+
+    }
+
+
+    @Override
+    public void insert(ClusterName targetCluster,
+        com.stratio.meta2.common.metadata.TableMetadata targetTable, Collection<Row> rows)
+        throws UnsupportedException, ExecutionException {
+        Session session = sessions.get(targetCluster.getName());
+        for (Row row : rows) {
+            Set<String> keys = row.getCells().keySet();
+            Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
+            Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
+            try {
+                for (String key : keys) {
+                    ColumnName col =
+                        new ColumnName(targetTable.getName().getCatalogName().getName(),
+                            targetTable.getName().getName(), key);
+                    columnsMetadata.put(key,
+                        new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
+                            row.getCell(key).getValue().toString(), key));
+                }
+            } catch (Exception e) {
+                throw new ExecutionException("Trying insert data in a not existing column", e);
+            }
+
+            InsertIntoStatement insertStatement =
+                new InsertIntoStatement(targetTable, columnsMetadata, true);
+            String query = insertStatement.toString();
+            Result result = CassandraExecutor.execute(query, session);
+            checkError(result);
         }
     }
 
@@ -93,31 +123,10 @@ public class CassandraStorageEngine implements IStorageEngine {
         }
     }
 
-    @Override
-    public void insert(ClusterName targetCluster,
-        com.stratio.meta2.common.metadata.TableMetadata targetTable, Collection<Row> rows)
-        throws UnsupportedException, ExecutionException {
-        Session session = sessions.get(targetCluster.getName());
-        for (Row row : rows) {
-            Set<String> keys = row.getCells().keySet();
-            Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
-            Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
-            for (String key : keys) {
-                ColumnName col = new ColumnName(targetTable.getName().getCatalogName().getName(),
-                    targetTable.getName().getName(), key);
-                columnsMetadata.put(key,
-                    new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
-                        row.getCell(key).getValue().toString(), key));
-            }
-
-            InsertIntoStatement insertStatement =
-                new InsertIntoStatement(targetTable, columnsMetadata, true);
-            String query = insertStatement.toString();
-            Result result = CassandraExecutor.execute(query, session);
-            if (result.hasError()) {
-                ErrorResult error = (ErrorResult) result;
-                getTypeErrorException(error);
-            }
+    private void checkError(Result result) throws ExecutionException, UnsupportedException {
+        if (result.hasError()) {
+            ErrorResult error = (ErrorResult) result;
+            getTypeErrorException(error);
         }
     }
 

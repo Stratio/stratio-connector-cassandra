@@ -86,13 +86,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             new CreateCatalogStatement(catalogName, true, stringOptions);
         Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
 
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
+        checkError(result);
+
+
     }
-
-
 
     @Override
     public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
@@ -120,25 +117,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             new CreateTableStatement(tableMetadata, primaryKey, partitionKey, clusterKey,
                 primaryKeyType, stringOptions, true);
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
+        checkError(result);
 
-    }
-
-    private void getTypeErrorException(ErrorResult error)
-        throws ExecutionException, UnsupportedException {
-        switch (error.getType()) {
-            case EXECUTION:
-                throw new ExecutionException(error.getErrorMessage());
-            case NOT_SUPPORTED:
-                throw new UnsupportedException(error.getErrorMessage());
-            case CRITICAL:
-                throw new CriticalExecutionException(error.getErrorMessage());
-            default:
-                throw new UnsupportedException(error.getErrorMessage());
-        }
     }
 
     @Override
@@ -147,10 +127,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
         Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
+        checkError(result);
     }
 
     @Override
@@ -159,10 +136,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
+        checkError(result);
 
     }
 
@@ -173,10 +147,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateIndexStatement indexStatement =
             new CreateIndexStatement(indexMetadata, true, session);
         Result result = CassandraExecutor.execute(indexStatement.toString(), session);
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
+        checkError(result);
     }
 
     @Override
@@ -185,10 +156,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
         Result result = CassandraExecutor.execute(indexStatement.toString(), session);
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
+        checkError(result);
 
     }
 
@@ -229,5 +197,27 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         }
 
         return stringOption;
+    }
+
+    private void checkError(Result result) throws ExecutionException, UnsupportedException {
+        if (result.hasError()) {
+            ErrorResult error = (ErrorResult) result;
+            getTypeErrorException(error);
+        }
+    }
+
+
+    private void getTypeErrorException(ErrorResult error)
+        throws ExecutionException, UnsupportedException {
+        switch (error.getType()) {
+            case EXECUTION:
+                throw new ExecutionException(error.getErrorMessage());
+            case NOT_SUPPORTED:
+                throw new UnsupportedException(error.getErrorMessage());
+            case CRITICAL:
+                throw new CriticalExecutionException(error.getErrorMessage());
+            default:
+                throw new UnsupportedException(error.getErrorMessage());
+        }
     }
 }

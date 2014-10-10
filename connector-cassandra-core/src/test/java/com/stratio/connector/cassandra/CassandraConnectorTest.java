@@ -23,6 +23,7 @@ import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.connector.IQueryEngine;
 import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.exceptions.ConnectionException;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
@@ -224,6 +225,77 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
 
     }
 
+    @Test
+    public void connectorStopTest() {
+        CassandraConnector cassandraConnector = new CassandraConnector();
+
+        ICredentials credentials = null;
+        Map<String, String> options = new HashMap<>();
+        options.put("Hosts", "[127.0.0.1]");
+        options.put("Port", "9042");
+
+        ConnectorClusterConfig config =
+            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        try {
+            cassandraConnector.connect(credentials, config);
+        } catch (ConnectionException e) {
+            Assert.fail(e.getMessage());
+        }
+        try {
+            cassandraConnector.shutdown();
+            Assert.assertTrue(true);
+        } catch (ExecutionException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void connectorUncontrolledStopTest() {
+        CassandraConnector cassandraConnector = new CassandraConnector();
+
+        ICredentials credentials = null;
+        Map<String, String> options = new HashMap<>();
+        options.put("Hosts", "[127.0.0.1]");
+        options.put("Port", "9042");
+
+        ConnectorClusterConfig config =
+            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        try {
+            cassandraConnector.connect(credentials, config);
+        } catch (ConnectionException e) {
+            Assert.fail(e.getMessage());
+        }
+        try {
+            cassandraConnector.uncontrolledShutdown();
+            Assert.assertTrue(true);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void getDataStoreNameTest() {
+        CassandraConnector cassandraConnector = new CassandraConnector();
+
+        try {
+            cassandraConnector.getDatastoreName();
+            Assert.assertTrue(true);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void getConnectorNameTest() {
+        CassandraConnector cassandraConnector = new CassandraConnector();
+
+        try {
+            cassandraConnector.getConnectorName();
+            Assert.assertTrue(true);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+    }
 
 
 }
