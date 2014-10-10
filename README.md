@@ -1,6 +1,6 @@
 # About #
 
-Native connector for Cassandra using CrossData.
+Native connector for Cassandra using Crossdata.
 
 ## Compiling Stratio Connector Cassandra ##
 

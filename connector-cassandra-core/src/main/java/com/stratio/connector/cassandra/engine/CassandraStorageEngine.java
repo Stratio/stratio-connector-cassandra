@@ -66,7 +66,7 @@ public class CassandraStorageEngine implements IStorageEngine {
                         row.getCell(key).getValue().toString(), key));
             }
         } catch (Exception e) {
-            throw new ExecutionException("Trying insert data in a not existing column",e);
+            throw new ExecutionException("Trying insert data in a not existing column", e);
         }
 
         InsertIntoStatement insertStatement =
@@ -88,12 +88,17 @@ public class CassandraStorageEngine implements IStorageEngine {
             Set<String> keys = row.getCells().keySet();
             Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
             Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
-            for (String key : keys) {
-                ColumnName col = new ColumnName(targetTable.getName().getCatalogName().getName(),
-                    targetTable.getName().getName(), key);
-                columnsMetadata.put(key,
-                    new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
-                        row.getCell(key).getValue().toString(), key));
+            try {
+                for (String key : keys) {
+                    ColumnName col =
+                        new ColumnName(targetTable.getName().getCatalogName().getName(),
+                            targetTable.getName().getName(), key);
+                    columnsMetadata.put(key,
+                        new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
+                            row.getCell(key).getValue().toString(), key));
+                }
+            } catch (Exception e) {
+                throw new ExecutionException("Trying insert data in a not existing column", e);
             }
 
             InsertIntoStatement insertStatement =
