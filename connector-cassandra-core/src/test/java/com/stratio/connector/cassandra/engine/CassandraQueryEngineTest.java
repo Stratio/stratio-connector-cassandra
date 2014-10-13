@@ -77,10 +77,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
-        Selector rightTerm = new StringSelector("'name_5'");
+        Selector rightTerm = new StringSelector("name_5");
 
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
-        Selector rightTerm2 = new StringSelector("'female'");
+        Selector rightTerm2 = new StringSelector("female");
 
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
         Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
@@ -140,10 +140,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
-        Selector rightTerm = new StringSelector("'name_5'");
+        Selector rightTerm = new StringSelector("name_5");
 
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
-        Selector rightTerm2 = new StringSelector("'female'");
+        Selector rightTerm2 = new StringSelector("female");
 
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
         Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
@@ -204,10 +204,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
-        Selector rightTerm = new StringSelector("'name_5'");
+        Selector rightTerm = new StringSelector("name_5");
 
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
-        Selector rightTerm2 = new StringSelector("'female'");
+        Selector rightTerm2 = new StringSelector("female");
 
         Relation relation2 = new Relation(selector2, Operator.EQ, rightTerm2);
         Filter filter2 = new Filter(Operations.FILTER_INDEXED_EQ, relation2);
