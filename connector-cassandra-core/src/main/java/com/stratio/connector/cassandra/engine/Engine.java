@@ -18,12 +18,13 @@
 
 package com.stratio.connector.cassandra.engine;
 
+import java.util.Arrays;
+
+import org.apache.log4j.Logger;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
-import org.apache.log4j.Logger;
-
-import java.util.Arrays;
 
 
 /**
@@ -62,6 +63,8 @@ public class Engine {
         Cluster cluster = Cluster.builder()
             .addContactPoints(config.getCassandraHosts())
             .withPort(config.getCassandraPort()).build();
+
+        //cluster.getConfiguration().getQueryOptions().setConsistencyLevel(ConsistencyLevel.ONE);
 
         //TODO When credential exists change cluster builder to add withCredentials method to it
 
