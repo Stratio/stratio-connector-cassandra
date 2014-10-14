@@ -16,4 +16,4 @@ hs_err_pid*
 
 #sonar pom
 target/sonar/*
-connector-dist/target/sonar/*
+connector-dist/target/*
