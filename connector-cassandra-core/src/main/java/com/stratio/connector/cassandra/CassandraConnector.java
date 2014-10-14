@@ -18,31 +18,46 @@
 
 package com.stratio.connector.cassandra;
 
-import com.datastax.driver.core.CloseFuture;
-import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.engine.*;
-import com.stratio.connectors.ConnectorApp;
-import com.stratio.meta.common.connector.*;
-import com.stratio.meta.common.exceptions.ConnectionException;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.InitializationException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.security.ICredentials;
-import com.stratio.meta2.common.data.ClusterName;
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import com.datastax.driver.core.CloseFuture;
+import com.datastax.driver.core.Session;
+import com.stratio.connector.cassandra.engine.CassandraMetadataEngine;
+import com.stratio.connector.cassandra.engine.CassandraQueryEngine;
+import com.stratio.connector.cassandra.engine.CassandraStorageEngine;
+import com.stratio.connector.cassandra.engine.Engine;
+import com.stratio.connector.cassandra.engine.EngineConfig;
+import com.stratio.connectors.ConnectorApp;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
+import com.stratio.meta.common.connector.IConfiguration;
+import com.stratio.meta.common.connector.IConnector;
+import com.stratio.meta.common.connector.IMetadataEngine;
+import com.stratio.meta.common.connector.IQueryEngine;
+import com.stratio.meta.common.connector.IStorageEngine;
+import com.stratio.meta.common.exceptions.ConnectionException;
+import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.meta.common.exceptions.InitializationException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta.common.security.ICredentials;
+import com.stratio.meta2.common.data.ClusterName;
 
 public class CassandraConnector implements IConnector {
 
@@ -168,6 +183,9 @@ public class CassandraConnector implements IConnector {
         }
 
         Engine engine = new Engine(engineConfig);
+
+        LOG.info("Cassandra session created.");
+
         sessions.put(clusterName.getName(), engine.getSession());
     }
 

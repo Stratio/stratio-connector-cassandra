@@ -18,15 +18,22 @@
 
 package com.stratio.connector.cassandra.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
-import com.stratio.connector.cassandra.statements.*;
+import com.stratio.connector.cassandra.statements.CreateCatalogStatement;
+import com.stratio.connector.cassandra.statements.CreateIndexStatement;
+import com.stratio.connector.cassandra.statements.CreateTableStatement;
+import com.stratio.connector.cassandra.statements.DropCatalogStatement;
+import com.stratio.connector.cassandra.statements.DropIndexStatement;
+import com.stratio.connector.cassandra.statements.DropTableStatement;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.CriticalExecutionException;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.result.ErrorResult;
-import com.stratio.meta2.common.result.Result;
 import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
@@ -34,12 +41,10 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.result.ErrorResult;
+import com.stratio.meta2.common.result.Result;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 public class CassandraMetadataEngine implements IMetadataEngine {
@@ -77,17 +82,19 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata)
         throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
+
         String catalogName = catalogMetadata.getName().getQualifiedName();
+
         Map<Selector, Selector> catalogOptions = catalogMetadata.getOptions();
 
         String stringOptions = getStringOptions(catalogOptions);
 
         CreateCatalogStatement catalogStatement =
             new CreateCatalogStatement(catalogName, true, stringOptions);
+
         Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
 
         checkError(result);
-
 
     }
 
@@ -163,7 +170,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     private String getStringOptions(Map<Selector, Selector> options) {
         StringBuilder stringOptions = new StringBuilder();
-        if (!options.isEmpty()) {
+        if ((options != null) && (!options.isEmpty())) {
             int i = 0;
 
             for (Map.Entry<Selector, Selector> entry : options.entrySet()) {

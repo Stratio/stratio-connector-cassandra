@@ -18,6 +18,10 @@
 
 package com.stratio.connector.cassandra;
 
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
@@ -25,9 +29,6 @@ import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.ColumnName;
-import org.apache.log4j.Logger;
-
-import java.util.Map;
 
 public final class CassandraExecutor {
 
@@ -74,8 +75,6 @@ public final class CassandraExecutor {
         }
 
     }
-
-
 
     /**
      * Executes a query from a String and add the alias in the Result for Selects .
