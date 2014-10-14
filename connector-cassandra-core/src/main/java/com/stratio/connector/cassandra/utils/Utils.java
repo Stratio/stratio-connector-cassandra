@@ -21,30 +21,28 @@ package com.stratio.connector.cassandra.utils;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
-import com.stratio.connector.cassandra.data.CassandraResultSet;
 import com.stratio.meta.common.data.Cell;
+import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnType;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Utils {
 
-
-    /**
-     * Map of methods required to transform a {@link com.datastax.driver.core.DataType} into the
-     * corresponding object.
-     */
-    private static Map<String, Method> transformations = new HashMap<>();
 
     /**
      * Class logger.
      */
     private static final Logger LOG = Logger.getLogger(Utils.class);
 
+    /*
     static {
         try {
             transformations
@@ -84,6 +82,12 @@ public class Utils {
             LOG.error("Cannot create transformation map", e);
         }
     }
+*/
+    /**
+     * Map of methods required to transform a {@link com.datastax.driver.core.DataType} into the
+     * corresponding object.
+     */
+    private static Map<String, Method> transformations = new HashMap<>();
 
     /**
      * Get a {@link com.stratio.meta.common.data.Cell} with the column contents of a Row.
@@ -111,7 +115,7 @@ public class Utils {
      */
     public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(
         com.datastax.driver.core.ResultSet resultSet) {
-        CassandraResultSet crs = new CassandraResultSet();
+        ResultSet crs = new ResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
 
@@ -145,7 +149,7 @@ public class Utils {
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
             LOG.error("Cannot transform result set", e);
-            crs = new CassandraResultSet();
+            crs = new ResultSet();
         }
         return crs;
     }
@@ -160,7 +164,7 @@ public class Utils {
      */
     public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(
         com.datastax.driver.core.ResultSet resultSet, Map<ColumnName, String> alias) {
-        CassandraResultSet crs = new CassandraResultSet();
+        ResultSet crs = new ResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
 
@@ -172,7 +176,8 @@ public class Utils {
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
-            if (alias.containsKey(new ColumnName(def.getKeyspace(), def.getTable() , def.getName()))) {
+            if (alias
+                .containsKey(new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
                 columnMetadata =
                     new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
                         def.getName());
@@ -202,7 +207,8 @@ public class Utils {
                     if (alias.containsKey(
                         new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
                         metaRow.addCell(alias
-                            .get(new ColumnName(def.getKeyspace(),def.getTable(),def.getName())),
+                                .get(new ColumnName(def.getKeyspace(), def.getTable(),
+                                    def.getName())),
                             metaCell);
                     } else {
                         metaRow.addCell(def.getName(), metaCell);
@@ -212,7 +218,7 @@ public class Utils {
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
             LOG.error("Cannot transform result set", e);
-            crs = new CassandraResultSet();
+            crs = new ResultSet();
         }
         return crs;
     }
