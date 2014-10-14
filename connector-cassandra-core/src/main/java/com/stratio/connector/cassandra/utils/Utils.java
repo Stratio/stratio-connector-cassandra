@@ -41,8 +41,13 @@ public class Utils {
      * Class logger.
      */
     private static final Logger LOG = Logger.getLogger(Utils.class);
+    /**
+     * Map of methods required to transform a {@link com.datastax.driver.core.DataType} into the
+     * corresponding object.
+     */
+    private static Map<String, Method> transformations = new HashMap<>();
 
-    /*
+
     static {
         try {
             transformations
@@ -82,12 +87,7 @@ public class Utils {
             LOG.error("Cannot create transformation map", e);
         }
     }
-*/
-    /**
-     * Map of methods required to transform a {@link com.datastax.driver.core.DataType} into the
-     * corresponding object.
-     */
-    private static Map<String, Method> transformations = new HashMap<>();
+
 
     /**
      * Get a {@link com.stratio.meta.common.data.Cell} with the column contents of a Row.

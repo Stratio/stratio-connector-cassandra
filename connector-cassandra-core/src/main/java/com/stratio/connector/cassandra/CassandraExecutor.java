@@ -58,9 +58,9 @@ public final class CassandraExecutor {
      */
     public static com.stratio.meta2.common.result.Result execute(String query, Session session)
         throws UnsupportedException, ExecutionException {
-
+        ResultSet resultSet=null;
         try {
-            ResultSet resultSet = session.execute(query);
+            resultSet = session.execute(query);
             return com.stratio.meta.common.result
                 .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
         } catch (UnsupportedOperationException unSupportException) {
