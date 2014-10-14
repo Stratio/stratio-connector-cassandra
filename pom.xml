@@ -24,7 +24,6 @@
     <description>Connector for Cassandra Native</description>
     <modules>
         <module>connector-cassandra-core</module>
-        <module>connector-dist</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -34,6 +33,11 @@
             <id>jjlopez</id>
             <name>Juanjo Lopez</name>
             <email>jjlopez at stratio dot com</email>
+        </developer>
+        <developer>
+            <id>aagea</id>
+            <name>Alvaro Agea</name>
+            <email>alvaro at stratio dot com</email>
         </developer>
 
     </developers>

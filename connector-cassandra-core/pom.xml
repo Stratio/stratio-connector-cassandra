@@ -140,6 +140,14 @@
 
         <plugins>
             <plugin>
+                <artifactId>meta-connector-maven-plugin</artifactId>
+                <groupId>com.stratio.meta</groupId>
+                <version>0.1.0-SNAPSHOT</version>
+                <configuration>
+                    <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
