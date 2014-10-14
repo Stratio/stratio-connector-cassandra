@@ -226,12 +226,12 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         //INSERT INTO demo.users (name, gender, email, age, bool, phrase) VALUES ('name_0', 'male', 'name_0@domain.com', 10, true, '');
         Collection<Row> rows = new ArrayList<>();
         Row row = new Row();
-        row.addCell("name", new Cell("insertName"));
-        row.addCell("gender", new Cell("male"));
-        row.addCell("email", new Cell("insertName@doamin.com"));
+        row.addCell("name", new Cell("insertName3"));
+        row.addCell("gender", new Cell("male3"));
+        row.addCell("email", new Cell("insertName3@doamin.com"));
         row.addCell("age", new Cell(20));
         row.addCell("bool", new Cell(false));
-        row.addCell("phrase", new Cell("insert phase"));
+        row.addCell("phrase", new Cell("insert phase3"));
 
         Row row2 = new Row();
         row2.addCell("name", new Cell("insertName2"));
