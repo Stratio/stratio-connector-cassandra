@@ -2,6 +2,7 @@
 *.iml
 connector-cassandra-core/target/
 .idea/
+.directory
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

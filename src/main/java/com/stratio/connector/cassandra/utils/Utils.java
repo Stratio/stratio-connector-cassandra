@@ -126,9 +126,11 @@ public class Utils {
         com.stratio.meta.common.metadata.structures.ColumnMetadata columnMetadata = null;
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
+            String tableName = def.getKeyspace() + "." + def.getTable();
+            String columnName = def.getKeyspace() + "." + def.getTable() + "." + def.getName();
             columnMetadata =
-                new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
-                    def.getName());
+                new com.stratio.meta.common.metadata.structures.ColumnMetadata(tableName,
+                    columnName);
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
             columnMetadata.setType(type);
             columnList.add(columnMetadata);
@@ -176,18 +178,20 @@ public class Utils {
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
+            String tableName = def.getKeyspace() + "." + def.getTable();
+            String columnName = def.getKeyspace() + "." + def.getTable() + "." + def.getName();
             if (alias
                 .containsKey(new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
                 columnMetadata =
-                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
-                        def.getName());
+                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(tableName,
+                        columnName);
                 columnMetadata
-                    .setColumnAlias(def.getKeyspace() + "." + def.getTable() + "." + def.getName());
+                    .setColumnAlias( alias.get(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())));
             } else {
 
                 columnMetadata =
-                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(def.getTable(),
-                        def.getName());
+                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(tableName,
+                        columnName);
 
             }
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
