@@ -13,7 +13,7 @@ To automatically build execute the following command:
 ## Running the Stratio Connector Cassandra ##
 
 ```
-   > mvn exec:java -pl stratio-connector-cassandra -Dexec.mainClass="com.stratio.connector.cassandra.CassandraConnector"
+   > mvn exec:java -Dexec.mainClass="com.stratio.connector.cassandra.CassandraConnector"
 ```
 
 # License #

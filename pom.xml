@@ -21,12 +21,9 @@
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-cassandra</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <description>Connector for Cassandra Native</description>
-    <modules>
-        <module>connector-cassandra-core</module>
-    </modules>
-    <packaging>pom</packaging>
-
+    <name>Stratio Connector Cassandra</name>
+    <description>Native Cassandra Connector</description>
+    <packaging>jar</packaging>
 
     <developers>
         <developer>
@@ -61,10 +58,125 @@
         <coverage.data.dir>${project.build.outputDirectory}</coverage.data.dir>
 
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.stratio.meta</groupId>
+            <artifactId>meta-connector</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.stratio.deep</groupId>
+                    <artifactId>deep-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.stratio.streaming</groupId>
+                    <artifactId>streaming-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.8</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>2.1.1</version>
+            <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>netty</artifactId>
+                    <groupId>io.netty</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.stratio.meta</groupId>
+            <artifactId>meta-common</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.stratio.connector</groupId>
+                    <artifactId>str</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- SCALA AND AKKA -->
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-osgi_${scala.dep.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-contrib_2.10</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster_${scala.dep.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-remote_${scala.dep.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-slf4j_${scala.dep.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_2.10</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-agent_2.10</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>1.2.0</version>
+        </dependency>
 
+    </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -103,6 +215,14 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <artifactId>meta-connector-maven-plugin</artifactId>
+                <groupId>com.stratio.meta</groupId>
+                <version>0.1.0-SNAPSHOT</version>
+                <configuration>
+                    <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>

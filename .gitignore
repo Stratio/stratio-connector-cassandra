@@ -15,6 +15,5 @@ connector-cassandra-core/target/
 hs_err_pid*
 
 #sonar pom
-target/sonar/*
-connector-dist/target/*
+target/
 atlassian-ide-plugin.xml
