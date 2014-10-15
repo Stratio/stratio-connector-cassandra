@@ -221,6 +221,7 @@
                 <version>0.1.0-SNAPSHOT</version>
                 <configuration>
                     <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
+                    <jmxPort>7192</jmxPort>
                 </configuration>
             </plugin>
 
