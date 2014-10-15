@@ -16,6 +16,27 @@ To automatically build execute the following command:
    > mvn exec:java -Dexec.mainClass="com.stratio.connector.cassandra.CassandraConnector"
 ```
 
+
+## Build an executable Connector Cassandra ##
+
+To generate the executable execute the following command:
+
+```
+   > mvn meta-connector:install
+```
+
+To run Connector Cassandra execute:
+
+```
+   > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT start
+```
+
+To stop the connector execute:
+
+```
+   > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT stop
+```
+
 # License #
 
 Licensed to STRATIO (C) under one or more contributor license agreements.
