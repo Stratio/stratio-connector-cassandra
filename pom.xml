@@ -36,10 +36,12 @@
             <name>Alvaro Agea</name>
             <email>alvaro at stratio dot com</email>
         </developer>
-
+        <developer>
+            <id>miguel0afd</id>
+            <name>Miguel Angel Fernandez Diaz</name>
+            <email>mafernandez at stratio dot com</email>
+        </developer>
     </developers>
-
-
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -51,6 +53,7 @@
     <properties>
         <cassandra.driver>2.0.6</cassandra.driver>
         <scala.version>2.10.4</scala.version>
+        <!--akka.version>2.3.4</akka.version-->
         <akka.version>2.2.4</akka.version>
         <deep.version>0.3.2</deep.version>
         <infinispan.version>6.0.2.Final</infinispan.version>
