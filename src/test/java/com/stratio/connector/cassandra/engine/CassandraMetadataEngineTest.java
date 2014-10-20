@@ -567,7 +567,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         } catch (ExecutionException e) {
             Assert.fail(e.getMessage());
         }
-        Assert.assertEquals(assertIndex("email","demometadata", "users1"), "Indice");
+        Assert.assertEquals(assertIndex("email","demometadata", "users1"), "indice");
     }
 
     @Test
@@ -635,51 +635,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        Assert.assertEquals(assertIndex("phrase","demometadata", "users1"), "stratio_lucene_IndiceLucene");
-    }
-
-
-    @Test
-    public void createLuceneIndexWithoutNameTest() {
-        createCatalog();
-        createTable("users1");
-        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
-        Map<ColumnName, ColumnMetadata> columns=new HashMap<>();
-        Object[] parameters = {};
-        columns.put(new ColumnName("demometada","users1","phrase"),
-            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "phrase"),
-                parameters, ColumnType.TEXT));
-
-        Map<Selector, Selector> options = new LinkedHashMap<>();
-
-
-        List<ColumnMetadata> columnsIndex = new ArrayList<>();
-        columnsIndex.add(
-            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "name"),
-                parameters, ColumnType.TEXT));
-        columnsIndex.add(
-            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "age"),
-                parameters, ColumnType.INT));
-        columnsIndex.add(
-            new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "email"),
-                parameters, ColumnType.TEXT));
-
-
-
-        IndexMetadata indexMetadata =
-            new IndexMetadata(new IndexName("demometadata", "users1", null), columns,
-                IndexType.FULL_TEXT, options);
-
-        try {
-            cme.createIndex(new ClusterName("cluster"), indexMetadata);
-            Assert.assertTrue(true);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
-            Assert.fail(e.getMessage());
-        }
-
-
+        Assert.assertEquals(assertIndex("phrase","demometadata", "users1"), "stratio_lucene_indicelucene");
     }
 
 
