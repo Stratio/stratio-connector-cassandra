@@ -234,7 +234,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         for (ColumnMetadata column : columns) {
             if (column.getIndex() != null) {
                 if (column.getIndex().isCustomIndex()) {
-                    indexName = column.getIndex().getName();
+                    indexName = column.getName();
                 }
             }
         }
