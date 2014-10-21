@@ -53,7 +53,6 @@
     <properties>
         <cassandra.driver>2.0.6</cassandra.driver>
         <scala.version>2.10.4</scala.version>
-        <!--akka.version>2.3.4</akka.version-->
         <akka.version>2.2.4</akka.version>
         <deep.version>0.3.2</deep.version>
         <infinispan.version>6.0.2.Final</infinispan.version>
@@ -127,6 +126,11 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_${scala.dep.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-osgi_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
@@ -152,12 +156,12 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-testkit_2.10</artifactId>
+            <artifactId>akka-testkit_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-agent_2.10</artifactId>
+            <artifactId>akka-agent_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
         <dependency>
