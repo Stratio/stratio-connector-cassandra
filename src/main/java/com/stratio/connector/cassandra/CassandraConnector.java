@@ -229,7 +229,7 @@ public class CassandraConnector implements IConnector {
     /**
      * Get the storage com.stratio.connector.cassandra.
      *
-     * @return An implementation of {@link com.stratio.meta.common.connector.IStorageEngine}.
+     * @return An implementation of {@link com.stratio.crossdata.common.connector.IStorageEngine}.
      * @throws UnsupportedException If the connector does not provide this functionality.
      */
     @Override
@@ -240,7 +240,7 @@ public class CassandraConnector implements IConnector {
     /**
      * Get the query com.stratio.connector.cassandra.
      *
-     * @return An implementation of {@link com.stratio.meta.common.connector.IQueryEngine}.
+     * @return An implementation of {@link com.stratio.crossdata.common.connector.IQueryEngine}.
      * @throws UnsupportedException If the connector does not provide this functionality.
      */
     @Override
@@ -251,7 +251,7 @@ public class CassandraConnector implements IConnector {
     /**
      * Get the metadata com.stratio.connector.cassandra.
      *
-     * @return An implementation of {@link com.stratio.meta.common.connector.IMetadataEngine}.
+     * @return An implementation of {@link com.stratio.crossdata.common.connector.IMetadataEngine}.
      * @throws UnsupportedException If the connector does not provide this functionality.
      */
     @Override
