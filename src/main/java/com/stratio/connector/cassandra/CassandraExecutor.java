@@ -26,6 +26,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.stratio.connector.cassandra.utils.Utils;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.data.ColumnName;
@@ -56,7 +57,7 @@ public final class CassandraExecutor {
      * @return a {@link com.stratio.crossdata.common.result.Result}.
      */
     public static com.stratio.crossdata.common.result.Result execute(String query, Session session)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         ResultSet resultSet = null;
         try {
             resultSet = session.execute(query);
@@ -85,7 +86,7 @@ public final class CassandraExecutor {
      */
     public static com.stratio.crossdata.common.result.Result execute(String query,
             Map<ColumnName, String> aliasColumns, Session session)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         try {
             ResultSet resultSet = session.execute(query);
             return com.stratio.crossdata.common.result

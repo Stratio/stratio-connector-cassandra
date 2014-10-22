@@ -29,6 +29,7 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.data.ClusterName;
@@ -111,10 +112,8 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         try {
             cse.insert(new ClusterName("cluster"), table, row);
             finalCount = select2InsertTest(_session, query);
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(initialCount, finalCount);
     }
@@ -171,9 +170,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         try {
             cse.insert(new ClusterName("cluster"), table, row);
             Assert.fail("Trying to add in a not existing column");
-        } catch (UnsupportedException e) {
-            finalCount = select2InsertTest(_session, query);
-        } catch (ExecutionException e) {
+        }catch (ConnectorException e) {
             finalCount = select2InsertTest(_session, query);
         }
         Assert.assertEquals(initialCount, finalCount);
@@ -242,10 +239,8 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         try {
             cse.insert(new ClusterName("cluster"), table, rows);
             finalCount = select2InsertTest(_session, query);
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(initialCount, finalCount);
     }

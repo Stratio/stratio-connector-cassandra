@@ -29,19 +29,27 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IResultHandler;
-import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.logicalplan.*;
-import com.stratio.crossdata.common.result.QueryResult;
-import com.stratio.crossdata.common.statements.structures.relationships.Relation;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
+import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.logicalplan.Limit;
+import com.stratio.crossdata.common.logicalplan.LogicalStep;
+import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.Project;
+import com.stratio.crossdata.common.logicalplan.Select;
+import com.stratio.crossdata.common.logicalplan.TransformationStep;
 import com.stratio.crossdata.common.result.ErrorResult;
+import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.result.Result;
+import com.stratio.crossdata.common.statements.structures.relationships.Relation;
 
 public class CassandraQueryEngine implements IQueryEngine {
+    private static int DEFAULT_LIMIT = 100;
     private Map<ColumnName, String> aliasColumns = new HashMap<>();
     private Session session = null;
     private List<ColumnName> selectionClause;
@@ -51,7 +59,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     private boolean whereInc = false;
     private boolean limitInc = true;
     private List<Relation> where = new ArrayList<>();
-    private int limit = 100;
+    private int limit = DEFAULT_LIMIT;
     private Map<String, Session> sessions;
 
     public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
@@ -61,7 +69,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     @Override
     public com.stratio.crossdata.common.result.QueryResult execute(LogicalWorkflow workflow)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
 
         LogicalStep logicalStep = workflow.getInitialSteps().get(0);
         while (logicalStep != null) {
@@ -94,7 +102,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private void getTypeErrorException(ErrorResult error)
-            throws ExecutionException, UnsupportedException {
+            throws ConnectorException {
         switch (error.getType()) {
         case EXECUTION:
             throw new ExecutionException(error.getErrorMessage());
@@ -138,12 +146,12 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     @Override public void asyncExecute(String queryId, LogicalWorkflow workflow,
-            IResultHandler resultHandler) throws UnsupportedException, ExecutionException {
+            IResultHandler resultHandler) throws ConnectorException {
         throw new UnsupportedException("Async execute not supported yet.");
 
     }
 
-    @Override public void stop(String queryId) throws UnsupportedException, ExecutionException {
+    @Override public void stop(String queryId) throws ConnectorException {
         throw new UnsupportedException("Stop for Async execute not supported yet.");
     }
 
@@ -228,10 +236,8 @@ public class CassandraQueryEngine implements IQueryEngine {
                 session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
                         .getColumns();
         for (ColumnMetadata column : columns) {
-            if (column.getIndex() != null) {
-                if (column.getIndex().isCustomIndex()) {
-                    indexName = column.getName();
-                }
+            if (column.getIndex() != null && column.getIndex().isCustomIndex()) {
+                indexName = column.getName();
             }
         }
         return indexName;

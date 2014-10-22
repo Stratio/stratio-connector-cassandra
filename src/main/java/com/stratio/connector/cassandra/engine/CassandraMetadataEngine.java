@@ -31,6 +31,7 @@ import com.stratio.connector.cassandra.statements.DropCatalogStatement;
 import com.stratio.connector.cassandra.statements.DropIndexStatement;
 import com.stratio.connector.cassandra.statements.DropTableStatement;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -79,7 +80,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         session = sessions.get(targetCluster.getName());
 
         String catalogName = catalogMetadata.getName().getQualifiedName();
@@ -99,7 +100,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         session = sessions.get(targetCluster.getName());
 
         Map<Selector, Selector> tableOptions = tableMetadata.getOptions();
@@ -129,7 +130,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void dropCatalog(ClusterName targetCluster, CatalogName name)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
         Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
@@ -138,7 +139,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void dropTable(ClusterName targetCluster, TableName name)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
@@ -148,7 +149,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
                 new CreateIndexStatement(indexMetadata, true, session);
@@ -158,7 +159,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void dropIndex(ClusterName targetCluster, IndexMetadata indexName)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
         Result result = CassandraExecutor.execute(indexStatement.toString(), session);
@@ -204,7 +205,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         return stringOption;
     }
 
-    private void checkError(Result result) throws ExecutionException, UnsupportedException {
+    private void checkError(Result result) throws ConnectorException {
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
             getTypeErrorException(error);
@@ -212,7 +213,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     }
 
     private void getTypeErrorException(ErrorResult error)
-            throws ExecutionException, UnsupportedException {
+            throws ConnectorException {
         switch (error.getType()) {
         case EXECUTION:
             throw new ExecutionException(error.getErrorMessage());
