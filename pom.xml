@@ -36,10 +36,12 @@
             <name>Alvaro Agea</name>
             <email>alvaro at stratio dot com</email>
         </developer>
-
+        <developer>
+            <id>miguel0afd</id>
+            <name>Miguel Angel Fernandez Diaz</name>
+            <email>mafernandez at stratio dot com</email>
+        </developer>
     </developers>
-
-
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -124,6 +126,11 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_${scala.dep.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-osgi_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
@@ -149,12 +156,12 @@
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-testkit_2.10</artifactId>
+            <artifactId>akka-testkit_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-agent_2.10</artifactId>
+            <artifactId>akka-agent_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
         <dependency>
