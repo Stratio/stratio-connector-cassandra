@@ -30,22 +30,21 @@ import com.stratio.connector.cassandra.statements.CreateTableStatement;
 import com.stratio.connector.cassandra.statements.DropCatalogStatement;
 import com.stratio.connector.cassandra.statements.DropIndexStatement;
 import com.stratio.connector.cassandra.statements.DropTableStatement;
-import com.stratio.meta.common.connector.IMetadataEngine;
-import com.stratio.meta.common.exceptions.CriticalExecutionException;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.data.CatalogName;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.CatalogMetadata;
-import com.stratio.meta2.common.metadata.IndexMetadata;
-import com.stratio.meta2.common.metadata.TableMetadata;
-import com.stratio.meta2.common.result.ErrorResult;
-import com.stratio.meta2.common.result.Result;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
-
+import com.stratio.crossdata.common.connector.IMetadataEngine;
+import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.data.CatalogName;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.metadata.CatalogMetadata;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.result.ErrorResult;
+import com.stratio.crossdata.common.result.Result;
+import com.stratio.crossdata.common.statements.structures.selectors.Selector;
+import com.stratio.crossdata.common.statements.structures.selectors.StringSelector;
 
 public class CassandraMetadataEngine implements IMetadataEngine {
 
@@ -80,7 +79,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata)
-        throws UnsupportedException, ExecutionException {
+            throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
 
         String catalogName = catalogMetadata.getName().getQualifiedName();
@@ -90,7 +89,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String stringOptions = getStringOptions(catalogOptions);
 
         CreateCatalogStatement catalogStatement =
-            new CreateCatalogStatement(catalogName, true, stringOptions);
+                new CreateCatalogStatement(catalogName, true, stringOptions);
 
         Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
 
@@ -100,7 +99,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
-        throws UnsupportedException, ExecutionException {
+            throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
 
         Map<Selector, Selector> tableOptions = tableMetadata.getOptions();
@@ -121,8 +120,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String stringOptions = getStringOptions(tableOptions);
 
         CreateTableStatement tableStatement =
-            new CreateTableStatement(tableMetadata, primaryKey, partitionKey, clusterKey,
-                primaryKeyType, stringOptions, true);
+                new CreateTableStatement(tableMetadata, primaryKey, partitionKey, clusterKey,
+                        primaryKeyType, stringOptions, true);
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
         checkError(result);
 
@@ -130,7 +129,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void dropCatalog(ClusterName targetCluster, CatalogName name)
-        throws UnsupportedException, ExecutionException {
+            throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
         Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
@@ -139,7 +138,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void dropTable(ClusterName targetCluster, TableName name)
-        throws UnsupportedException, ExecutionException {
+            throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
         Result result = CassandraExecutor.execute(tableStatement.toString(), session);
@@ -149,24 +148,23 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
-        throws UnsupportedException, ExecutionException {
+            throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
-            new CreateIndexStatement(indexMetadata, true, session);
+                new CreateIndexStatement(indexMetadata, true, session);
         Result result = CassandraExecutor.execute(indexStatement.toString(), session);
         checkError(result);
     }
 
     @Override
     public void dropIndex(ClusterName targetCluster, IndexMetadata indexName)
-        throws UnsupportedException, ExecutionException {
+            throws UnsupportedException, ExecutionException {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
         Result result = CassandraExecutor.execute(indexStatement.toString(), session);
         checkError(result);
 
     }
-
 
     private String getStringOptions(Map<Selector, Selector> options) {
         StringBuilder stringOptions = new StringBuilder();
@@ -196,11 +194,11 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             stringOption.append(key);
         } else if ("CLUSTERING ORDER BY".equals(key)) {
             stringOption.append(key).append(" (").append(value).append(")");
-        } else if  (createTableOptions.contains(key)){
+        } else if (createTableOptions.contains(key)) {
             stringOption.append(key).append(" = ").append(value).append("");
         } else {
             stringOption.append(key).append(" = {")
-                .append(value).append("}");
+                    .append(value).append("}");
         }
 
         return stringOption;
@@ -213,18 +211,17 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         }
     }
 
-
     private void getTypeErrorException(ErrorResult error)
-        throws ExecutionException, UnsupportedException {
+            throws ExecutionException, UnsupportedException {
         switch (error.getType()) {
-            case EXECUTION:
-                throw new ExecutionException(error.getErrorMessage());
-            case NOT_SUPPORTED:
-                throw new UnsupportedException(error.getErrorMessage());
-            case CRITICAL:
-                throw new CriticalExecutionException(error.getErrorMessage());
-            default:
-                throw new UnsupportedException(error.getErrorMessage());
+        case EXECUTION:
+            throw new ExecutionException(error.getErrorMessage());
+        case NOT_SUPPORTED:
+            throw new UnsupportedException(error.getErrorMessage());
+        case CRITICAL:
+            throw new CriticalExecutionException(error.getErrorMessage());
+        default:
+            throw new UnsupportedException(error.getErrorMessage());
         }
     }
 }

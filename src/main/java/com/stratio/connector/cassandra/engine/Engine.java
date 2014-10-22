@@ -26,13 +26,11 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 
-
 /**
  * Execution com.stratio.connector.cassandra that creates all entities required for processing an executing a query:
  * Additionally, it also maintains the {@link com.datastax.driver.core.Session} with the Cassandra backend.
  */
 public class Engine {
-
 
     /**
      * Class logger.
@@ -52,7 +50,6 @@ public class Engine {
         this.session = initializeDB(config);
     }
 
-
     /**
      * Initialize the connection to the underlying database.
      *
@@ -61,15 +58,15 @@ public class Engine {
      */
     private Session initializeDB(EngineConfig config) {
         Cluster cluster = Cluster.builder()
-            .addContactPoints(config.getCassandraHosts())
-            .withPort(config.getCassandraPort()).build();
+                .addContactPoints(config.getCassandraHosts())
+                .withPort(config.getCassandraPort()).build();
 
         //cluster.getConfiguration().getQueryOptions().setConsistencyLevel(ConsistencyLevel.ONE);
 
         //TODO When credential exists change cluster builder to add withCredentials method to it
 
         LOG.info("Connecting to Cassandra Cluster on "
-            + Arrays.toString(config.getCassandraHosts()) + ":" + config.getCassandraPort());
+                + Arrays.toString(config.getCassandraHosts()) + ":" + config.getCassandraPort());
         Session result = null;
 
         try {
@@ -80,7 +77,6 @@ public class Engine {
 
         return result;
     }
-
 
     /**
      * Close open connections.

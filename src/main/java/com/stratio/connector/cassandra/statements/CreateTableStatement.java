@@ -18,17 +18,15 @@
 
 package com.stratio.connector.cassandra.statements;
 
-
-
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.metadata.TableMetadata;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
  * Class that models a {@code CREATE TABLE} statement of the META language.
@@ -73,7 +71,6 @@ public class CreateTableStatement {
      */
     private boolean ifNotExists;
 
-
     /**
      * Whether the table should be created with a set of properties.
      */
@@ -89,8 +86,6 @@ public class CreateTableStatement {
      */
     private boolean catalogInc;
 
-
-
     /**
      * Class constructor.
      *
@@ -100,8 +95,8 @@ public class CreateTableStatement {
      * @param primaryKeyType The type of primary key.
      */
     public CreateTableStatement(TableMetadata tableMetadata,
-        List<ColumnName> primaryKey, List<ColumnName> partitionKey, List<ColumnName> clusterKey,
-        int primaryKeyType, String properties, boolean ifNotExists) throws ExecutionException {
+            List<ColumnName> primaryKey, List<ColumnName> partitionKey, List<ColumnName> clusterKey,
+            int primaryKeyType, String properties, boolean ifNotExists) throws ExecutionException {
         this.tableName = tableMetadata.getName().getName();
         this.catalog = tableMetadata.getName().getCatalogName().getName();
         this.catalogInc = true;
@@ -120,10 +115,9 @@ public class CreateTableStatement {
             throw new ExecutionException("PrimaryKey must contain partition Key");
         } else if (clusterKey == null && primaryKeyType == PRIMARY_AND_CLUSTERING_SPECIFIED) {
             throw new ExecutionException(
-                "ClusterKey must exist with the type og primaryKey specified");
+                    "ClusterKey must exist with the type og primaryKey specified");
         }
     }
-
 
     public String getSinglePKString() {
         StringBuilder sb = new StringBuilder(" (");
@@ -151,7 +145,6 @@ public class CreateTableStatement {
         StringBuilder sb = new StringBuilder("PRIMARY KEY");
         if (primaryKeyType == PRIMARY_COMPOSED) {
             sb.append("(");
-
 
             Iterator<ColumnName> pks = primaryKey.iterator();
             while (pks.hasNext()) {
@@ -212,7 +205,5 @@ public class CreateTableStatement {
         }
         return sb.toString();
     }
-
-
 
 }

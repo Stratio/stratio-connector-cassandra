@@ -45,19 +45,19 @@ import com.stratio.connector.cassandra.engine.CassandraQueryEngine;
 import com.stratio.connector.cassandra.engine.CassandraStorageEngine;
 import com.stratio.connector.cassandra.engine.Engine;
 import com.stratio.connector.cassandra.engine.EngineConfig;
-import com.stratio.connectors.ConnectorApp;
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.connector.IConfiguration;
-import com.stratio.meta.common.connector.IConnector;
-import com.stratio.meta.common.connector.IMetadataEngine;
-import com.stratio.meta.common.connector.IQueryEngine;
-import com.stratio.meta.common.connector.IStorageEngine;
-import com.stratio.meta.common.exceptions.ConnectionException;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.InitializationException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.security.ICredentials;
-import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.crossdata.connectors.ConnectorApp;
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.connector.IConfiguration;
+import com.stratio.crossdata.common.connector.IConnector;
+import com.stratio.crossdata.common.connector.IMetadataEngine;
+import com.stratio.crossdata.common.connector.IQueryEngine;
+import com.stratio.crossdata.common.connector.IStorageEngine;
+import com.stratio.crossdata.common.exceptions.ConnectionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.InitializationException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.security.ICredentials;
+import com.stratio.crossdata.common.data.ClusterName;
 
 public class CassandraConnector implements IConnector {
 
@@ -74,9 +74,9 @@ public class CassandraConnector implements IConnector {
         sessions = new HashMap<>();
         try {
             InputStream inputStream = getClass()
-                .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
+                    .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
             Document d =
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
 
             //Search for the limit properties and connectorName
             XPathFactory xFactory = XPathFactory.newInstance();
@@ -159,20 +159,19 @@ public class CassandraConnector implements IConnector {
     @Override
     public void init(IConfiguration configuration) throws InitializationException {
 
-
     }
 
     @Override
     public void connect(ICredentials credentials, ConnectorClusterConfig config)
-        throws ConnectionException {
+            throws ConnectionException {
         ClusterName clusterName = config.getName();
         Map<String, String> clusterOptions = config.getOptions();
 
         EngineConfig engineConfig = new EngineConfig();
         //the hosts must be received as [host1:port,host2:port,host3:port...]
         engineConfig.setCassandraHosts(
-            clusterOptions.get("Hosts").substring(1, clusterOptions.get("Hosts").length() - 1)
-                .split(","));
+                clusterOptions.get("Hosts").substring(1, clusterOptions.get("Hosts").length() - 1)
+                        .split(","));
         engineConfig.setCassandraPort(Integer.parseInt(clusterOptions.get("Port")));
         engineConfig.setCredentials(credentials);
 
@@ -210,8 +209,6 @@ public class CassandraConnector implements IConnector {
         }
         sessions = new HashMap<>();
     }
-
-
 
     @Override
     public boolean isConnected(ClusterName name) {
@@ -261,6 +258,5 @@ public class CassandraConnector implements IConnector {
     public IMetadataEngine getMetadataEngine() throws UnsupportedException {
         return new CassandraMetadataEngine(sessions);
     }
-
 
 }

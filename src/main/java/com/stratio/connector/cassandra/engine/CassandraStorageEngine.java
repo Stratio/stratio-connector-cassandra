@@ -27,16 +27,16 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.connector.cassandra.statements.InsertIntoStatement;
 import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
-import com.stratio.meta.common.connector.IStorageEngine;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.exceptions.CriticalExecutionException;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.result.ErrorResult;
-import com.stratio.meta2.common.result.Result;
+import com.stratio.crossdata.common.connector.IStorageEngine;
+import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.result.ErrorResult;
+import com.stratio.crossdata.common.result.Result;
 
 public class CassandraStorageEngine implements IStorageEngine {
     private Map<String, Session> sessions;
@@ -47,8 +47,8 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     @Override
     public void insert(ClusterName targetCluster,
-        com.stratio.meta2.common.metadata.TableMetadata targetTable, Row row)
-        throws UnsupportedException, ExecutionException {
+            com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row)
+            throws UnsupportedException, ExecutionException {
         Session session = sessions.get(targetCluster.getName());
 
         Set<String> keys = row.getCells().keySet();
@@ -59,17 +59,17 @@ public class CassandraStorageEngine implements IStorageEngine {
         try {
             for (String key : keys) {
                 ColumnName col = new ColumnName(targetTable.getName().getCatalogName().getName(),
-                    targetTable.getName().getName(), key);
+                        targetTable.getName().getName(), key);
                 columnsMetadata.put(key,
-                    new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
-                            row.getCell(key).toString(), key));
+                        new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
+                                row.getCell(key).toString(), key));
             }
         } catch (Exception e) {
             throw new ExecutionException("Trying insert data in a not existing column", e);
         }
 
         InsertIntoStatement insertStatement =
-            new InsertIntoStatement(targetTable, columnsMetadata, true);
+                new InsertIntoStatement(targetTable, columnsMetadata, true);
         String query = insertStatement.toString();
         Result result = CassandraExecutor.execute(query, session);
 
@@ -79,8 +79,8 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     @Override
     public void insert(ClusterName targetCluster,
-        com.stratio.meta2.common.metadata.TableMetadata targetTable, Collection<Row> rows)
-        throws UnsupportedException, ExecutionException {
+            com.stratio.crossdata.common.metadata.TableMetadata targetTable, Collection<Row> rows)
+            throws UnsupportedException, ExecutionException {
         Session session = sessions.get(targetCluster.getName());
         for (Row row : rows) {
             Set<String> keys = row.getCells().keySet();
@@ -89,18 +89,18 @@ public class CassandraStorageEngine implements IStorageEngine {
             try {
                 for (String key : keys) {
                     ColumnName col =
-                        new ColumnName(targetTable.getName().getCatalogName().getName(),
-                            targetTable.getName().getName(), key);
+                            new ColumnName(targetTable.getName().getCatalogName().getName(),
+                                    targetTable.getName().getName(), key);
                     columnsMetadata.put(key,
-                        new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
-                            row.getCell(key).toString(), key));
+                            new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
+                                    row.getCell(key).toString(), key));
                 }
             } catch (Exception e) {
                 throw new ExecutionException("Trying insert data in a not existing column", e);
             }
 
             InsertIntoStatement insertStatement =
-                new InsertIntoStatement(targetTable, columnsMetadata, true);
+                    new InsertIntoStatement(targetTable, columnsMetadata, true);
             String query = insertStatement.toString();
             Result result = CassandraExecutor.execute(query, session);
             checkError(result);
@@ -108,16 +108,16 @@ public class CassandraStorageEngine implements IStorageEngine {
     }
 
     private void getTypeErrorException(ErrorResult error)
-        throws ExecutionException, UnsupportedException {
+            throws ExecutionException, UnsupportedException {
         switch (error.getType()) {
-            case EXECUTION:
-                throw new ExecutionException(error.getErrorMessage());
-            case NOT_SUPPORTED:
-                throw new UnsupportedException(error.getErrorMessage());
-            case CRITICAL:
-                throw new CriticalExecutionException(error.getErrorMessage());
-            default:
-                throw new UnsupportedException(error.getErrorMessage());
+        case EXECUTION:
+            throw new ExecutionException(error.getErrorMessage());
+        case NOT_SUPPORTED:
+            throw new UnsupportedException(error.getErrorMessage());
+        case CRITICAL:
+            throw new CriticalExecutionException(error.getErrorMessage());
+        default:
+            throw new UnsupportedException(error.getErrorMessage());
         }
     }
 
@@ -127,6 +127,5 @@ public class CassandraStorageEngine implements IStorageEngine {
             getTypeErrorException(error);
         }
     }
-
 
 }

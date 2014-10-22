@@ -18,22 +18,19 @@
 
 package com.stratio.connector.cassandra.statements;
 
-
-import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
-import com.stratio.meta.common.utils.StringUtils;
-import com.stratio.meta2.common.metadata.ColumnType;
-import com.stratio.meta2.common.metadata.TableMetadata;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
+import com.stratio.crossdata.common.utils.StringUtils;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
  * Class that models an {@code INSERT INTO} statement from the META language.
  */
 public class InsertIntoStatement {
-
 
     /**
      * The name of the target table.
@@ -45,15 +42,12 @@ public class InsertIntoStatement {
      */
     private List<String> ids;
 
-
-
     private Map<String, ColumnInsertCassandra> cellValues;
 
     /**
      * Indicates if exists "IF NOT EXISTS" clause.
      */
     private boolean ifNotExists;
-
 
     /**
      * Catalog
@@ -65,8 +59,6 @@ public class InsertIntoStatement {
      */
     private boolean catalogInc;
 
-
-
     /**
      * InsertIntoStatement general constructor.
      *
@@ -75,8 +67,8 @@ public class InsertIntoStatement {
      * @param ifNotExists     Boolean that indicates if IF NOT EXISTS clause is included in the query.
      */
     public InsertIntoStatement(TableMetadata targetTable,
-        Map<String, ColumnInsertCassandra> columnsMetadata,
-        boolean ifNotExists) {
+            Map<String, ColumnInsertCassandra> columnsMetadata,
+            boolean ifNotExists) {
         ids = new ArrayList<>();
         this.tableName = targetTable.getName().getQualifiedName();
         if (tableName.contains(".")) {
@@ -114,13 +106,13 @@ public class InsertIntoStatement {
             cont = 1;
 
             switch (type) {
-                case TEXT:
-                case VARCHAR:
-                    sb.append("'" + value + "'");
-                    break;
-                default:
-                    sb.append(value);
-                    break;
+            case TEXT:
+            case VARCHAR:
+                sb.append("'" + value + "'");
+                break;
+            default:
+                sb.append(value);
+                break;
             }
         }
         sb.append(")");
@@ -131,7 +123,5 @@ public class InsertIntoStatement {
 
         return sb.toString();
     }
-
-
 
 }

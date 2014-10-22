@@ -18,7 +18,6 @@
 
 package com.stratio.connector.cassandra.statements;
 
-
 /**
  * Class that models a {@code CREATE CATALOG} statement from the META language. Catalog
  * information will be stored internally as part of the existing metadata. Catalog creation
@@ -30,7 +29,7 @@ public class CreateCatalogStatement {
      */
     private String catalog;
 
-       /**
+    /**
      * Whether the keyspace should be created only if it not exists.
      */
     private final boolean ifNotExists;
@@ -48,7 +47,7 @@ public class CreateCatalogStatement {
      * @param options     A JSON with the storage options.
      */
     public CreateCatalogStatement(String catalogName, boolean ifNotExists,
-        String options) {
+            String options) {
         this.catalog = catalogName;
         this.ifNotExists = ifNotExists;
         this.options = options;
@@ -69,8 +68,6 @@ public class CreateCatalogStatement {
         }
         return sb.toString();
     }
-
-
 
 }
 

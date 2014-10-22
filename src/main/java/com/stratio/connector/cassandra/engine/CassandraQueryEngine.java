@@ -18,30 +18,28 @@
 
 package com.stratio.connector.cassandra.engine;
 
-
-import com.datastax.driver.core.ColumnMetadata;
-import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.CassandraExecutor;
-import com.stratio.meta.common.connector.IQueryEngine;
-import com.stratio.meta.common.connector.IResultHandler;
-import com.stratio.meta.common.exceptions.CriticalExecutionException;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.*;
-import com.stratio.meta2.common.result.ErrorResult;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta2.common.result.Result;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta2.common.data.CatalogName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.TableName;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.datastax.driver.core.ColumnMetadata;
+import com.datastax.driver.core.Session;
+import com.stratio.connector.cassandra.CassandraExecutor;
+import com.stratio.crossdata.common.connector.IQueryEngine;
+import com.stratio.crossdata.common.connector.IResultHandler;
+import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.*;
+import com.stratio.crossdata.common.result.QueryResult;
+import com.stratio.crossdata.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.data.CatalogName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.result.ErrorResult;
+import com.stratio.crossdata.common.result.Result;
 
 public class CassandraQueryEngine implements IQueryEngine {
     private Map<ColumnName, String> aliasColumns = new HashMap<>();
@@ -62,8 +60,8 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     @Override
-    public com.stratio.meta.common.result.QueryResult execute(LogicalWorkflow workflow)
-        throws UnsupportedException, ExecutionException {
+    public com.stratio.crossdata.common.result.QueryResult execute(LogicalWorkflow workflow)
+            throws UnsupportedException, ExecutionException {
 
         LogicalStep logicalStep = workflow.getInitialSteps().get(0);
         while (logicalStep != null) {
@@ -96,16 +94,16 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private void getTypeErrorException(ErrorResult error)
-        throws ExecutionException, UnsupportedException {
+            throws ExecutionException, UnsupportedException {
         switch (error.getType()) {
-            case EXECUTION:
-                throw new ExecutionException(error.getErrorMessage());
-            case NOT_SUPPORTED:
-                throw new UnsupportedException(error.getErrorMessage());
-            case CRITICAL:
-                throw new CriticalExecutionException(error.getErrorMessage());
-            default:
-                throw new UnsupportedException(error.getErrorMessage());
+        case EXECUTION:
+            throw new ExecutionException(error.getErrorMessage());
+        case NOT_SUPPORTED:
+            throw new UnsupportedException(error.getErrorMessage());
+        case CRITICAL:
+            throw new CriticalExecutionException(error.getErrorMessage());
+        default:
+            throw new UnsupportedException(error.getErrorMessage());
         }
     }
 
@@ -140,7 +138,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     @Override public void asyncExecute(String queryId, LogicalWorkflow workflow,
-        IResultHandler resultHandler) throws UnsupportedException, ExecutionException {
+            IResultHandler resultHandler) throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Async execute not supported yet.");
 
     }
@@ -148,8 +146,6 @@ public class CassandraQueryEngine implements IQueryEngine {
     @Override public void stop(String queryId) throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Stop for Async execute not supported yet.");
     }
-
-
 
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
@@ -169,7 +165,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private String getWhereClause() {
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(" WHERE ");
         int count = 0;
         for (Relation relation : where) {
@@ -178,24 +174,24 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
             count = 1;
             switch (relation.getOperator()) {
-                case IN:
-                case BETWEEN:
-                    break;
-                case MATCH:
-                    String nameIndex = getLuceneIndex();
-                    sb.append(nameIndex).append(" = '");
-                    sb.append(getLuceneWhereClause(relation));
-                    sb.append("'");
-                    break;
-                default:
-                    String whereWithQualification = relation.toString();
-                    String parts[] = whereWithQualification.split(" ");
-                    String columnName = parts[0].substring(parts[0].lastIndexOf('.') + 1);
-                    sb.append(columnName);
-                    for (int i = 1; i < parts.length; i++) {
-                        sb.append(" ").append(parts[i]);
-                    }
-                    break;
+            case IN:
+            case BETWEEN:
+                break;
+            case MATCH:
+                String nameIndex = getLuceneIndex();
+                sb.append(nameIndex).append(" = '");
+                sb.append(getLuceneWhereClause(relation));
+                sb.append("'");
+                break;
+            default:
+                String whereWithQualification = relation.toString();
+                String parts[] = whereWithQualification.split(" ");
+                String columnName = parts[0].substring(parts[0].lastIndexOf('.') + 1);
+                sb.append(columnName);
+                for (int i = 1; i < parts.length; i++) {
+                    sb.append(" ").append(parts[i]);
+                }
+                break;
             }
         }
 
@@ -204,7 +200,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private String getFromClause() {
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append(" FROM ");
         if (catalogInc) {
             sb.append(catalog).append(".");
@@ -214,7 +210,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private String getSelectionClause() {
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         int i = 0;
         for (ColumnName columnName : selectionClause) {
             if (i != 0) {
@@ -229,8 +225,8 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String getLuceneIndex() {
         String indexName = "";
         List<ColumnMetadata> columns =
-            session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
-                .getColumns();
+                session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
+                        .getColumns();
         for (ColumnMetadata column : columns) {
             if (column.getIndex() != null) {
                 if (column.getIndex().isCustomIndex()) {
@@ -246,9 +242,8 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         StringBuilder sb = new StringBuilder("{filter:{type:\"boolean\",must:[");
 
-
         String column = relation.getLeftTerm().toString()
-            .substring(relation.getLeftTerm().toString().lastIndexOf('.') + 1);
+                .substring(relation.getLeftTerm().toString().lastIndexOf('.') + 1);
         String value = relation.getRightTerm().toString();
         // Generate query for column
         String[] processedQuery = processLuceneQueryType(value);
@@ -268,8 +263,6 @@ public class CassandraQueryEngine implements IQueryEngine {
         return result;
 
     }
-
-
 
     /**
      * Process a query pattern to determine the type of Lucene query. The supported types of queries
@@ -292,7 +285,7 @@ public class CassandraQueryEngine implements IQueryEngine {
      * @return An array with the type of query and the processed query.
      */
     protected String[] processLuceneQueryType(String query) {
-        String[] result = {"", ""};
+        String[] result = { "", "" };
         Pattern escaped = Pattern.compile(".*\\\\\\*.*|.*\\\\\\?.*|.*\\\\\\[.*|.*\\\\\\].*");
         Pattern wildcard = Pattern.compile(".*\\*.*|.*\\?.*");
         Pattern regex = Pattern.compile(".*\\].*|.*\\[.*");
@@ -300,8 +293,8 @@ public class CassandraQueryEngine implements IQueryEngine {
         if (escaped.matcher(query).matches()) {
             result[0] = "match";
             result[1] =
-                query.replace("\\*", "*").replace("\\?", "?").replace("\\]", "]")
-                    .replace("\\[", "[");
+                    query.replace("\\*", "*").replace("\\?", "?").replace("\\]", "]")
+                            .replace("\\[", "[");
         } else if (regex.matcher(query).matches()) {
             result[0] = "regex";
             result[1] = query;

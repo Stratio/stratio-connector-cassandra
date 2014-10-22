@@ -18,12 +18,13 @@
 
 package com.stratio.connector.cassandra.utils;
 
-import com.datastax.driver.core.DataType;
-import com.stratio.meta2.common.metadata.ColumnType;
-import org.apache.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.datastax.driver.core.DataType;
+import com.stratio.crossdata.common.metadata.ColumnType;
 
 /**
  * Cassandra mapping of META column types to their underlying Java
@@ -90,7 +91,6 @@ public class CassandraMetadataHelper {
         }
     }
 
-
     public ColumnType toColumnType(String dbTypeName) {
         ColumnType result = typeMapping.get(dbTypeName.toUpperCase());
         if (result == null) {
@@ -109,6 +109,5 @@ public class CassandraMetadataHelper {
 
         return result;
     }
-
 
 }

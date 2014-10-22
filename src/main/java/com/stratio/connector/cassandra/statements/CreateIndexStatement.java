@@ -18,30 +18,27 @@
 
 package com.stratio.connector.cassandra.statements;
 
-
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.utils.IdentifierProperty;
-import com.stratio.connector.cassandra.utils.ValueProperty;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.metadata.IndexMetadata;
-import com.stratio.meta2.common.metadata.IndexType;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.datastax.driver.core.DataType;
+import com.datastax.driver.core.Session;
+import com.stratio.connector.cassandra.utils.IdentifierProperty;
+import com.stratio.connector.cassandra.utils.ValueProperty;
+
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.IndexType;
 
 /**
  * Class that models a {@code CREATE INDEX} statement of the META language to CQL native. T
  */
 public class CreateIndexStatement {
-
-
 
     /**
      * Map of lucene types associated with Cassandra data types.
@@ -88,10 +85,9 @@ public class CreateIndexStatement {
      */
     private Map<ValueProperty, ValueProperty> options = new LinkedHashMap<>();
 
-
     public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists,
-        Session session)
-        throws ExecutionException {
+            Session session)
+            throws ExecutionException {
         this.targetColumns = indexMetadata.getColumns();
         this.createIfNotExists = createIfNotExists;
         this.type = indexMetadata.getType();
@@ -108,16 +104,15 @@ public class CreateIndexStatement {
             //Create the new column for the Lucene Index
             try {
                 session.execute(
-                    "ALTER TABLE " + indexMetadata.getName().getTableName().getQualifiedName() + " ADD " + getIndexName() + " varchar;");
+                        "ALTER TABLE " + indexMetadata.getName().getTableName().getQualifiedName() + " ADD "
+                                + getIndexName() + " varchar;");
             } catch (Exception e) {
                 throw new ExecutionException(
-                    "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),
-                    e);
+                        "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),
+                        e);
             }
         }
     }
-
-
 
     /**
      * Get the name of the index. If a LUCENE index is to be created, the name of the index is
@@ -152,7 +147,6 @@ public class CreateIndexStatement {
         }
         return result;
     }
-
 
     public String toString() {
         StringBuilder sb = new StringBuilder("CREATE ");
@@ -214,7 +208,6 @@ public class CreateIndexStatement {
 
     }
 
-
     /**
      * Generate the set of Lucene options required to create an index.
      *
@@ -230,7 +223,7 @@ public class CreateIndexStatement {
         result.put(new IdentifierProperty("'max_merge_mb'"), new IdentifierProperty("'5'"));
         result.put(new IdentifierProperty("'max_cached_mb'"), new IdentifierProperty("'30'"));
         result.put(new IdentifierProperty("'schema'"), new IdentifierProperty("'"
-            + generateLuceneSchema() + "'"));
+                + generateLuceneSchema() + "'"));
 
         return result;
     }
@@ -246,7 +239,6 @@ public class CreateIndexStatement {
         sb.append("{default_analyzer:\"org.apache.lucene.analysis.standard.StandardAnalyzer\",");
         sb.append("fields:{");
 
-
         // Iterate throught the columns.
         for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
             sb.append(entry.getValue().getName().getName());
@@ -258,7 +250,5 @@ public class CreateIndexStatement {
         sb.append("}}");
         return sb.toString().replace(",}}", "}}");
     }
-
-
 
 }

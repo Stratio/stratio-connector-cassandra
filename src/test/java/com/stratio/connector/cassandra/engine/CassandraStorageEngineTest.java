@@ -13,35 +13,37 @@
  */
 package com.stratio.connector.cassandra.engine;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.BasicCoreCassandraTest;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.IndexName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.metadata.ColumnType;
-import com.stratio.meta2.common.metadata.IndexMetadata;
-import com.stratio.meta2.common.metadata.TableMetadata;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.*;
-
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
+import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.crossdata.common.data.Cell;
+import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.IndexName;
+import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.selectors.Selector;
 
 public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
     private Map<String, Session> sessions;
-
 
     public int select2InsertTest(Session session, String query) {
 
@@ -65,38 +67,36 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
 
-
         TableName targetTable = new TableName("demo", "users");
         Map<Selector, Selector> options = new HashMap<>();
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
         List<ColumnName> partitionKey = new ArrayList<>();
         List<ColumnName> clusterKey = new ArrayList<>();
-        Object[] parameters = {};
+        Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
-                ColumnType.INT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+                        ColumnType.INT));
         columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
-                ColumnType.BOOLEAN));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+                        ColumnType.BOOLEAN));
         columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
-                ColumnType.TEXT));
-
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+                        ColumnType.TEXT));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
         TableMetadata table =
-            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
-                clusterKey);
+                new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                        clusterKey);
 
         //INSERT INTO demo.users (name, gender, email, age, bool, phrase) VALUES ('name_0', 'male', 'name_0@domain.com', 10, true, '');
         Row row = new Row();
@@ -119,8 +119,6 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Assert.assertNotEquals(initialCount, finalCount);
     }
 
-
-
     @Test
     public void InsertInExistingTableUnknownColumn() {
         String query = "SELECT * FROM demo.users;";
@@ -128,38 +126,36 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
 
-
         TableName targetTable = new TableName("demo", "users");
         Map<Selector, Selector> options = new HashMap<>();
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
         List<ColumnName> partitionKey = new ArrayList<>();
         List<ColumnName> clusterKey = new ArrayList<>();
-        Object[] parameters = {};
+        Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
-                ColumnType.INT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+                        ColumnType.INT));
         columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
-                ColumnType.BOOLEAN));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+                        ColumnType.BOOLEAN));
         columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
-                ColumnType.TEXT));
-
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+                        ColumnType.TEXT));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
         TableMetadata table =
-            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
-                clusterKey);
+                new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                        clusterKey);
 
         //INSERT INTO demo.users (name, gender, email, age, bool, phrase) VALUES ('name_0', 'male', 'name_0@domain.com', 10, true, '');
         Row row = new Row();
@@ -183,7 +179,6 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Assert.assertEquals(initialCount, finalCount);
     }
 
-
     @Test
     public void multipleInsert() {
         String query = "SELECT * FROM demo.users;";
@@ -195,31 +190,30 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         ClusterName clusterRef = new ClusterName("cluster");
         List<ColumnName> partitionKey = new ArrayList<>();
         List<ColumnName> clusterKey = new ArrayList<>();
-        Object[] parameters = {};
+        Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
-                ColumnType.INT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+                        ColumnType.INT));
         columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
-                ColumnType.BOOLEAN));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+                        ColumnType.BOOLEAN));
         columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
-                ColumnType.TEXT));
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+                        ColumnType.TEXT));
         columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-            new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
-                ColumnType.TEXT));
-
+                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+                        ColumnType.TEXT));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
         TableMetadata table =
-            new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
-                clusterKey);
+                new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                        clusterKey);
 
         CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
 

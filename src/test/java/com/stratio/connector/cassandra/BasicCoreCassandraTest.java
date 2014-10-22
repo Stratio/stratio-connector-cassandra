@@ -18,16 +18,7 @@
 
 package com.stratio.connector.cassandra;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.ResultSet;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.exceptions.InvalidQueryException;
-import com.stratio.meta2.common.result.ErrorResult;
-import com.stratio.meta2.common.result.Result;
-import org.apache.log4j.Logger;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import static org.testng.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,8 +27,17 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.testng.Assert.assertTrue;
+import org.apache.log4j.Logger;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.exceptions.InvalidQueryException;
+import com.stratio.crossdata.common.result.ErrorResult;
+import com.stratio.crossdata.common.result.Result;
 
 public class BasicCoreCassandraTest {
 
@@ -45,7 +45,6 @@ public class BasicCoreCassandraTest {
      * Default Cassandra HOST using 127.0.0.1.
      */
     private static final String DEFAULT_HOST = "127.0.0.1";
-
 
     /**
      * Session to launch queries on C*.
@@ -56,7 +55,6 @@ public class BasicCoreCassandraTest {
      * Class logger.
      */
     private static final Logger logger = Logger.getLogger(BasicCoreCassandraTest.class);
-
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -70,7 +68,6 @@ public class BasicCoreCassandraTest {
         dropKeyspaceIfExists("testKs");
         closeCassandraConnection();
     }
-
 
     /**
      * Establish the connection with Cassandra in order to be able to retrieve metadata from the
@@ -97,7 +94,7 @@ public class BasicCoreCassandraTest {
      */
     public static void initCassandraConnection() {
         assertTrue(connect(getHost()),
-            "Cannot connect to com.stratio.connector.cassandra.com.stratio.connector.cassandra");
+                "Cannot connect to com.stratio.connector.cassandra.com.stratio.connector.cassandra");
     }
 
     /**

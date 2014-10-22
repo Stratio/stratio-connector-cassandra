@@ -18,15 +18,6 @@
 
 package com.stratio.connector.cassandra.utils;
 
-import com.datastax.driver.core.ColumnDefinitions;
-import com.datastax.driver.core.DataType;
-import com.datastax.driver.core.Row;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.ResultSet;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.metadata.ColumnType;
-import org.apache.log4j.Logger;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,8 +25,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Utils {
+import org.apache.log4j.Logger;
 
+import com.datastax.driver.core.ColumnDefinitions;
+import com.datastax.driver.core.DataType;
+import com.datastax.driver.core.Row;
+import com.stratio.crossdata.common.data.Cell;
+import com.stratio.crossdata.common.data.ResultSet;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.metadata.ColumnType;
+
+public class Utils {
 
     /**
      * Class logger.
@@ -47,60 +47,58 @@ public class Utils {
      */
     private static Map<String, Method> transformations = new HashMap<>();
 
-
     static {
         try {
             transformations
-                .put(DataType.ascii().toString(), Row.class.getMethod("getString", String.class));
+                    .put(DataType.ascii().toString(), Row.class.getMethod("getString", String.class));
             transformations
-                .put(DataType.text().toString(), Row.class.getMethod("getString", String.class));
+                    .put(DataType.text().toString(), Row.class.getMethod("getString", String.class));
             transformations
-                .put(DataType.varchar().toString(), Row.class.getMethod("getString", String.class));
+                    .put(DataType.varchar().toString(), Row.class.getMethod("getString", String.class));
             transformations
-                .put(DataType.bigint().toString(), Row.class.getMethod("getLong", String.class));
+                    .put(DataType.bigint().toString(), Row.class.getMethod("getLong", String.class));
             transformations
-                .put(DataType.counter().toString(), Row.class.getMethod("getLong", String.class));
+                    .put(DataType.counter().toString(), Row.class.getMethod("getLong", String.class));
             transformations
-                .put(DataType.cboolean().toString(), Row.class.getMethod("getBool", String.class));
+                    .put(DataType.cboolean().toString(), Row.class.getMethod("getBool", String.class));
             transformations
-                .put(DataType.blob().toString(), Row.class.getMethod("getBytes", String.class));
+                    .put(DataType.blob().toString(), Row.class.getMethod("getBytes", String.class));
             transformations
-                .put(DataType.decimal().toString(),
-                    Row.class.getMethod("getDecimal", String.class));
+                    .put(DataType.decimal().toString(),
+                            Row.class.getMethod("getDecimal", String.class));
             transformations
-                .put(DataType.cdouble().toString(), Row.class.getMethod("getDouble", String.class));
+                    .put(DataType.cdouble().toString(), Row.class.getMethod("getDouble", String.class));
             transformations
-                .put(DataType.cfloat().toString(), Row.class.getMethod("getFloat", String.class));
+                    .put(DataType.cfloat().toString(), Row.class.getMethod("getFloat", String.class));
             transformations
-                .put(DataType.inet().toString(), Row.class.getMethod("getInet", String.class));
+                    .put(DataType.inet().toString(), Row.class.getMethod("getInet", String.class));
             transformations
-                .put(DataType.cint().toString(), Row.class.getMethod("getInt", String.class));
+                    .put(DataType.cint().toString(), Row.class.getMethod("getInt", String.class));
             transformations
-                .put(DataType.timestamp().toString(), Row.class.getMethod("getDate", String.class));
+                    .put(DataType.timestamp().toString(), Row.class.getMethod("getDate", String.class));
             transformations
-                .put(DataType.uuid().toString(), Row.class.getMethod("getUUID", String.class));
+                    .put(DataType.uuid().toString(), Row.class.getMethod("getUUID", String.class));
             transformations
-                .put(DataType.timeuuid().toString(), Row.class.getMethod("getUUID", String.class));
+                    .put(DataType.timeuuid().toString(), Row.class.getMethod("getUUID", String.class));
             transformations
-                .put(DataType.varint().toString(), Row.class.getMethod("getVarint", String.class));
+                    .put(DataType.varint().toString(), Row.class.getMethod("getVarint", String.class));
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot create transformation map", e);
         }
     }
 
-
     /**
-     * Get a {@link com.stratio.meta.common.data.Cell} with the column contents of a Row.
+     * Get a {@link com.stratio.crossdata.common.data.Cell} with the column contents of a Row.
      *
      * @param type       The {@link com.datastax.driver.core.DataType} of the column.
      * @param r          The row that contains the column.
      * @param columnName The column name.
-     * @return A {@link com.stratio.meta.common.data.Cell} with the contents.
+     * @return A {@link com.stratio.crossdata.common.data.Cell} with the contents.
      * @throws java.lang.reflect.InvocationTargetException If the required method cannot be invoked.
      * @throws IllegalAccessException                      If the method cannot be accessed.
      */
     protected Cell getCell(DataType type, Row r, String columnName)
-        throws InvocationTargetException, IllegalAccessException {
+            throws InvocationTargetException, IllegalAccessException {
         Method m = transformations.get(type.toString());
         Object value = m.invoke(r, columnName);
         return new Cell(value);
@@ -108,29 +106,29 @@ public class Utils {
 
     /**
      * Transforms a Cassandra {@link com.datastax.driver.core.ResultSet} into a {@link
-     * com.stratio.meta.common.data.ResultSet}.
+     * com.stratio.crossdata.common.data.ResultSet}.
      *
      * @param resultSet The input Cassandra result set.
      * @return An equivalent Meta ResultSet
      */
-    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(
-        com.datastax.driver.core.ResultSet resultSet) {
+    public com.stratio.crossdata.common.data.ResultSet transformToMetaResultSet(
+            com.datastax.driver.core.ResultSet resultSet) {
         ResultSet crs = new ResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
 
         //Get the columns in order
         List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
-        List<com.stratio.meta.common.metadata.structures.ColumnMetadata> columnList =
-            new ArrayList<>();
-        com.stratio.meta.common.metadata.structures.ColumnMetadata columnMetadata = null;
+        List<com.stratio.crossdata.common.metadata.structures.ColumnMetadata> columnList =
+                new ArrayList<>();
+        com.stratio.crossdata.common.metadata.structures.ColumnMetadata columnMetadata = null;
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             String tableName = def.getKeyspace() + "." + def.getTable();
             String columnName = def.getKeyspace() + "." + def.getTable() + "." + def.getName();
             columnMetadata =
-                new com.stratio.meta.common.metadata.structures.ColumnMetadata(tableName,
-                    columnName);
+                    new com.stratio.crossdata.common.metadata.structures.ColumnMetadata(tableName,
+                            columnName);
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
             columnMetadata.setType(type);
             columnList.add(columnMetadata);
@@ -139,7 +137,7 @@ public class Utils {
 
         try {
             for (Row row : resultSet.all()) {
-                com.stratio.meta.common.data.Row metaRow = new com.stratio.meta.common.data.Row();
+                com.stratio.crossdata.common.data.Row metaRow = new com.stratio.crossdata.common.data.Row();
                 for (ColumnDefinitions.Definition def : definitions) {
                     if (def.getName().toLowerCase().startsWith("stratio")) {
                         continue;
@@ -156,42 +154,41 @@ public class Utils {
         return crs;
     }
 
-
     /**
      * Transforms a Cassandra {@link com.datastax.driver.core.ResultSet} into a {@link
-     * com.stratio.meta.common.data.ResultSet}.
+     * com.stratio.crossdata.common.data.ResultSet}.
      *
      * @param resultSet The input Cassandra result set.
      * @return An equivalent Meta ResultSet
      */
-    public com.stratio.meta.common.data.ResultSet transformToMetaResultSet(
-        com.datastax.driver.core.ResultSet resultSet, Map<ColumnName, String> alias) {
+    public com.stratio.crossdata.common.data.ResultSet transformToMetaResultSet(
+            com.datastax.driver.core.ResultSet resultSet, Map<ColumnName, String> alias) {
         ResultSet crs = new ResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
 
         //Get the columns in order
         List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
-        List<com.stratio.meta.common.metadata.structures.ColumnMetadata> columnList =
-            new ArrayList<>();
-        com.stratio.meta.common.metadata.structures.ColumnMetadata columnMetadata = null;
+        List<com.stratio.crossdata.common.metadata.structures.ColumnMetadata> columnList =
+                new ArrayList<>();
+        com.stratio.crossdata.common.metadata.structures.ColumnMetadata columnMetadata = null;
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
             String tableName = def.getKeyspace() + "." + def.getTable();
             String columnName = def.getKeyspace() + "." + def.getTable() + "." + def.getName();
             if (alias
-                .containsKey(new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
+                    .containsKey(new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
                 columnMetadata =
-                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(tableName,
-                        columnName);
+                        new com.stratio.crossdata.common.metadata.structures.ColumnMetadata(tableName,
+                                columnName);
                 columnMetadata
-                    .setColumnAlias( alias.get(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())));
+                        .setColumnAlias(alias.get(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())));
             } else {
 
                 columnMetadata =
-                    new com.stratio.meta.common.metadata.structures.ColumnMetadata(tableName,
-                        columnName);
+                        new com.stratio.crossdata.common.metadata.structures.ColumnMetadata(tableName,
+                                columnName);
 
             }
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
@@ -202,18 +199,18 @@ public class Utils {
 
         try {
             for (Row row : resultSet.all()) {
-                com.stratio.meta.common.data.Row metaRow = new com.stratio.meta.common.data.Row();
+                com.stratio.crossdata.common.data.Row metaRow = new com.stratio.crossdata.common.data.Row();
                 for (ColumnDefinitions.Definition def : definitions) {
                     if (def.getName().toLowerCase().startsWith("stratio")) {
                         continue;
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
                     if (alias.containsKey(
-                        new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
+                            new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
                         metaRow.addCell(alias
-                                .get(new ColumnName(def.getKeyspace(), def.getTable(),
-                                    def.getName())),
-                            metaCell);
+                                        .get(new ColumnName(def.getKeyspace(), def.getTable(),
+                                                def.getName())),
+                                metaCell);
                     } else {
                         metaRow.addCell(def.getName(), metaCell);
                     }
@@ -226,7 +223,5 @@ public class Utils {
         }
         return crs;
     }
-
-
 
 }

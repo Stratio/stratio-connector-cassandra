@@ -18,13 +18,12 @@
 
 package com.stratio.connector.cassandra.engine;
 
-import com.stratio.meta.common.security.ICredentials;
-
 import java.util.Arrays;
 import java.util.Random;
 
-public class EngineConfig {
+import com.stratio.crossdata.common.security.ICredentials;
 
+public class EngineConfig {
 
     /**
      * Cassandra hosts.
@@ -36,15 +35,12 @@ public class EngineConfig {
      */
     private int cassandraPort;
 
-
     /**
      * Cluster Name
      */
 
     private String clusterName;
     private ICredentials credentials;
-
-
 
     /**
      * Get Cassandra hosts.
@@ -117,6 +113,5 @@ public class EngineConfig {
     public void setCredentials(ICredentials credentials) {
         this.credentials = credentials;
     }
-
 
 }

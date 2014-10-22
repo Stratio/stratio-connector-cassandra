@@ -27,7 +27,6 @@ public class DropCatalogStatement {
      */
     private String catalog;
 
-
     /**
      * Whether the keyspace should be removed only if exists.
      */
@@ -54,6 +53,5 @@ public class DropCatalogStatement {
         sb.append(catalog);
         return sb.toString();
     }
-
 
 }

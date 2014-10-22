@@ -17,7 +17,7 @@
  */
 package com.stratio.connector.cassandra.utils;
 
-import com.stratio.meta2.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.ColumnType;
 
 public class ColumnInsertCassandra {
 

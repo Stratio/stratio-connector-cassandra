@@ -18,25 +18,23 @@
 
 package com.stratio.connector.cassandra;
 
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.connector.IMetadataEngine;
-import com.stratio.meta.common.connector.IQueryEngine;
-import com.stratio.meta.common.connector.IStorageEngine;
-import com.stratio.meta.common.exceptions.ConnectionException;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.security.ICredentials;
-import com.stratio.meta2.common.data.ClusterName;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.connector.IMetadataEngine;
+import com.stratio.crossdata.common.connector.IQueryEngine;
+import com.stratio.crossdata.common.connector.IStorageEngine;
+import com.stratio.crossdata.common.exceptions.ConnectionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.security.ICredentials;
+import com.stratio.crossdata.common.data.ClusterName;
 
 public class CassandraConnectorTest extends BasicCoreCassandraTest {
-
-
 
     @Test
     public void connectorTest() {
@@ -70,7 +68,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -91,7 +89,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
         try {
             cassandraConnector.connect(credentials, config);
         } catch (ConnectionException e) {
@@ -115,7 +113,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -140,7 +138,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -150,9 +148,9 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
 
         try {
             IQueryEngine queryEngine = cassandraConnector.getQueryEngine();
-            if (queryEngine!=null) {
+            if (queryEngine != null) {
                 Assert.assertTrue(true);
-            }else{
+            } else {
                 Assert.fail("It can't be null");
             }
         } catch (UnsupportedException e) {
@@ -160,7 +158,6 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         }
 
     }
-
 
     @Test
     public void connectorMetadataEngineTest() {
@@ -172,7 +169,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -182,9 +179,9 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
 
         try {
             IMetadataEngine metadataEngine = cassandraConnector.getMetadataEngine();
-            if (metadataEngine!=null) {
+            if (metadataEngine != null) {
                 Assert.assertTrue(true);
-            }else{
+            } else {
                 Assert.fail("It can't be null");
             }
 
@@ -204,7 +201,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -214,9 +211,9 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
 
         try {
             IStorageEngine storageEngine = cassandraConnector.getStorageEngine();
-            if (storageEngine!=null) {
+            if (storageEngine != null) {
                 Assert.assertTrue(true);
-            }else{
+            } else {
                 Assert.fail("It can't be null");
             }
         } catch (UnsupportedException e) {
@@ -235,7 +232,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
         try {
             cassandraConnector.connect(credentials, config);
         } catch (ConnectionException e) {
@@ -259,7 +256,7 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         options.put("Port", "9042");
 
         ConnectorClusterConfig config =
-            new ConnectorClusterConfig(new ClusterName("cluster"), options);
+                new ConnectorClusterConfig(new ClusterName("cluster"), options);
         try {
             cassandraConnector.connect(credentials, config);
         } catch (ConnectionException e) {
@@ -296,6 +293,5 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
     }
-
 
 }

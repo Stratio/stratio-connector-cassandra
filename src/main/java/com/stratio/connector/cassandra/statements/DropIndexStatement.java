@@ -18,7 +18,7 @@
 
 package com.stratio.connector.cassandra.statements;
 
-import com.stratio.meta2.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
 
 /**
  * Class that models a {@code DROP KEYSPACE} statement from the META language.
@@ -26,7 +26,6 @@ import com.stratio.meta2.common.metadata.IndexMetadata;
 public class DropIndexStatement {
     private String catalog;
     private String indexName;
-
 
     /**
      * Indicates if there is a catalog specified in the table name
@@ -45,8 +44,6 @@ public class DropIndexStatement {
      * @param ifExists Whether it should be removed only if exists.
      */
     public DropIndexStatement(IndexMetadata index, boolean ifExists) {
-
-
 
         if (index.getColumns() != null && index.getColumns().size() != 0) {
             this.catalogInc = true;
@@ -80,6 +77,5 @@ public class DropIndexStatement {
 
         return sb.toString();
     }
-
 
 }

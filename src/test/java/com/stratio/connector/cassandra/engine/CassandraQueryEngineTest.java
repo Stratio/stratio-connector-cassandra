@@ -17,38 +17,37 @@
  */
 package com.stratio.connector.cassandra.engine;
 
-
-
-import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.BasicCoreCassandraTest;
-import com.stratio.meta.common.connector.IResultHandler;
-import com.stratio.meta.common.connector.Operations;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.*;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta.common.statements.structures.relationships.Operator;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.ColumnType;
-import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.datastax.driver.core.Session;
+import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.crossdata.common.connector.IResultHandler;
+import com.stratio.crossdata.common.connector.Operations;
+import com.stratio.crossdata.common.data.Cell;
+import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.*;
+import com.stratio.crossdata.common.result.QueryResult;
+import com.stratio.crossdata.common.statements.structures.relationships.Operator;
+import com.stratio.crossdata.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.statements.structures.selectors.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.selectors.Selector;
+import com.stratio.crossdata.common.statements.structures.selectors.StringSelector;
 
 public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
@@ -74,8 +73,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         //Generation of Data
         Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
 
-
-
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
@@ -98,7 +95,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         sessions.put("cluster", this._session);
         CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
 
-
         QueryResult qr = null;
         try {
             qr = cqe.execute(workflow);
@@ -116,10 +112,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         assertEquals(value, "name_5");
 
         assertEquals(cqe.parseQuery(),
-            "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
+                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
 
     }
-
 
     @Test
     public void basicSelectWithOwnLimitTest() {
@@ -136,8 +131,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         //Generation of Data
         Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
-
-
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -163,7 +156,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         sessions.put("cluster", this._session);
         CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
 
-
         QueryResult qr = null;
         try {
             qr = cqe.execute(workflow);
@@ -181,10 +173,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         assertEquals(value, "name_5");
 
         assertEquals(cqe.parseQuery(),
-            "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 50");
+                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 50");
 
     }
-
 
     @Test
     public void SelectTestWithAlias() {
@@ -201,7 +192,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         //Generation of Data
         Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
-
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -233,7 +223,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         sessions.put("cluster", this._session);
         CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
 
-
         QueryResult qr = null;
         try {
             qr = cqe.execute(workflow);
@@ -252,14 +241,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             assertEquals(value, "name_5");
 
             assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
+                    "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
         } catch (Exception ex) {
             Assert.fail("No alias found");
         }
 
     }
-
-
 
     @Test
     public void LuceneSelectTest() {
@@ -277,7 +264,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         //Generation of Data
         Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
 
-
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "phrase"));
         Selector rightTerm = new StringSelector("*");
 
@@ -292,7 +278,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
         CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
-
 
         QueryResult qr = null;
         try {
@@ -316,8 +301,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
     }
 
-
-
     @Test
     public void processLuceneQueryType() {
 
@@ -326,23 +309,23 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
         String[][] queries = {
-            //Input    Type       parsed
-            {"?", "wildcard", "?"},
-            {"*", "wildcard", "*"},
-            {"\\?", "match", "?"},
-            {"\\*", "match", "*"},
-            {"\\?sf", "match", "?sf"},
-            {"af\\?", "match", "af?"},
-            {"s\\?f", "match", "s?f"},
-            {"sdf", "match", "sdf"},
-            {"*asd*", "wildcard", "*asd*"},
-            {"?as?", "wildcard", "?as?"},
-            {"?as*", "wildcard", "?as*"},
-            {"[asd", "regex", "[asd"},
-            {"fa]", "regex", "fa]"},
-            {"]*sf", "regex", "]*sf"},
-            {"~as", "match", "~as"},
-            {"as~2", "fuzzy", "as~2"}};
+                //Input    Type       parsed
+                { "?", "wildcard", "?" },
+                { "*", "wildcard", "*" },
+                { "\\?", "match", "?" },
+                { "\\*", "match", "*" },
+                { "\\?sf", "match", "?sf" },
+                { "af\\?", "match", "af?" },
+                { "s\\?f", "match", "s?f" },
+                { "sdf", "match", "sdf" },
+                { "*asd*", "wildcard", "*asd*" },
+                { "?as?", "wildcard", "?as?" },
+                { "?as*", "wildcard", "?as*" },
+                { "[asd", "regex", "[asd" },
+                { "fa]", "regex", "fa]" },
+                { "]*sf", "regex", "]*sf" },
+                { "~as", "match", "~as" },
+                { "as~2", "fuzzy", "as~2" } };
 
         for (String[] query : queries) {
             String[] result = cqe.processLuceneQueryType(query[0]);
@@ -367,8 +350,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         //Generation of Data
         Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
-
-
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("'name_5'");
@@ -442,6 +423,5 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     public void restore() {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
     }
-
 
 }

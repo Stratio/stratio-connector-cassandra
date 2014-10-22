@@ -18,8 +18,6 @@
 
 package com.stratio.connector.cassandra.statements;
 
-
-
 /**
  * Class that models a {@code DROP TABLE} statement from the META language.
  */
@@ -61,7 +59,6 @@ public class DropTableStatement {
         this.ifExists = ifExists;
     }
 
-
     public String toString() {
         StringBuilder sb = new StringBuilder("DROP TABLE ");
         if (ifExists) {
@@ -73,7 +70,5 @@ public class DropTableStatement {
         sb.append(tableName);
         return sb.toString();
     }
-
-
 
 }

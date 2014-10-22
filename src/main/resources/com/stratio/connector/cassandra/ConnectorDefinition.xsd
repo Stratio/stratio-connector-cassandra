@@ -9,7 +9,7 @@
             <xs:element type="xs:string" name="Version"/>
             <xs:element type="PropertiesType" name="RequiredProperties" maxOccurs="1" minOccurs="0"/>
             <xs:element type="PropertiesType" name="OptionalProperties" maxOccurs="1" minOccurs="0"/>
-            <xs:element type="SupportedOperationsType" name="SupportedOperations"/>
+            <xs:element type="SupportedOperationsType" name="SupportedOperations" maxOccurs="1" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="PropertiesType">

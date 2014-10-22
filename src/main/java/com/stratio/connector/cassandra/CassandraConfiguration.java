@@ -17,7 +17,7 @@
  */
 package com.stratio.connector.cassandra;
 
-import com.stratio.meta.common.connector.IConfiguration;
+import com.stratio.crossdata.common.connector.IConfiguration;
 
 public class CassandraConfiguration implements IConfiguration {
 }

@@ -18,11 +18,15 @@
 
 package com.stratio.connector.cassandra;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-
-import java.io.*;
-import java.nio.charset.Charset;
 
 public class CCMHandler {
 
@@ -47,14 +51,14 @@ public class CCMHandler {
         try {
             File tempFile = File.createTempFile("stratio-start-ccm", ".sh");
             InputStream resourceStream =
-                CCMHandler.class.getResourceAsStream("/com/stratio/meta/test/test.sh");
+                    CCMHandler.class.getResourceAsStream("/com/stratio/connector/cassandra/test.sh");
             FileUtils.copyInputStreamToFile(resourceStream, tempFile);
             tempFile.setExecutable(true);
 
             Process p = Runtime.getRuntime().exec(tempFile.getAbsolutePath());
 
             in = new BufferedReader(
-                new InputStreamReader(p.getInputStream(), Charset.forName("UTF-8")));
+                    new InputStreamReader(p.getInputStream(), Charset.forName("UTF-8")));
 
             String line;
             while ((line = in.readLine()) != null) {
