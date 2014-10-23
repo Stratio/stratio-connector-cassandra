@@ -36,7 +36,7 @@ public class EngineConfig {
     private int cassandraPort;
 
     /**
-     * Cluster Name
+     * Cluster Name.
      */
 
     private String clusterName;

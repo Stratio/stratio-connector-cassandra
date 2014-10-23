@@ -53,7 +53,7 @@ public class CreateTableStatement {
      */
     private List<ColumnName> clusterKey;
     /**
-     * The list of properties of the table
+     * The list of properties of the table.
      */
     private String properties;
     /**
@@ -77,12 +77,12 @@ public class CreateTableStatement {
     private boolean withProperties = false;
 
     /**
-     * Catalog
+     * Catalog.
      */
     private String catalog;
 
     /**
-     * Indicates if there is a catalog specified in the table name
+     * Indicates if there is a catalog specified in the table name.
      */
     private boolean catalogInc;
 

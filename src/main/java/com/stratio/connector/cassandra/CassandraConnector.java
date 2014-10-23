@@ -65,6 +65,8 @@ public class CassandraConnector implements IConnector {
      * Class logger.
      */
     private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
+
+    private final static int DEFAULTLIMIT = 100;
     private Map<String, Session> sessions;
     private String connectorName;
     private String[] datastoreName;
@@ -176,7 +178,7 @@ public class CassandraConnector implements IConnector {
         engineConfig.setCredentials(credentials);
 
         if (clusterOptions.get("DefaultLimit") == null) {
-            defaultLimit = 100;
+            defaultLimit = DEFAULTLIMIT;
         } else {
             defaultLimit = Integer.parseInt(clusterOptions.get("DefaultLimit"));
         }

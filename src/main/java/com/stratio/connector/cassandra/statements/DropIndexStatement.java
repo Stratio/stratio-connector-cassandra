@@ -28,7 +28,7 @@ public class DropIndexStatement {
     private String indexName;
 
     /**
-     * Indicates if there is a catalog specified in the table name
+     * Indicates if there is a catalog specified in the table name.
      */
     private boolean catalogInc;
 
