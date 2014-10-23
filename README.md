@@ -2,6 +2,10 @@
 
 Native connector for Cassandra using Crossdata.
 
+## Requirements ##
+
+Install [Stratio Cassandra] (https://github.com/Stratio/stratio-cassandra) and run it. 
+
 ## Compiling Stratio Connector Cassandra ##
 
 To automatically build execute the following command:
@@ -36,6 +40,54 @@ To stop the connector execute:
 ```
    > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT stop
 ```
+
+## How to use Cassandra Connector ##
+
+ 1. Start [crossdata-server and then crossdata-shell](https://github.com/Stratio/crossdata).  
+ 2. https://github.com/Stratio/crossdata
+ 3. Start Cassandra Connector as it is explained before
+ 4. In crossdata-shell:
+    
+    Add a datastore with this command:
+      
+      ```
+         xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
+      ```
+
+    Attach cluster on that datastore. The datastore name must be the same as the defined in the Datastore manifest.
+    
+      ```
+         xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1,
+         ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
+      ```
+
+    Add the connector manifest.
+
+       ```
+         xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
+       ```
+    
+    Attach the connector to the previously defined cluster. The connector name must match the one defined in the 
+    Connector Manifest.
+    
+        ```
+            xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {'DefaultLimit': '1000'};
+        ```
+    
+    At this point, we can start to send queries.
+    
+        ...
+            xdsh:user> CREATE CATALOG catalogTest;
+        
+            xdsh:user> USE catalogTest;
+        
+            xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text);
+    
+            xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
+    
+            xdsh:user> SELECT * FROM tableTest;
+        ...
+
 
 # License #
 
