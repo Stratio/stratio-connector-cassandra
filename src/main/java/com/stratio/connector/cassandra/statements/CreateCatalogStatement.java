@@ -25,7 +25,7 @@ package com.stratio.connector.cassandra.statements;
  */
 public class CreateCatalogStatement {
     /**
-     * Catalog
+     * Catalog.
      */
     private String catalog;
 

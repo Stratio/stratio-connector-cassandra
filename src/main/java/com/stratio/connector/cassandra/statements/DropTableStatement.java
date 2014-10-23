@@ -23,7 +23,7 @@ package com.stratio.connector.cassandra.statements;
  */
 public class DropTableStatement {
     /**
-     * Catalog
+     * Catalog.
      */
     private String catalog;
 

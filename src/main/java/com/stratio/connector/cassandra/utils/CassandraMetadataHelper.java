@@ -49,7 +49,7 @@ public class CassandraMetadataHelper {
      */
     private static final Logger LOG = Logger.getLogger(CassandraMetadataHelper.class.getName());
     /**
-     * Mapping of native datatypes to SQL types
+     * Mapping of native datatypes to SQL types.
      */
     private static Map<DataType.Name, String> nativeODBCType = new HashMap<>();
     private static Map<ColumnType, String> dbType = new HashMap<>();

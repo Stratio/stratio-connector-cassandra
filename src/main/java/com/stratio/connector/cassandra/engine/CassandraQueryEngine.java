@@ -49,7 +49,7 @@ import com.stratio.crossdata.common.result.Result;
 import com.stratio.crossdata.common.statements.structures.relationships.Relation;
 
 public class CassandraQueryEngine implements IQueryEngine {
-    private final static int DEFAULTLIMIT = 100;
+    private static final int DEFAULT_LIMIT = 100;
     private Map<ColumnName, String> aliasColumns = new HashMap<>();
     private Session session = null;
     private List<ColumnName> selectionClause;
@@ -59,7 +59,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     private boolean whereInc = false;
     private boolean limitInc = true;
     private List<Relation> where = new ArrayList<>();
-    private int limit = DEFAULTLIMIT;
+    private int limit = DEFAULT_LIMIT;
     private Map<String, Session> sessions;
 
     public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
