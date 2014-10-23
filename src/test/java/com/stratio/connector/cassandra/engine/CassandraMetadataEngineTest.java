@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.data.*;
@@ -107,10 +108,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         try {
             cme.createTable(new ClusterName("cluster"), table);
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
     }
 
@@ -126,10 +125,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         try {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
 
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
     }
 
@@ -146,10 +143,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
                         IndexType.DEFAULT, null);
         try {
             cme.createIndex(new ClusterName("cluster"), indexMetadata);
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
     }
 
@@ -177,11 +172,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
             rowsFinal = assertCatalog();
 
-        } catch (UnsupportedException e) {
-
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
-
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -208,11 +199,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
             rowsFinal = assertCatalog();
 
-        } catch (UnsupportedException e) {
-
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
-
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -241,6 +228,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.assertTrue(true);
         } catch (ExecutionException e) {
             Assert.assertTrue(true);
+        }catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
 
     }
@@ -293,11 +282,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             cme.createTable(new ClusterName("cluster"), table);
             rowsFinal = assertTable();
 
-        } catch (UnsupportedException e) {
-
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
-
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -353,11 +338,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             cme.createTable(new ClusterName("cluster"), table);
             rowsFinal = assertTable();
 
-        } catch (UnsupportedException e) {
-
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
-
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -410,11 +391,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             cme.createTable(new ClusterName("cluster"), table);
             rowsFinal = assertTable();
 
-        } catch (UnsupportedException e) {
-
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
-
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -475,9 +452,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         try {
             cme.createTable(new ClusterName("cluster"), table);
             rowsFinal = assertTable();
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -501,10 +476,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
                         IndexType.DEFAULT, null);
         try {
             cme.dropIndex(new ClusterName("cluster"), index);
-        } catch (UnsupportedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(assertIndex("age", "demometadata", "users1"), "Indice2");
 
@@ -515,9 +488,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         try {
             cme.dropTable(new ClusterName("cluster"), new TableName("demometadata", "users1"));
             rowsFinal = assertTable();
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -528,9 +499,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         try {
             cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata"));
             rowsFinal = assertCatalog();
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
@@ -554,9 +523,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         try {
             cme.createIndex(new ClusterName("cluster"), indexMetadata);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertEquals(assertIndex("email", "demometadata", "users1"), "indice");
@@ -580,9 +547,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         try {
             cme.createIndex(new ClusterName("cluster"), indexMetadata);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
         Assert.assertEquals(assertIndex("email", "demometadata", "users5"), "email");
@@ -617,9 +582,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
                         IndexType.FULL_TEXT, options);
         try {
             cme.createIndex(new ClusterName("cluster"), indexMetadata);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
 

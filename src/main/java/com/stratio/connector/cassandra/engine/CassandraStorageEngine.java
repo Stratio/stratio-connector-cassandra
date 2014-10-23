@@ -29,6 +29,7 @@ import com.stratio.connector.cassandra.statements.InsertIntoStatement;
 import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.crossdata.common.connector.IStorageEngine;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -48,7 +49,7 @@ public class CassandraStorageEngine implements IStorageEngine {
     @Override
     public void insert(ClusterName targetCluster,
             com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
 
         Set<String> keys = row.getCells().keySet();
@@ -80,7 +81,7 @@ public class CassandraStorageEngine implements IStorageEngine {
     @Override
     public void insert(ClusterName targetCluster,
             com.stratio.crossdata.common.metadata.TableMetadata targetTable, Collection<Row> rows)
-            throws UnsupportedException, ExecutionException {
+            throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
         for (Row row : rows) {
             Set<String> keys = row.getCells().keySet();
@@ -108,7 +109,7 @@ public class CassandraStorageEngine implements IStorageEngine {
     }
 
     private void getTypeErrorException(ErrorResult error)
-            throws ExecutionException, UnsupportedException {
+            throws ConnectorException {
         switch (error.getType()) {
         case EXECUTION:
             throw new ExecutionException(error.getErrorMessage());
@@ -121,7 +122,7 @@ public class CassandraStorageEngine implements IStorageEngine {
         }
     }
 
-    private void checkError(Result result) throws ExecutionException, UnsupportedException {
+    private void checkError(Result result) throws ConnectorException {
         if (result.hasError()) {
             ErrorResult error = (ErrorResult) result;
             getTypeErrorException(error);

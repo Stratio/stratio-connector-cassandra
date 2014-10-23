@@ -35,6 +35,7 @@ import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.connector.Operations;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.*;
@@ -98,9 +99,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         QueryResult qr = null;
         try {
             qr = cqe.execute(workflow);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
 
@@ -159,9 +158,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         QueryResult qr = null;
         try {
             qr = cqe.execute(workflow);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
 
@@ -226,12 +223,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         QueryResult qr = null;
         try {
             qr = cqe.execute(workflow);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-
         String value = "";
         try {
             for (Row row : qr.getResultSet()) {
@@ -282,9 +276,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         QueryResult qr = null;
         try {
             qr = cqe.execute(workflow);
-        } catch (UnsupportedException e) {
-            Assert.fail(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
 
@@ -381,6 +373,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.assertTrue(true);
         } catch (ExecutionException e) {
             Assert.fail(e.getMessage());
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
         }
 
     }
@@ -398,6 +392,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         } catch (UnsupportedException e) {
             Assert.assertTrue(true);
         } catch (ExecutionException e) {
+            Assert.fail(e.getMessage());
+        }catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
 
