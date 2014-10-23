@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.crossdata.common.connector.IResultHandler;
-import com.stratio.crossdata.common.connector.Operations;
+import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
