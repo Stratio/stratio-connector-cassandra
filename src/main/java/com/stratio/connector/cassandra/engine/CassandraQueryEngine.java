@@ -46,7 +46,7 @@ import com.stratio.crossdata.common.logicalplan.TransformationStep;
 import com.stratio.crossdata.common.result.ErrorResult;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.result.Result;
-import com.stratio.crossdata.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.statements.structures.Relation;
 
 public class CassandraQueryEngine implements IQueryEngine {
     private static final int DEFAULT_LIMIT = 100;

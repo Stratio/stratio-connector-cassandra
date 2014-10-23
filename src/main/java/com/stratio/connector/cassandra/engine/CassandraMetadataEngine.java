@@ -31,21 +31,21 @@ import com.stratio.connector.cassandra.statements.DropCatalogStatement;
 import com.stratio.connector.cassandra.statements.DropIndexStatement;
 import com.stratio.connector.cassandra.statements.DropTableStatement;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
-import com.stratio.crossdata.common.exceptions.ConnectorException;
-import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
+import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.CatalogMetadata;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.result.ErrorResult;
 import com.stratio.crossdata.common.result.Result;
-import com.stratio.crossdata.common.statements.structures.selectors.Selector;
-import com.stratio.crossdata.common.statements.structures.selectors.StringSelector;
+import com.stratio.crossdata.common.statements.structures.Selector;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 public class CassandraMetadataEngine implements IMetadataEngine {
 
