@@ -32,23 +32,28 @@ import org.testng.annotations.Test;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.crossdata.common.connector.IResultHandler;
-import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.data.Cell;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.logicalplan.*;
-import com.stratio.crossdata.common.result.QueryResult;
-import com.stratio.crossdata.common.statements.structures.relationships.Operator;
-import com.stratio.crossdata.common.statements.structures.relationships.Relation;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.data.ColumnName;
-import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.logicalplan.Limit;
+import com.stratio.crossdata.common.logicalplan.LogicalStep;
+import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.Project;
+import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
-import com.stratio.crossdata.common.statements.structures.selectors.ColumnSelector;
-import com.stratio.crossdata.common.statements.structures.selectors.Selector;
-import com.stratio.crossdata.common.statements.structures.selectors.StringSelector;
+import com.stratio.crossdata.common.metadata.Operations;
+import com.stratio.crossdata.common.result.QueryResult;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Operator;
+import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.Selector;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
@@ -206,8 +211,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         aliasColumns.put(new ColumnName("demo", "users", "name"), "nameAlias");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
+        Map<ColumnName, ColumnType> typeMapFromColumnName = new HashMap<>();
         typeMap.put("demo.users.name", ColumnType.VARCHAR);
-        Select aliasSelect = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap);
+        typeMapFromColumnName.put(new ColumnName("demo", "users", "name"), ColumnType.VARCHAR);
+        Select aliasSelect = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
 
         //Compound workflow
         filter2.setNextStep(aliasSelect);

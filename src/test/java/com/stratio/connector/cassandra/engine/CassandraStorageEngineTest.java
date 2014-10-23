@@ -28,19 +28,17 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.crossdata.common.data.Cell;
-import com.stratio.crossdata.common.data.Row;
-import com.stratio.crossdata.common.exceptions.ConnectorException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.IndexName;
+import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
-import com.stratio.crossdata.common.statements.structures.selectors.Selector;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
