@@ -72,10 +72,7 @@ public class CassandraStorageEngine implements IStorageEngine {
         InsertIntoStatement insertStatement =
                 new InsertIntoStatement(targetTable, columnsMetadata, true);
         String query = insertStatement.toString();
-        Result result = CassandraExecutor.execute(query, session);
-
-        checkError(result);
-
+        CassandraExecutor.execute(query, session);
     }
 
     @Override
@@ -103,30 +100,10 @@ public class CassandraStorageEngine implements IStorageEngine {
             InsertIntoStatement insertStatement =
                     new InsertIntoStatement(targetTable, columnsMetadata, true);
             String query = insertStatement.toString();
-            Result result = CassandraExecutor.execute(query, session);
-            checkError(result);
+            CassandraExecutor.execute(query, session);
         }
     }
 
-    private void getTypeErrorException(ErrorResult error)
-            throws ConnectorException {
-        switch (error.getType()) {
-        case EXECUTION:
-            throw new ExecutionException(error.getErrorMessage());
-        case NOT_SUPPORTED:
-            throw new UnsupportedException(error.getErrorMessage());
-        case CRITICAL:
-            throw new CriticalExecutionException(error.getErrorMessage());
-        default:
-            throw new UnsupportedException(error.getErrorMessage());
-        }
-    }
 
-    private void checkError(Result result) throws ConnectorException {
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
-    }
 
 }

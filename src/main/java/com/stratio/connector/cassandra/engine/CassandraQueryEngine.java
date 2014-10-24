@@ -91,29 +91,11 @@ public class CassandraQueryEngine implements IQueryEngine {
         } else {
             throw new ExecutionException("No session to cluster established");
         }
-
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
-
         return (QueryResult) result;
 
     }
 
-    private void getTypeErrorException(ErrorResult error)
-            throws ConnectorException {
-        switch (error.getType()) {
-        case EXECUTION:
-            throw new ExecutionException(error.getErrorMessage());
-        case NOT_SUPPORTED:
-            throw new UnsupportedException(error.getErrorMessage());
-        case CRITICAL:
-            throw new CriticalExecutionException(error.getErrorMessage());
-        default:
-            throw new UnsupportedException(error.getErrorMessage());
-        }
-    }
+
 
     private void getTransformationStep(LogicalStep logicalStep) {
         TransformationStep transformation = (TransformationStep) logicalStep;

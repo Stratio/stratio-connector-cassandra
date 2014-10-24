@@ -92,9 +92,9 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateCatalogStatement catalogStatement =
                 new CreateCatalogStatement(catalogName, true, stringOptions);
 
-        Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
+        CassandraExecutor.execute(catalogStatement.toString(), session);
 
-        checkError(result);
+
 
     }
 
@@ -123,8 +123,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateTableStatement tableStatement =
                 new CreateTableStatement(tableMetadata, primaryKey, partitionKey, clusterKey,
                         primaryKeyType, stringOptions, true);
-        Result result = CassandraExecutor.execute(tableStatement.toString(), session);
-        checkError(result);
+        CassandraExecutor.execute(tableStatement.toString(), session);
+
 
     }
 
@@ -133,8 +133,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
-        Result result = CassandraExecutor.execute(catalogStatement.toString(), session);
-        checkError(result);
+        CassandraExecutor.execute(catalogStatement.toString(), session);
+
     }
 
     @Override
@@ -142,8 +142,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
-        Result result = CassandraExecutor.execute(tableStatement.toString(), session);
-        checkError(result);
+        CassandraExecutor.execute(tableStatement.toString(), session);
+
 
     }
 
@@ -153,8 +153,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
                 new CreateIndexStatement(indexMetadata, true, session);
-        Result result = CassandraExecutor.execute(indexStatement.toString(), session);
-        checkError(result);
+        CassandraExecutor.execute(indexStatement.toString(), session);
+
     }
 
     @Override
@@ -162,8 +162,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
-        Result result = CassandraExecutor.execute(indexStatement.toString(), session);
-        checkError(result);
+        CassandraExecutor.execute(indexStatement.toString(), session);
+
 
     }
 
@@ -205,24 +205,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         return stringOption;
     }
 
-    private void checkError(Result result) throws ConnectorException {
-        if (result.hasError()) {
-            ErrorResult error = (ErrorResult) result;
-            getTypeErrorException(error);
-        }
-    }
 
-    private void getTypeErrorException(ErrorResult error)
-            throws ConnectorException {
-        switch (error.getType()) {
-        case EXECUTION:
-            throw new ExecutionException(error.getErrorMessage());
-        case NOT_SUPPORTED:
-            throw new UnsupportedException(error.getErrorMessage());
-        case CRITICAL:
-            throw new CriticalExecutionException(error.getErrorMessage());
-        default:
-            throw new UnsupportedException(error.getErrorMessage());
-        }
-    }
+
 }
