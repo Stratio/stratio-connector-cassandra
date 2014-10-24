@@ -26,7 +26,7 @@ To automatically build execute the following command:
 To generate the executable execute the following command:
 
 ```
-   > mvn meta-connector:install
+   > mvn crossdata-connector:install
 ```
 
 To run Connector Cassandra execute:
