@@ -66,11 +66,11 @@ public final class CassandraExecutor {
                     .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
         } catch (UnsupportedOperationException unSupportException) {
             LOG.debug("Cassandra executor failed", unSupportException);
-            throw new UnsupportedException("Unsupported operation by C*: " + unSupportException.getMessage());
+            throw new UnsupportedException(unSupportException);
         } catch (DriverException dex) {
-            throw new CriticalExecutionException(dex.getMessage());
+            throw new CriticalExecutionException(dex);
         } catch (Exception ex) {
-            throw new ExecutionException(ex.getMessage());
+            throw new ExecutionException(ex);
         }
 
     }
@@ -93,11 +93,11 @@ public final class CassandraExecutor {
                     .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns));
         } catch (UnsupportedOperationException unSupportException) {
             LOG.debug("Cassandra executor failed", unSupportException);
-            throw new UnsupportedException("Unsupported operation by C*: " + unSupportException.getMessage());
+            throw new UnsupportedException(unSupportException);
         } catch (DriverException dex) {
-            throw new CriticalExecutionException(dex.getMessage());
+            throw new CriticalExecutionException(dex);
         } catch (Exception ex) {
-            throw new ExecutionException(ex.getMessage());
+            throw new ExecutionException(ex);
         }
     }
 
