@@ -28,16 +28,12 @@ import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.connector.cassandra.statements.InsertIntoStatement;
 import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.crossdata.common.connector.IStorageEngine;
-import com.stratio.crossdata.common.data.Row;
-import com.stratio.crossdata.common.exceptions.ConnectorException;
-import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
-import com.stratio.crossdata.common.result.ErrorResult;
-import com.stratio.crossdata.common.result.Result;
 
 public class CassandraStorageEngine implements IStorageEngine {
     private Map<String, Session> sessions;
@@ -103,7 +99,5 @@ public class CassandraStorageEngine implements IStorageEngine {
             CassandraExecutor.execute(query, session);
         }
     }
-
-
 
 }

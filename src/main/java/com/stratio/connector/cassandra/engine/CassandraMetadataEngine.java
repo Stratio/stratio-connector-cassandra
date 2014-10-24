@@ -36,14 +36,9 @@ import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
-import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.CatalogMetadata;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
-import com.stratio.crossdata.common.result.ErrorResult;
-import com.stratio.crossdata.common.result.Result;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
@@ -94,8 +89,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
-
-
     }
 
     @Override
@@ -125,7 +118,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                         primaryKeyType, stringOptions, true);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
-
     }
 
     @Override
@@ -143,7 +135,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
         CassandraExecutor.execute(tableStatement.toString(), session);
-
 
     }
 
@@ -163,7 +154,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
         CassandraExecutor.execute(indexStatement.toString(), session);
-
 
     }
 
@@ -204,7 +194,5 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         return stringOption;
     }
-
-
 
 }
