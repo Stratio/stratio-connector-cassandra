@@ -11,36 +11,36 @@ Native connector for Cassandra using Crossdata.
 
 To automatically build execute the following command:
 
-```
-   > mvn clean compile install
-```
+
+    > mvn clean compile install
+
 
 ## Running the Stratio Connector Cassandra ##
 
-```
-   > mvn exec:java -Dexec.mainClass="com.stratio.connector.cassandra.CassandraConnector"
-```
+
+    > mvn exec:java -Dexec.mainClass="com.stratio.connector.cassandra.CassandraConnector"
+
 
 
 ## Build an executable Connector Cassandra ##
 
 To generate the executable execute the following command:
 
-```
-   > mvn crossdata-connector:install
-```
+
+    > mvn crossdata-connector:install
+
 
 To run Connector Cassandra execute:
 
-```
-   > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT start
-```
+
+    > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT start
+
 
 To stop the connector execute:
 
-```
-   > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT stop
-```
+
+    > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT stop
+
 
 ## How to use Cassandra Connector ##
 
@@ -49,45 +49,44 @@ To stop the connector execute:
  3. Start Cassandra Connector as it is explained before
  4. In crossdata-shell:
     
-    Add a datastore with this command:
-      
-      ```
-         xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
-      ```
-
-    Attach cluster on that datastore. The datastore name must be the same as the defined in the Datastore manifest.
+    Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found
+    in the path of the Cassandra Connector in target/stratio-connector-cassandra-0.1.0/conf/CassandraDataStore.xml
     
-      ```
-         xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1,
-         ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
-      ```
-
-    Add the connector manifest.
-
-       ```
-         xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
-       ```
     
-    Attach the connector to the previously defined cluster. The connector name must match the one defined in the 
-    Connector Manifest.
+        xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
     
-        ```
-            xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {'DefaultLimit': '1000'};
-        ```
     
-    At this point, we can start to send queries.
+    Attach cluster on that data store. The data store name must be the same as the defined in the data store manifest.
     
-        ...
-            xdsh:user> CREATE CATALOG catalogTest;
-        
-            xdsh:user> USE catalogTest;
-        
-            xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text);
     
-            xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
+        xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1, ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
     
-            xdsh:user> SELECT * FROM tableTest;
-        ...
+    
+    Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in
+    target/stratio-connector-cassandra-0.1.0/conf/CassandraConnector.xml
+    
+    
+        xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
+    
+    
+    Attach the connector to the previously defined cluster. The connector name must match the one defined in the
+    Connector Manifest, and the cluster name must match with the previously defined in the ATTACH CLUSTER command.
+    
+    
+        xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {'DefaultLimit': '1000'};
+    
+    
+    At this point, we can start to send queries, that Crossdata execute with the connector specified.    
+    
+        xdsh:user> CREATE CATALOG catalogTest;
+    
+        xdsh:user> USE catalogTest;
+    
+        xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text);
+    
+        xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
+    
+        xdsh:user> SELECT * FROM tableTest;
 
 
 # License #
