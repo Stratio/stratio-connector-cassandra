@@ -33,13 +33,13 @@ To generate the executable execute the following command:
 To run Connector Cassandra execute:
 
 
-    > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT start
+    > target/stratio-connector-cassandra-0.1.0/bin/stratio-connector-cassandra-0.1.0 start
 
 
 To stop the connector execute:
 
 
-    > target/stratio-connector-cassandra-0.1.0-SNAPSHOT/bin/stratio-connector-cassandra-0.1.0-SNAPSHOT stop
+    > target/stratio-connector-cassandra-0.1.0/bin/stratio-connector-cassandra-0.1.0 stop
 
 
 ## How to use Cassandra Connector ##
