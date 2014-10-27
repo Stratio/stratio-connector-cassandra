@@ -43,7 +43,7 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     /**
      * Basic Constructor.
-     * @param sessions: Map with the sessions
+     * @param sessions Map with the sessions
      */
     public CassandraStorageEngine(Map<String, Session> sessions) {
         this.sessions = sessions;
@@ -51,9 +51,9 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     /**
      * Insert method to a table.
-     * @param targetCluster: The target cluster.
-     * @param targetTable:   The target table.
-     * @param row:           The inserted row.
+     * @param targetCluster The target cluster.
+     * @param targetTable   The target table.
+     * @param row           The inserted row.
      * @throws ConnectorException
      */
     @Override
@@ -87,9 +87,9 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     /**
      * Multiple insertion in a table.
-     * @param targetCluster: The target cluster.
-     * @param targetTable: The target table.
-     * @param rows: Collection of rows to insert.
+     * @param targetCluster The target cluster.
+     * @param targetTable The target table.
+     * @param rows Collection of rows to insert.
      * @throws ConnectorException
      */
     @Override

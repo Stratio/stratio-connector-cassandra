@@ -42,7 +42,7 @@ public abstract class ValueProperty {
 
     /**
      * Set the type.
-     * @param type: The integer type.
+     * @param type The integer type.
      */
     public void setType(int type) {
         this.type = type;

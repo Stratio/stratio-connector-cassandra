@@ -65,8 +65,8 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     /**
      * Basic constructor.
-     * @param sessions: Map of sessions.
-     * @param limitDefault: Default limit for a query.
+     * @param sessions Map of sessions.
+     * @param limitDefault Default limit for a query.
      */
     public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
         this.sessions = sessions;
