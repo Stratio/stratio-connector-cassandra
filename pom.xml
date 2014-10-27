@@ -23,6 +23,7 @@
     <version>0.1.0</version>
     <name>Stratio Connector Cassandra</name>
     <description>Native Cassandra Connector</description>
+    <url>https://github.com/Stratio/stratio-connector-cassandra</url>
     <packaging>jar</packaging>
 
     <developers>
