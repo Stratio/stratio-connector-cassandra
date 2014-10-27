@@ -32,6 +32,9 @@ import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
+/**
+ * CassandraExecutor allows to interact with the Cassandra Datastax Driver and execute the queries.
+ */
 public final class CassandraExecutor {
 
     /**

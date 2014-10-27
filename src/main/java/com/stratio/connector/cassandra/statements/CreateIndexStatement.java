@@ -85,6 +85,13 @@ public class CreateIndexStatement {
      */
     private Map<ValueProperty, ValueProperty> options = new LinkedHashMap<>();
 
+    /**
+     * Basic Constructor.
+     * @param indexMetadata  Index metadata information .
+     * @param createIfNotExists Condition of creation of the index.
+     * @param session Session that the Index affect.
+     * @throws ExecutionException
+     */
     public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists,
             Session session)
             throws ExecutionException {
@@ -148,6 +155,10 @@ public class CreateIndexStatement {
         return result;
     }
 
+    /**
+     * Get the query in a String in CQL language.
+     * @return String with the query
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder("CREATE ");
         if (type == (IndexType.FULL_TEXT)) {

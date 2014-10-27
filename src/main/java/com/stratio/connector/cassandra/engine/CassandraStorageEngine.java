@@ -35,13 +35,27 @@ import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 
+/**
+ * Class CassandraStorageEngine: Allow to make insert queries with the connector.
+ */
 public class CassandraStorageEngine implements IStorageEngine {
     private Map<String, Session> sessions;
 
+    /**
+     * Basic Constructor.
+     * @param sessions: Map with the sessions
+     */
     public CassandraStorageEngine(Map<String, Session> sessions) {
         this.sessions = sessions;
     }
 
+    /**
+     * Insert method to a table.
+     * @param targetCluster: The target cluster.
+     * @param targetTable:   The target table.
+     * @param row:           The inserted row.
+     * @throws ConnectorException
+     */
     @Override
     public void insert(ClusterName targetCluster,
             com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row)
@@ -71,6 +85,13 @@ public class CassandraStorageEngine implements IStorageEngine {
         CassandraExecutor.execute(query, session);
     }
 
+    /**
+     * Multiple insertion in a table.
+     * @param targetCluster: The target cluster.
+     * @param targetTable: The target table.
+     * @param rows: Collection of rows to insert.
+     * @throws ConnectorException
+     */
     @Override
     public void insert(ClusterName targetCluster,
             com.stratio.crossdata.common.metadata.TableMetadata targetTable, Collection<Row> rows)

@@ -59,6 +59,9 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.security.ICredentials;
 import com.stratio.crossdata.common.data.ClusterName;
 
+/**
+ * Cassandra Connector class. This class contain a main that starts the connector.
+ */
 public class CassandraConnector implements IConnector {
 
     /**
@@ -66,12 +69,22 @@ public class CassandraConnector implements IConnector {
      */
     private static final Logger LOG = Logger.getLogger(CassandraConnector.class);
 
+    /**
+     * DEFAULT_LIMIT for the select queries.
+     */
     private static final int DEFAULT_LIMIT = 100;
+
+    /**
+     * The sessions of the connector.
+     */
     private Map<String, Session> sessions;
     private String connectorName;
     private String[] datastoreName;
     private int defaultLimit;
 
+    /**
+     * Constructor.
+     */
     public CassandraConnector() {
         sessions = new HashMap<>();
         try {
@@ -117,6 +130,10 @@ public class CassandraConnector implements IConnector {
         }
     }
 
+    /**
+     * Main method that start the connector and controls the unexpected shutdowns
+     * @param args
+     */
     public static void main(String[] args) {
 
         CassandraConnector cassandraConnector = new CassandraConnector();
@@ -127,8 +144,7 @@ public class CassandraConnector implements IConnector {
 
     }
 
-    public void attachShutDownHook() {
-
+    private void attachShutDownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -158,11 +174,22 @@ public class CassandraConnector implements IConnector {
         return datastoreName.clone();
     }
 
+    /**
+     * Init Method with the needed configuration for the connector.
+     * @param configuration
+     * @throws InitializationException
+     */
     @Override
     public void init(IConfiguration configuration) throws InitializationException {
 
     }
 
+    /**
+     * Connect Method: Enabled the connector with his own configuration
+     * @param credentials: The credentials.
+     * @param config: The cluster config
+     * @throws ConnectionException
+     */
     @Override
     public void connect(ICredentials credentials, ConnectorClusterConfig config)
             throws ConnectionException {
@@ -190,12 +217,21 @@ public class CassandraConnector implements IConnector {
         sessions.put(clusterName.getName(), engine.getSession());
     }
 
+    /**
+     * Close the session of the cluster name specified.
+     * @param name: Name of the cluster.
+     * @throws ConnectionException
+     */
     @Override
     public void close(ClusterName name) throws ConnectionException {
         sessions.get(name.getName()).close();
         sessions.remove(name.getName());
     }
 
+    /**
+     * Close all the sessions of the connector.
+     * @throws ExecutionException
+     */
     @Override
     public void shutdown() throws ExecutionException {
         List<CloseFuture> closeFutureList = new ArrayList<>();
@@ -205,6 +241,9 @@ public class CassandraConnector implements IConnector {
         sessions = new HashMap<>();
     }
 
+    /**
+     * Close at the moment all the sessions of the connector
+     */
     public void uncontrolledShutdown() {
         for (Session s : sessions.values()) {
             s.close();
@@ -212,6 +251,11 @@ public class CassandraConnector implements IConnector {
         sessions = new HashMap<>();
     }
 
+    /**
+     * Controls if there is a session started for a cluster name.
+     * @param name: cluster name.
+     * @return if the connector is connected to the cluster.
+     */
     @Override
     public boolean isConnected(ClusterName name) {
         boolean connected;

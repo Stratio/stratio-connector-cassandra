@@ -23,6 +23,9 @@ import java.util.Random;
 
 import com.stratio.crossdata.common.security.ICredentials;
 
+/**
+ * Engine Config class contains information about, hosts, cluster and credentials for Cassandra Connector.
+ */
 public class EngineConfig {
 
     /**
@@ -106,10 +109,18 @@ public class EngineConfig {
         return cassandraHosts[rand.nextInt(cassandraHosts.length)];
     }
 
+    /**
+     * Get the credentials.
+     * @return ICredentials.
+     */
     public ICredentials getCredentials() {
         return credentials;
     }
 
+    /**
+     * Set the credentials.
+     * @param credentials
+     */
     public void setCredentials(ICredentials credentials) {
         this.credentials = credentials;
     }

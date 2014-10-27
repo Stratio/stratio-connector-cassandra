@@ -19,5 +19,8 @@ package com.stratio.connector.cassandra;
 
 import com.stratio.crossdata.common.connector.IConfiguration;
 
+/**
+ * CassandraConfiguration Class will implement the specific configuration for Cassandra Connector.
+ */
 public class CassandraConfiguration implements IConfiguration {
 }

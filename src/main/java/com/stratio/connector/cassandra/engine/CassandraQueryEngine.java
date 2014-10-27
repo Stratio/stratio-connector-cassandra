@@ -46,6 +46,9 @@ import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.result.Result;
 import com.stratio.crossdata.common.statements.structures.Relation;
 
+/**
+ * Class CassandraQueryEngine: Allow to make select queries with the connector.
+ */
 public class CassandraQueryEngine implements IQueryEngine {
     private static final int DEFAULT_LIMIT = 100;
     private Map<ColumnName, String> aliasColumns = new HashMap<>();
@@ -60,10 +63,16 @@ public class CassandraQueryEngine implements IQueryEngine {
     private int limit = DEFAULT_LIMIT;
     private Map<String, Session> sessions;
 
+    /**
+     * Basic constructor.
+     * @param sessions: Map of sessions.
+     * @param limitDefault: Default limit for a query.
+     */
     public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
         this.sessions = sessions;
         this.limit = limitDefault;
     }
+
 
     @Override
     public com.stratio.crossdata.common.result.QueryResult execute(LogicalWorkflow workflow)
@@ -133,6 +142,10 @@ public class CassandraQueryEngine implements IQueryEngine {
         throw new UnsupportedException("Stop for Async execute not supported yet.");
     }
 
+    /**
+     * Method that convert a query to a cassandra language.
+     * @return java.lang.String with the Cassandra query.
+     */
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
         if (selectionClause != null) {
@@ -221,7 +234,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         return indexName;
     }
 
-    public String getLuceneWhereClause(Relation relation) {
+    private String getLuceneWhereClause(Relation relation) {
         String result;
 
         StringBuilder sb = new StringBuilder("{filter:{type:\"boolean\",must:[");

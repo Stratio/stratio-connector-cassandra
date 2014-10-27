@@ -18,31 +18,47 @@
 
 package com.stratio.connector.cassandra.utils;
 
+/**
+ * IdentifierProperty class
+ */
 public class IdentifierProperty extends ValueProperty {
 
     private String identifier;
 
+    /**
+     * Basic Constructor.
+     * @param identifier The identifier.
+     */
     public IdentifierProperty(String identifier) {
         this.identifier = identifier;
         this.type = TYPE_IDENT;
     }
 
+    /**
+     * Get the identifier.
+     * @return String.
+     */
     public String getIdentifier() {
         return identifier;
     }
 
+    /**
+     * Set the identifier.
+     * @param identifier
+     */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
 
+    /**
+     * Obtain the identifier in a String.
+     * @return String.
+     */
     @Override
     public String toString() {
         return identifier;
     }
 
-    @Override
-    public String getStringValue() {
-        return toString();
-    }
+
 
 }

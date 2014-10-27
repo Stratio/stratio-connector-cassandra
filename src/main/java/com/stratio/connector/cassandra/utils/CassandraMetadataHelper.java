@@ -91,6 +91,11 @@ public class CassandraMetadataHelper {
         }
     }
 
+    /**
+     * Transform a Cassandra type to Crossdata type.
+     * @param dbTypeName The Cassandra column type.
+     * @return The Crossdata ColumnType.
+     */
     public ColumnType toColumnType(String dbTypeName) {
         ColumnType result = typeMapping.get(dbTypeName.toUpperCase());
         if (result == null) {

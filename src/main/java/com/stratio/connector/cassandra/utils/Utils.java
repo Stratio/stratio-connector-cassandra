@@ -35,6 +35,9 @@ import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.metadata.ColumnType;
 
+/**
+ * Utils Class that implements a utility helper for Cassandra Connector.
+ */
 public class Utils {
 
     /**
@@ -159,7 +162,8 @@ public class Utils {
      * com.stratio.crossdata.common.data.ResultSet}.
      *
      * @param resultSet The input Cassandra result set.
-     * @return An equivalent Meta ResultSet
+     * @param alias  The map with the relations between ColumnName and Alias.
+     * @return An equivalent Meta ResultSet.
      */
     public com.stratio.crossdata.common.data.ResultSet transformToMetaResultSet(
             com.datastax.driver.core.ResultSet resultSet, Map<ColumnName, String> alias) {

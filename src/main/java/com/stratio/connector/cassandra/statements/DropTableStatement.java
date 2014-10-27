@@ -59,6 +59,10 @@ public class DropTableStatement {
         this.ifExists = ifExists;
     }
 
+    /**
+     * Obtain the query in CQL language.
+     * @return String with the query.
+     */
     public String toString() {
         StringBuilder sb = new StringBuilder("DROP TABLE ");
         if (ifExists) {

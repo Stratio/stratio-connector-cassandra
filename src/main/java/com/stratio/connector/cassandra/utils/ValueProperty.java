@@ -18,6 +18,9 @@
 
 package com.stratio.connector.cassandra.utils;
 
+/**
+ * Value property class.
+ */
 public abstract class ValueProperty {
 
     public static final int TYPE_IDENT = 1;
@@ -29,17 +32,29 @@ public abstract class ValueProperty {
 
     protected int type;
 
+    /**
+     * Obtain the type.
+     * @return int with the type.
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     * Set the type.
+     * @param type: The integer type.
+     */
     public void setType(int type) {
         this.type = type;
     }
 
+    /**
+     * Get the string of the type.
+     * @return the string of the type.
+     */
     @Override
     public abstract String toString();
 
-    public abstract String getStringValue();
+
 
 }

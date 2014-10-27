@@ -42,6 +42,9 @@ import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
+/**
+ * CassandraMetadataEngine Class allow to send metadata queries to the Cassandra Connector.
+ */
 public class CassandraMetadataEngine implements IMetadataEngine {
 
     private static final int PRIMARY_SINGLE = 1;
@@ -69,10 +72,20 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     private Map<String, Session> sessions;
     private Session session = null;
 
+    /**
+     * Basic constructor.
+     * @param sessions The map of sessions that affect the queries.
+     */
     public CassandraMetadataEngine(Map<String, Session> sessions) {
         this.sessions = sessions;
     }
 
+    /**
+     * Create Catalog for Cassandra Connector.
+     * @param targetCluster The target cluster.
+     * @param catalogMetadata The metadata of the catalog that will be created.
+     * @throws ConnectorException
+     */
     @Override
     public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata)
             throws ConnectorException {
@@ -91,6 +104,12 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
+    /**
+     * Create Table for Cassandra Connector.
+     * @param targetCluster The target cluster.
+     * @param tableMetadata The metadata of the table that will be created.
+     * @throws ConnectorException
+     */
     @Override
     public void createTable(ClusterName targetCluster, TableMetadata tableMetadata)
             throws ConnectorException {
@@ -120,6 +139,12 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
+    /**
+     * Drop Catalog that was created previously.
+     * @param targetCluster The target cluster.
+     * @param name The CatalogName of the Catalog.
+     * @throws ConnectorException
+     */
     @Override
     public void dropCatalog(ClusterName targetCluster, CatalogName name)
             throws ConnectorException {
@@ -129,6 +154,12 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
+    /**
+     * Drop table that was created previously.
+     * @param targetCluster The target cluster.
+     * @param name The TableName of the Table.
+     * @throws ConnectorException
+     */
     @Override
     public void dropTable(ClusterName targetCluster, TableName name)
             throws ConnectorException {
@@ -138,6 +169,12 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
+    /**
+     * Create Index for Cassandra Connector.
+     * @param targetCluster The target cluster.
+     * @param indexMetadata The metadata of the index that will be created.
+     * @throws ConnectorException
+     */
     @Override
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
             throws ConnectorException {
@@ -148,6 +185,12 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
+    /**
+     * Drop Index that was created previously.
+     * @param targetCluster The target cluster.
+     * @param indexName The IndexName of the index.
+     * @throws ConnectorException
+     */
     @Override
     public void dropIndex(ClusterName targetCluster, IndexMetadata indexName)
             throws ConnectorException {

@@ -119,6 +119,10 @@ public class CreateTableStatement {
         }
     }
 
+    /**
+     * Obtain the single primary key.
+     * @return a string with the primary key.
+     */
     public String getSinglePKString() {
         StringBuilder sb = new StringBuilder(" (");
         Set<ColumnName> keySet = tableColumns.keySet();
@@ -141,6 +145,10 @@ public class CreateTableStatement {
         return sb.toString();
     }
 
+    /**
+     * Obtain the composite primary key.
+     * @return a string with the primary key.
+     */
     public String getCompositePKString() {
         StringBuilder sb = new StringBuilder("PRIMARY KEY");
         if (primaryKeyType == PRIMARY_COMPOSED) {
@@ -176,6 +184,10 @@ public class CreateTableStatement {
         return sb.toString();
     }
 
+    /**
+     * Get the query of create table in Cassandra language.
+     * @return th String with the query.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Create table ");
