@@ -131,7 +131,7 @@ public class CassandraConnector implements IConnector {
     }
 
     /**
-     * Main method that start the connector and controls the unexpected shutdowns
+     * Main method that start the connector and controls the unexpected shutdowns.
      * @param args
      */
     public static void main(String[] args) {
@@ -185,9 +185,9 @@ public class CassandraConnector implements IConnector {
     }
 
     /**
-     * Connect Method: Enabled the connector with his own configuration
-     * @param credentials: The credentials.
-     * @param config: The cluster config
+     * Connect Method: Enabled the connector with his own configuration.
+     * @param credentials The credentials.
+     * @param config The cluster config
      * @throws ConnectionException
      */
     @Override
@@ -219,7 +219,7 @@ public class CassandraConnector implements IConnector {
 
     /**
      * Close the session of the cluster name specified.
-     * @param name: Name of the cluster.
+     * @param name Name of the cluster.
      * @throws ConnectionException
      */
     @Override
@@ -242,7 +242,7 @@ public class CassandraConnector implements IConnector {
     }
 
     /**
-     * Close at the moment all the sessions of the connector
+     * Close at the moment all the sessions of the connector.
      */
     public void uncontrolledShutdown() {
         for (Session s : sessions.values()) {
@@ -253,7 +253,7 @@ public class CassandraConnector implements IConnector {
 
     /**
      * Controls if there is a session started for a cluster name.
-     * @param name: cluster name.
+     * @param name cluster name.
      * @return if the connector is connected to the cluster.
      */
     @Override

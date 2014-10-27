@@ -41,7 +41,7 @@ public class ColumnInsertCassandra {
     }
 
     /**
-     * Get the type
+     * Get the type.
      * @return ColumnType
      */
     public ColumnType getType() {
@@ -49,7 +49,7 @@ public class ColumnInsertCassandra {
     }
 
     /**
-     * Set the type
+     * Set the type.
      * @param type
      */
     public void setType(ColumnType type) {
@@ -57,7 +57,7 @@ public class ColumnInsertCassandra {
     }
 
     /**
-     * Get the value
+     * Get the value.
      * @return String with the value of a Column.
      */
     public String getValue() {

@@ -19,7 +19,7 @@
 package com.stratio.connector.cassandra.utils;
 
 /**
- * IdentifierProperty class
+ * IdentifierProperty class.
  */
 public class IdentifierProperty extends ValueProperty {
 

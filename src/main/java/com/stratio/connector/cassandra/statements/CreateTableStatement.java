@@ -87,12 +87,15 @@ public class CreateTableStatement {
     private boolean catalogInc;
 
     /**
-     * Class constructor.
-     *
+     * Class Constructor.
      * @param tableMetadata  The metadata of the table.
-     * @param primaryKey     The list of columns that are part of the primary key.
-     * @param clusterKey     The list of columns that are part of the clustering key.
-     * @param primaryKeyType The type of primary key.
+     * @param primaryKey The primary key of the table.
+     * @param partitionKey The partition key of the table.
+     * @param clusterKey The cluster key of the table.
+     * @param primaryKeyType The type of the primary key of the table.
+     * @param properties The specific properties of the table that will be created.
+     * @param ifNotExists the condition of creation of the table.
+     * @throws ExecutionException
      */
     public CreateTableStatement(TableMetadata tableMetadata,
             List<ColumnName> primaryKey, List<ColumnName> partitionKey, List<ColumnName> clusterKey,
