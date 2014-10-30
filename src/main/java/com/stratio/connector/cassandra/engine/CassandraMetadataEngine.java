@@ -24,6 +24,8 @@ import java.util.Map;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
+
+import com.stratio.connector.cassandra.statements.AlterTableStatement;
 import com.stratio.connector.cassandra.statements.CreateCatalogStatement;
 import com.stratio.connector.cassandra.statements.CreateIndexStatement;
 import com.stratio.connector.cassandra.statements.CreateTableStatement;
@@ -31,16 +33,19 @@ import com.stratio.connector.cassandra.statements.DropCatalogStatement;
 import com.stratio.connector.cassandra.statements.DropIndexStatement;
 import com.stratio.connector.cassandra.statements.DropTableStatement;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
+import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.metadata.CatalogMetadata;
+import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
+
 
 /**
  * CassandraMetadataEngine Class allow to send metadata queries to the Cassandra Connector.
@@ -165,6 +170,17 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
         DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
+        CassandraExecutor.execute(tableStatement.toString(), session);
+
+    }
+
+    @Override public void alterTable(ClusterName targetCluster, TableName name, AlterOptions alterOptions)
+            throws ConnectorException {
+
+        session = sessions.get(targetCluster.getName());
+        ColumnType type=alterOptions.getColumnMetadata().getColumnType();
+        AlterTableStatement tableStatement = new AlterTableStatement(name, alterOptions.getColumnMetadata().getName()
+                ,type, alterOptions.getProperties(),alterOptions.getOption());
         CassandraExecutor.execute(tableStatement.toString(), session);
 
     }

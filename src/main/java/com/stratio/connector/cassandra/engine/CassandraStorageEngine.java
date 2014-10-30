@@ -18,13 +18,16 @@
 
 package com.stratio.connector.cassandra.engine;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
+import com.stratio.connector.cassandra.statements.DeleteStatement;
 import com.stratio.connector.cassandra.statements.InsertIntoStatement;
 import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.crossdata.common.connector.IStorageEngine;
@@ -34,6 +37,8 @@ import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
  * Class CassandraStorageEngine: Allow to make insert queries with the connector.
@@ -43,6 +48,7 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     /**
      * Basic Constructor.
+     *
      * @param sessions Map with the sessions
      */
     public CassandraStorageEngine(Map<String, Session> sessions) {
@@ -51,6 +57,7 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     /**
      * Insert method to a table.
+     *
      * @param targetCluster The target cluster.
      * @param targetTable   The target table.
      * @param row           The inserted row.
@@ -87,9 +94,10 @@ public class CassandraStorageEngine implements IStorageEngine {
 
     /**
      * Multiple insertion in a table.
+     *
      * @param targetCluster The target cluster.
-     * @param targetTable The target table.
-     * @param rows Collection of rows to insert.
+     * @param targetTable   The target table.
+     * @param rows          Collection of rows to insert.
      * @throws ConnectorException
      */
     @Override
@@ -119,6 +127,20 @@ public class CassandraStorageEngine implements IStorageEngine {
             String query = insertStatement.toString();
             CassandraExecutor.execute(query, session);
         }
+    }
+
+    @Override public void delete(ClusterName targetCluster, TableMetadata targetTable,
+            Collection<Relation> whereClauses) throws ConnectorException {
+
+        Session session = sessions.get(targetCluster.getName());
+        List<Relation> whereRelations=new ArrayList<>();
+        for (Relation relation:whereClauses){
+            whereRelations.add(relation);
+        }
+        DeleteStatement deleteStatement=new DeleteStatement(targetTable.getName(), whereRelations);
+        String query = deleteStatement.toString();
+        CassandraExecutor.execute(query, session);
+
     }
 
 }
