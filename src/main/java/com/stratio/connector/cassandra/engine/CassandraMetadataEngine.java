@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
-
 import com.stratio.connector.cassandra.statements.AlterTableStatement;
 import com.stratio.connector.cassandra.statements.CreateCatalogStatement;
 import com.stratio.connector.cassandra.statements.CreateIndexStatement;
@@ -45,7 +44,6 @@ import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
-
 
 /**
  * CassandraMetadataEngine Class allow to send metadata queries to the Cassandra Connector.
@@ -79,6 +77,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     /**
      * Basic constructor.
+     *
      * @param sessions The map of sessions that affect the queries.
      */
     public CassandraMetadataEngine(Map<String, Session> sessions) {
@@ -87,7 +86,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     /**
      * Create Catalog for Cassandra Connector.
-     * @param targetCluster The target cluster.
+     *
+     * @param targetCluster   The target cluster.
      * @param catalogMetadata The metadata of the catalog that will be created.
      * @throws ConnectorException
      */
@@ -111,6 +111,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     /**
      * Create Table for Cassandra Connector.
+     *
      * @param targetCluster The target cluster.
      * @param tableMetadata The metadata of the table that will be created.
      * @throws ConnectorException
@@ -146,8 +147,9 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     /**
      * Drop Catalog that was created previously.
+     *
      * @param targetCluster The target cluster.
-     * @param name The CatalogName of the Catalog.
+     * @param name          The CatalogName of the Catalog.
      * @throws ConnectorException
      */
     @Override
@@ -161,8 +163,9 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     /**
      * Drop table that was created previously.
+     *
      * @param targetCluster The target cluster.
-     * @param name The TableName of the Table.
+     * @param name          The TableName of the Table.
      * @throws ConnectorException
      */
     @Override
@@ -176,17 +179,33 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override public void alterTable(ClusterName targetCluster, TableName name, AlterOptions alterOptions)
             throws ConnectorException {
-
+        AlterTableStatement tableStatement;
         session = sessions.get(targetCluster.getName());
-        ColumnType type=alterOptions.getColumnMetadata().getColumnType();
-        AlterTableStatement tableStatement = new AlterTableStatement(name, alterOptions.getColumnMetadata().getName()
-                ,type, alterOptions.getProperties(),alterOptions.getOption());
-        CassandraExecutor.execute(tableStatement.toString(), session);
+        switch (alterOptions.getOption()) {
+        case ALTER_COLUMN:
+        case ADD_COLUMN:
+        case DROP_COLUMN:
+            ColumnType type = alterOptions.getColumnMetadata().getColumnType();
+            tableStatement = new AlterTableStatement(name, alterOptions.getColumnMetadata().getName()
+                    , type, alterOptions.getProperties(), alterOptions.getOption());
+            CassandraExecutor.execute(tableStatement.toString(), session);
+            break;
+        case ALTER_OPTIONS:
+            tableStatement = new AlterTableStatement(name, null, null, alterOptions.getProperties(),
+                    alterOptions.getOption());
+            CassandraExecutor.execute(tableStatement.toString(), session);
+            break;
+        default:
+            break;
+        }
+
+
 
     }
 
     /**
      * Create Index for Cassandra Connector.
+     *
      * @param targetCluster The target cluster.
      * @param indexMetadata The metadata of the index that will be created.
      * @throws ConnectorException
@@ -203,8 +222,9 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     /**
      * Drop Index that was created previously.
+     *
      * @param targetCluster The target cluster.
-     * @param indexName The IndexName of the index.
+     * @param indexName     The IndexName of the index.
      * @throws ConnectorException
      */
     @Override

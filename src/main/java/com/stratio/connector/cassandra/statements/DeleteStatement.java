@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.utils.StringUtils;
 
@@ -46,9 +47,9 @@ public class DeleteStatement {
      * The list of {@link com.stratio.crossdata.common.statements.structures.Relation} found
      * in the WHERE clause.
      */
-    private List<Relation> whereClauses;
+    private List<Filter> whereClauses;
 
-    public DeleteStatement(TableName tableName, List<Relation> whereClauses) {
+    public DeleteStatement(TableName tableName, List<Filter> whereClauses) {
         this.tableName = tableName;
         if (tableName.isCompletedName()) {
             catalogInc = true;
@@ -61,13 +62,13 @@ public class DeleteStatement {
      * Add a new {@link com.stratio.crossdata.common.statements.structures.Relation} found in
      * a WHERE clause.
      *
-     * @param relation The relation.
+     * @param filter The filter.
      */
-    public void addRelation(Relation relation) {
-        whereClauses.add(relation);
+    public void addFilter(Filter filter) {
+        whereClauses.add(filter);
     }
 
-    public List<Relation> getWhereClauses() {
+    public List<Filter> getWhereClauses() {
         return whereClauses;
     }
 
@@ -77,10 +78,18 @@ public class DeleteStatement {
         if (catalogInc) {
             sb.append(catalog).append(".");
         }
-        sb.append(tableName);
+        sb.append(tableName.getName());
         if (!whereClauses.isEmpty()) {
             sb.append(" WHERE ");
-            sb.append(StringUtils.stringList(whereClauses, " AND "));
+            for (Filter filter:whereClauses){
+                Relation relation=filter.getRelation();
+                String leftTerm=relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
+                        .getStringValue().lastIndexOf('.')+1,relation.getLeftTerm().getStringValue().length());
+                sb.append(leftTerm).append(relation.getOperator().toString()).append
+                        (relation.getRightTerm().toString()).append(" AND ");
+            }
+            sb.delete(sb.lastIndexOf(" AND"), sb.length());
+
         }
         return sb.toString();
     }

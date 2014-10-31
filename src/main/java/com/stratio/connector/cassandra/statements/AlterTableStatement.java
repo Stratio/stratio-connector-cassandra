@@ -93,20 +93,24 @@ public class AlterTableStatement {
         sb.append(tableName.getQualifiedName());
         switch (option) {
         case ALTER_COLUMN:
-            sb.append(" ALTER ").append(column.getQualifiedName());
+            sb.append(" ALTER ").append(column.getName());
             sb.append(" TYPE ").append(type);
             break;
         case ADD_COLUMN:
             sb.append(" ADD ");
-            sb.append(column.getQualifiedName()).append(" ");
+            sb.append(column.getName()).append(" ");
             sb.append(type);
             break;
         case DROP_COLUMN:
             sb.append(" DROP ");
-            sb.append(column.getQualifiedName());
+            sb.append(column.getName());
             break;
         case ALTER_OPTIONS:
-            sb.append(" WITH ").append(properties);
+            sb.append(" WITH ");
+            for(Map.Entry<Selector,Selector> entry: properties.entrySet()) {
+                sb.append(entry.getKey().getStringValue()).append(" = ").append(entry.getValue().toString()).append(" AND ");
+            }
+            sb.delete(sb.lastIndexOf(" AND"), sb.length());
             break;
         default:
             sb.append("BAD OPTION");

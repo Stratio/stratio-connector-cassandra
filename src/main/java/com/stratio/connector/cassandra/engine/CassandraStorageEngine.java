@@ -34,10 +34,11 @@ import com.stratio.crossdata.common.connector.IStorageEngine;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
-import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
@@ -129,18 +130,17 @@ public class CassandraStorageEngine implements IStorageEngine {
         }
     }
 
-    @Override public void delete(ClusterName targetCluster, TableMetadata targetTable,
-            Collection<Relation> whereClauses) throws ConnectorException {
-
+    @Override
+    public void delete(ClusterName targetCluster, TableName tableName, Collection<Filter> whereClauses)
+            throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
-        List<Relation> whereRelations=new ArrayList<>();
-        for (Relation relation:whereClauses){
-            whereRelations.add(relation);
+        List<Filter> whereFilters = new ArrayList<>();
+        for (Filter filter : whereClauses) {
+            whereFilters.add(filter);
         }
-        DeleteStatement deleteStatement=new DeleteStatement(targetTable.getName(), whereRelations);
+        DeleteStatement deleteStatement = new DeleteStatement(tableName, whereFilters);
         String query = deleteStatement.toString();
         CassandraExecutor.execute(query, session);
-
     }
 
 }

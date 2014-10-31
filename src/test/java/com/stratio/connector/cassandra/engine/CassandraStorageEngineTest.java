@@ -16,6 +16,7 @@ package com.stratio.connector.cassandra.engine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -34,11 +35,17 @@ import com.stratio.crossdata.common.data.IndexName;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
+import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Operator;
+import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.statements.structures.Selector;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
@@ -243,6 +250,30 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Assert.assertNotEquals(initialCount, finalCount);
     }
 
+
+    @Test
+    public void deleteFromTest() {
+        CassandraStorageEngine cse = new CassandraStorageEngine(sessions);
+        Collection<Filter> whereClauses=new HashSet<>();
+        Selector leftSelector= new ColumnSelector(new ColumnName("demo","users","name"));
+        Selector rightSelector= new StringSelector("insertName");
+        Relation relation=new Relation(leftSelector, Operator.EQ, rightSelector);
+        Filter filter=new Filter(Operations.DELETE,relation);
+
+        Selector leftSelector2= new ColumnSelector(new ColumnName("demo","users","gender"));
+        Selector rightSelector2= new StringSelector("male");
+        Relation relation2=new Relation(leftSelector2, Operator.EQ, rightSelector2);
+        Filter filter2=new Filter(Operations.DELETE,relation2);
+        whereClauses.add(filter);
+        whereClauses.add(filter2);
+        try {
+            cse.delete(new ClusterName("cluster"), new TableName("demo", "users"), whereClauses);
+            Assert.assertTrue(true);
+        }catch (ConnectorException e){
+            Assert.fail(e.getMessage());
+        }
+
+    }
     @AfterClass
     public void restore() {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demo");

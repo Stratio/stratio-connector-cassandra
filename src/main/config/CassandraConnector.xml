@@ -14,8 +14,10 @@
     <SupportedOperations>
         <operation>CREATE_CATALOG</operation>
         <operation>DROP_CATALOG</operation>
+        <operation>ALTER_CATALOG</operation>
         <operation>CREATE_TABLE</operation>
         <operation>DROP_TABLE</operation>
+        <operation>ALTER_TABLE</operation>
         <operation>INSERT</operation>
         <operation>PROJECT</operation>
         <operation>SELECT_OPERATOR</operation>
