@@ -18,6 +18,8 @@
         <operation>CREATE_TABLE</operation>
         <operation>DROP_TABLE</operation>
         <operation>ALTER_TABLE</operation>
+        <operation>UPDATE_TABLE</operation>
+        <operation>TRUNCATE_TABLE</operation>
         <operation>INSERT</operation>
         <operation>DELETE</operation>
         <operation>CREATE_INDEX</operation>
