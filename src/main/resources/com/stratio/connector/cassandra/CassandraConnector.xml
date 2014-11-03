@@ -19,6 +19,9 @@
         <operation>DROP_TABLE</operation>
         <operation>ALTER_TABLE</operation>
         <operation>INSERT</operation>
+        <operation>DELETE</operation>
+        <operation>CREATE_INDEX</operation>
+        <operation>DROP_INDEX</operation>
         <operation>PROJECT</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
