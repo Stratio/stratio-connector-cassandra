@@ -29,6 +29,8 @@ import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.connector.cassandra.statements.DeleteStatement;
 import com.stratio.connector.cassandra.statements.InsertIntoStatement;
+import com.stratio.connector.cassandra.statements.TruncateStatement;
+import com.stratio.connector.cassandra.statements.UpdateTableStatement;
 import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
 import com.stratio.crossdata.common.connector.IStorageEngine;
 import com.stratio.crossdata.common.data.ClusterName;
@@ -39,6 +41,7 @@ import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
@@ -69,27 +72,7 @@ public class CassandraStorageEngine implements IStorageEngine {
             com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
-
-        Set<String> keys = row.getCells().keySet();
-
-        Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
-        Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
-
-        try {
-            for (String key : keys) {
-                ColumnName col = new ColumnName(targetTable.getName().getCatalogName().getName(),
-                        targetTable.getName().getName(), key);
-                columnsMetadata.put(key,
-                        new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
-                                row.getCell(key).toString(), key));
-            }
-        } catch (Exception e) {
-            throw new ExecutionException("Trying insert data in a not existing column", e);
-        }
-
-        InsertIntoStatement insertStatement =
-                new InsertIntoStatement(targetTable, columnsMetadata, true);
-        String query = insertStatement.toString();
+        String query = insertBlock(row, targetTable);
         CassandraExecutor.execute(query, session);
     }
 
@@ -102,32 +85,35 @@ public class CassandraStorageEngine implements IStorageEngine {
      * @throws ConnectorException
      */
     @Override
-    public void insert(ClusterName targetCluster,
-            com.stratio.crossdata.common.metadata.TableMetadata targetTable, Collection<Row> rows)
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
         for (Row row : rows) {
-            Set<String> keys = row.getCells().keySet();
-            Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
-            Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
-            try {
-                for (String key : keys) {
-                    ColumnName col =
-                            new ColumnName(targetTable.getName().getCatalogName().getName(),
-                                    targetTable.getName().getName(), key);
-                    columnsMetadata.put(key,
-                            new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
-                                    row.getCell(key).toString(), key));
-                }
-            } catch (Exception e) {
-                throw new ExecutionException("Trying insert data in a not existing column", e);
-            }
-
-            InsertIntoStatement insertStatement =
-                    new InsertIntoStatement(targetTable, columnsMetadata, true);
-            String query = insertStatement.toString();
+            String query = insertBlock(row, targetTable);
             CassandraExecutor.execute(query, session);
         }
+    }
+
+    private String insertBlock(Row row, TableMetadata targetTable) throws ExecutionException {
+        Set<String> keys = row.getCells().keySet();
+        Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
+        Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
+        try {
+            for (String key : keys) {
+                ColumnName col =
+                        new ColumnName(targetTable.getName().getCatalogName().getName(),
+                                targetTable.getName().getName(), key);
+                columnsMetadata.put(key,
+                        new ColumnInsertCassandra(columnsWithMetadata.get(col).getColumnType(),
+                                row.getCell(key).toString(), key));
+            }
+        } catch (Exception e) {
+            throw new ExecutionException("Trying insert data in a not existing column", e);
+        }
+
+        InsertIntoStatement insertStatement =
+                new InsertIntoStatement(targetTable, columnsMetadata, true);
+        return insertStatement.toString();
     }
 
     @Override
@@ -140,6 +126,23 @@ public class CassandraStorageEngine implements IStorageEngine {
         }
         DeleteStatement deleteStatement = new DeleteStatement(tableName, whereFilters);
         String query = deleteStatement.toString();
+        CassandraExecutor.execute(query, session);
+    }
+
+    @Override
+    public void update(ClusterName targetCluster, TableName tableName, Collection<Relation> assignments,
+            Collection<Filter> whereClauses) throws ConnectorException {
+        Session session = sessions.get(targetCluster.getName());
+        UpdateTableStatement updateStatement = new UpdateTableStatement(tableName, assignments, whereClauses);
+        String query = updateStatement.toString();
+        CassandraExecutor.execute(query, session);
+    }
+
+    @Override
+    public void truncate(ClusterName targetCluster, TableName tableName) throws ConnectorException {
+        Session session = sessions.get(targetCluster.getName());
+        TruncateStatement truncateStatement = new TruncateStatement(tableName);
+        String query = truncateStatement.toString();
         CassandraExecutor.execute(query, session);
     }
 

@@ -20,12 +20,9 @@ package com.stratio.connector.cassandra.statements;
 
 import java.util.List;
 
-import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.statements.structures.Relation;
-import com.stratio.crossdata.common.utils.StringUtils;
-
 
 /**
  * Class that models a {@code SELECT} statement from the META language. This class recognizes the
@@ -37,7 +34,7 @@ import com.stratio.crossdata.common.utils.StringUtils;
 public class DeleteStatement {
 
     private String catalog;
-    private boolean catalogInc=false;
+    private boolean catalogInc = false;
     /**
      * The name of the targe table.
      */
@@ -49,11 +46,16 @@ public class DeleteStatement {
      */
     private List<Filter> whereClauses;
 
+    /**
+     * Constructor Class.
+     * @param tableName The table Name
+     * @param whereClauses A list with the conditions
+     */
     public DeleteStatement(TableName tableName, List<Filter> whereClauses) {
         this.tableName = tableName;
         if (tableName.isCompletedName()) {
             catalogInc = true;
-            catalog=tableName.getCatalogName().getName();
+            catalog = tableName.getCatalogName().getName();
         }
         this.whereClauses = whereClauses;
     }
@@ -81,10 +83,10 @@ public class DeleteStatement {
         sb.append(tableName.getName());
         if (!whereClauses.isEmpty()) {
             sb.append(" WHERE ");
-            for (Filter filter:whereClauses){
-                Relation relation=filter.getRelation();
-                String leftTerm=relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
-                        .getStringValue().lastIndexOf('.')+1,relation.getLeftTerm().getStringValue().length());
+            for (Filter filter : whereClauses) {
+                Relation relation = filter.getRelation();
+                String leftTerm = relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
+                        .getStringValue().lastIndexOf('.') + 1, relation.getLeftTerm().getStringValue().length());
                 sb.append(leftTerm).append(relation.getOperator().toString()).append
                         (relation.getRightTerm().toString()).append(" AND ");
             }
@@ -93,8 +95,6 @@ public class DeleteStatement {
         }
         return sb.toString();
     }
-
-
 
     public TableName getTableName() {
         return tableName;
@@ -108,8 +108,5 @@ public class DeleteStatement {
     public void setTableName(TableName tableName) {
         this.tableName = tableName;
     }
-
-
-
 
 }

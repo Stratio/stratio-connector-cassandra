@@ -176,7 +176,7 @@ public class Utils {
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
-            String tableName = def.getKeyspace() + "." + def.getTable();
+
             ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
             if (alias

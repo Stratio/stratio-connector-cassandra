@@ -77,6 +77,14 @@ public class AlterTableStatement {
         this.option = option;
     }
 
+    /**
+     *
+     * @param tableName  The name of the table.
+     * @param column     The name of the column.
+     * @param type       The data type of the column.
+     * @param properties The type of modification.
+     * @param option     The map of options.
+     */
     public AlterTableStatement(TableName tableName, ColumnName column, ColumnType type,
             Map<Selector, Selector> properties, AlterOperation option) {
 
