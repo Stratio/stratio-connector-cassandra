@@ -21,7 +21,7 @@
         <operation>UPDATE_TABLE</operation>
         <operation>TRUNCATE_TABLE</operation>
         <operation>INSERT</operation>
-        <operation>DELETE</operation>
+        <operation>DELETE_BY_PK</operation>
         <operation>CREATE_INDEX</operation>
         <operation>DROP_INDEX</operation>
         <operation>PROJECT</operation>
