@@ -27,6 +27,7 @@
         <operation>PROJECT</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
+        <operation>SELECT_GROUP_BY</operation>
         <operation>SELECT_ORDER_BY</operation>
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>
