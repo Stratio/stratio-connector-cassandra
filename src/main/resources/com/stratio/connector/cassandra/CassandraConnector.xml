@@ -18,16 +18,15 @@
         <operation>CREATE_TABLE</operation>
         <operation>DROP_TABLE</operation>
         <operation>ALTER_TABLE</operation>
-        <operation>UPDATE_TABLE</operation>
+        <operation>UPDATE_PK_EQ</operation>
         <operation>TRUNCATE_TABLE</operation>
         <operation>INSERT</operation>
-        <operation>DELETE_BY_PK</operation>
+        <operation>DELETE_PK_EQ</operation>
         <operation>CREATE_INDEX</operation>
         <operation>DROP_INDEX</operation>
         <operation>PROJECT</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
-        <operation>SELECT_GROUP_BY</operation>
         <operation>SELECT_ORDER_BY</operation>
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>

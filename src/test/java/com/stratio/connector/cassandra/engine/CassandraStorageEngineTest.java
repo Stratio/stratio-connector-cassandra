@@ -263,12 +263,12 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Selector leftSelector= new ColumnSelector(new ColumnName("demo","users","name"));
         Selector rightSelector= new StringSelector("insertName");
         Relation relation=new Relation(leftSelector, Operator.EQ, rightSelector);
-        Filter filter=new Filter(Operations.DELETE_BY_PK,relation);
+        Filter filter=new Filter(Operations.DELETE_PK_EQ,relation);
 
         Selector leftSelector2= new ColumnSelector(new ColumnName("demo","users","gender"));
         Selector rightSelector2= new StringSelector("male");
         Relation relation2=new Relation(leftSelector2, Operator.EQ, rightSelector2);
-        Filter filter2=new Filter(Operations.DELETE_BY_PK,relation2);
+        Filter filter2=new Filter(Operations.DELETE_PK_EQ,relation2);
         whereClauses.add(filter);
         whereClauses.add(filter2);
         try {
@@ -300,25 +300,25 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Selector leftSelector= new ColumnSelector(new ColumnName("demo","users","name"));
         Selector rightSelector= new StringSelector("name_2");
         Relation relation=new Relation(leftSelector, Operator.EQ, rightSelector);
-        Filter filter=new Filter(Operations.DELETE_BY_PK,relation);
+        Filter filter=new Filter(Operations.DELETE_PK_EQ,relation);
 
         Selector leftSelector2= new ColumnSelector(new ColumnName("demo","users","gender"));
         Selector rightSelector2= new StringSelector("male");
         Relation relation2=new Relation(leftSelector2, Operator.EQ, rightSelector2);
-        Filter filter2=new Filter(Operations.DELETE_BY_PK,relation2);
+        Filter filter2=new Filter(Operations.DELETE_PK_EQ,relation2);
         whereClauses.add(filter);
         whereClauses.add(filter2);
 
         Selector leftSelector5= new ColumnSelector(new ColumnName("demo","users","email"));
         Selector rightSelector5= new StringSelector("name_2@domain.com");
         Relation relation5=new Relation(leftSelector5, Operator.EQ, rightSelector5);
-        Filter filter5=new Filter(Operations.DELETE_BY_PK,relation5);
+        Filter filter5=new Filter(Operations.DELETE_PK_EQ,relation5);
 
 
         Selector leftSelector4= new ColumnSelector(new ColumnName("demo","users","age"));
         Selector rightSelector4= new IntegerSelector(12);
         Relation relation4=new Relation(leftSelector4, Operator.EQ, rightSelector4);
-        Filter filter4=new Filter(Operations.DELETE_BY_PK,relation4);
+        Filter filter4=new Filter(Operations.DELETE_PK_EQ,relation4);
         whereClauses.add(filter);
         whereClauses.add(filter2);
         whereClauses.add(filter4);
