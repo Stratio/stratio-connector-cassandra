@@ -224,6 +224,7 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public void close(ClusterName name) throws ConnectionException {
+        LOG.info("Closing cassandra session");
         sessions.get(name.getName()).close();
         sessions.remove(name.getName());
     }
