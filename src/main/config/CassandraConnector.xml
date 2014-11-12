@@ -21,6 +21,7 @@
         <operation>UPDATE_PK_EQ</operation>
         <operation>TRUNCATE_TABLE</operation>
         <operation>INSERT</operation>
+        <operation>INSERT_IF_NOT_EXISTS</operation>
         <operation>DELETE_PK_EQ</operation>
         <operation>CREATE_INDEX</operation>
         <operation>DROP_INDEX</operation>
