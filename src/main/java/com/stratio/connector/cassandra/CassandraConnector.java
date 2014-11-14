@@ -194,7 +194,9 @@ public class CassandraConnector implements IConnector {
     public void connect(ICredentials credentials, ConnectorClusterConfig config)
             throws ConnectionException {
         ClusterName clusterName = config.getName();
-        Map<String, String> clusterOptions = config.getOptions();
+        Map<String, String> clusterOptions = config.getClusterOptions();
+        Map<String, String> connectorOptions = config.getConnectorOptions();
+
 
         EngineConfig engineConfig = new EngineConfig();
         //the hosts must be received as [host1:port,host2:port,host3:port...]
@@ -204,10 +206,10 @@ public class CassandraConnector implements IConnector {
         engineConfig.setCassandraPort(Integer.parseInt(clusterOptions.get("Port")));
         engineConfig.setCredentials(credentials);
 
-        if (clusterOptions.get("DefaultLimit") == null) {
+        if (connectorOptions.get("DefaultLimit") == null) {
             defaultLimit = DEFAULT_LIMIT;
         } else {
-            defaultLimit = Integer.parseInt(clusterOptions.get("DefaultLimit"));
+            defaultLimit = Integer.parseInt(connectorOptions.get("DefaultLimit"));
         }
 
         Engine engine = new Engine(engineConfig);
