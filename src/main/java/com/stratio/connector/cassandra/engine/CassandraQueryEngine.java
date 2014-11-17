@@ -150,7 +150,9 @@ public class CassandraQueryEngine implements IQueryEngine {
      */
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
-        if (selectionClause != null) {
+        if (aliasColumns!=null && aliasColumns.size()!=0){
+            sb.append(getAliasClause());
+        }else {
             sb.append(getSelectionClause());
         }
         sb.append(getFromClause());
@@ -219,6 +221,19 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
             i = 1;
             sb.append(columnName.getName());
+        }
+        return sb.toString();
+    }
+
+    private String getAliasClause() {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (Map.Entry<ColumnName,String> entry:aliasColumns.entrySet()) {
+            if (i != 0) {
+                sb.append(",");
+            }
+            i = 1;
+            sb.append(entry.getKey().getName());
         }
         return sb.toString();
     }
