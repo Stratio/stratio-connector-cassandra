@@ -63,12 +63,14 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -84,12 +86,15 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
+
         try {
             cassandraConnector.connect(credentials, config);
         } catch (ConnectionException e) {
@@ -108,12 +113,15 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
+
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -133,12 +141,15 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
+
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -164,12 +175,15 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
+
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -196,12 +210,15 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
+
 
         try {
             cassandraConnector.connect(credentials, config);
@@ -227,12 +244,15 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
+
         try {
             cassandraConnector.connect(credentials, config);
         } catch (ConnectionException e) {
@@ -251,12 +271,15 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
         ICredentials credentials = null;
-        Map<String, String> options = new HashMap<>();
-        options.put("Hosts", "[127.0.0.1]");
-        options.put("Port", "9042");
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put("Hosts", "[127.0.0.1]");
+        clusterOptions.put("Port", "9042");
 
-        ConnectorClusterConfig config =
-                new ConnectorClusterConfig(new ClusterName("cluster"), options);
+        Map<String, String> connectorOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName("cluster"), connectorOptions,
+                clusterOptions);
+
         try {
             cassandraConnector.connect(credentials, config);
         } catch (ConnectionException e) {

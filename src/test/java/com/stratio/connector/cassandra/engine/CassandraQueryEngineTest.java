@@ -18,6 +18,7 @@
 package com.stratio.connector.cassandra.engine;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,10 +114,11 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Cell cell = row.getCell("name");
             value = cell.getValue().toString();
         }
-        assertEquals(value, "name_5");
+        assertEquals(value, "name_5", "The value not match with the expected value");
 
         assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
+                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "The select statement not match with the expected value");
 
     }
 
@@ -172,10 +174,11 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Cell cell = row.getCell("name");
             value = cell.getValue().toString();
         }
-        assertEquals(value, "name_5");
+        assertEquals(value, "name_5", "The value not match with the expected value");
 
         assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 50");
+                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 50",
+                "The select statement query obtained not match with the expected query");
 
     }
 
@@ -239,10 +242,11 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
                 Cell cell = row.getCell("nameAlias");
                 value = cell.getValue().toString();
             }
-            assertEquals(value, "name_5");
+            assertEquals(value, "name_5", "The value not match with the expected value");
 
             assertEquals(cqe.parseQuery(),
-                    "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100");
+                    "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                    "The select query obtained not match with the expected query");
         } catch (Exception ex) {
             Assert.fail("No alias found");
         }
@@ -292,9 +296,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Cell cell = row.getCell("name");
             value = cell.getValue().toString();
         }
-        if (value != null && !value.equals("")) {
-            assertEquals(true, true);
-        }
+
+        assertNotEquals(value, null, "The value cannot be null");
+
 
         //assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
 
