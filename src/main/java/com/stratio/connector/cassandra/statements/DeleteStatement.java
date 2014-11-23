@@ -60,19 +60,6 @@ public class DeleteStatement {
         this.whereClauses = whereClauses;
     }
 
-    /**
-     * Add a new {@link com.stratio.crossdata.common.statements.structures.Relation} found in
-     * a WHERE clause.
-     *
-     * @param filter The filter.
-     */
-    public void addFilter(Filter filter) {
-        whereClauses.add(filter);
-    }
-
-    public List<Filter> getWhereClauses() {
-        return whereClauses;
-    }
 
     @Override
     public String toString() {

@@ -25,7 +25,6 @@ import java.util.List;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.statements.structures.Relation;
-import com.stratio.crossdata.common.utils.StringUtils;
 
 /**
  * Class that models an {@code UPDATE} statement from the META language.
@@ -40,12 +39,12 @@ public class UpdateTableStatement {
     /**
      * The list of assignations.
      */
-    private List<Relation> assignations=new ArrayList<>();
+    private List<Relation> assignations = new ArrayList<>();
 
     /**
      * The list of relations.
      */
-    private List<Filter> whereClauses= new ArrayList<>();
+    private List<Filter> whereClauses = new ArrayList<>();
 
     /**
      * Class constructor.
@@ -74,9 +73,8 @@ public class UpdateTableStatement {
         sb.append(tableName.getQualifiedName());
 
         sb.append(" ").append("SET ");
-        for (Relation relation:assignations){
-            String leftTerm=relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
-                    .getStringValue().lastIndexOf('.')+1,relation.getLeftTerm().getStringValue().length());
+        for (Relation relation : assignations) {
+            String leftTerm = getLeftTerm(relation);
             sb.append(leftTerm).append(relation.getOperator().toString()).append
                     (relation.getRightTerm().toString()).append(", ");
         }
@@ -85,10 +83,9 @@ public class UpdateTableStatement {
 
         sb.append(" WHERE ");
         if ((whereClauses != null) && (!whereClauses.isEmpty())) {
-            for (Filter filter:whereClauses){
-                Relation relation=filter.getRelation();
-                String leftTerm=relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
-                        .getStringValue().lastIndexOf('.')+1,relation.getLeftTerm().getStringValue().length());
+            for (Filter filter : whereClauses) {
+                Relation relation = filter.getRelation();
+                String leftTerm = getLeftTerm(relation);
                 sb.append(leftTerm).append(relation.getOperator().toString()).append
                         (relation.getRightTerm().toString()).append(" AND ");
             }
@@ -96,6 +93,13 @@ public class UpdateTableStatement {
         }
 
         return sb.toString();
+    }
+
+    private String getLeftTerm(Relation relation){
+        String leftTerm = relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
+                .getStringValue().lastIndexOf('.') + 1, relation.getLeftTerm().getStringValue().length());
+
+        return leftTerm;
     }
 
     public TableName getTableName() {
@@ -106,11 +110,4 @@ public class UpdateTableStatement {
         this.tableName = tableName;
     }
 
-    public List<Relation> getAssignations() {
-        return assignations;
-    }
-
-    public List<Filter> getWhereClauses() {
-        return whereClauses;
-    }
 }
