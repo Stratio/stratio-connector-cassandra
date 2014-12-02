@@ -109,6 +109,11 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
+    @Override public void alterCatalog(ClusterName targetCluster, CatalogName catalogName,
+            Map<Selector, Selector> options) throws ConnectorException {
+        throw new UnsupportedOperationException("Alter Catalog not supported yet");
+    }
+
     /**
      * Create Table for Cassandra Connector.
      *

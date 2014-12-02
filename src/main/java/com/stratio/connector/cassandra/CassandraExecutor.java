@@ -62,7 +62,7 @@ public final class CassandraExecutor {
      */
     public static com.stratio.crossdata.common.result.Result execute(String query, Session session)
             throws ConnectorException {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             resultSet = session.execute(query);
             return com.stratio.crossdata.common.result

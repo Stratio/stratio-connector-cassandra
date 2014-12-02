@@ -72,7 +72,7 @@ public class CassandraStorageEngine implements IStorageEngine {
             com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
-        String query = insertBlock(row, targetTable);
+        String query = insertBlock(row, targetTable, false);
         CassandraExecutor.execute(query, session);
     }
 
@@ -89,12 +89,12 @@ public class CassandraStorageEngine implements IStorageEngine {
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
         for (Row row : rows) {
-            String query = insertBlock(row, targetTable);
+            String query = insertBlock(row, targetTable, false);
             CassandraExecutor.execute(query, session);
         }
     }
 
-    private String insertBlock(Row row, TableMetadata targetTable) throws ExecutionException {
+    private String insertBlock(Row row, TableMetadata targetTable, boolean ifNotExists) throws ExecutionException {
         Set<String> keys = row.getCells().keySet();
         Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
         Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
@@ -112,7 +112,7 @@ public class CassandraStorageEngine implements IStorageEngine {
         }
 
         InsertIntoStatement insertStatement =
-                new InsertIntoStatement(targetTable, columnsMetadata, true);
+                new InsertIntoStatement(targetTable, columnsMetadata, ifNotExists);
         return insertStatement.toString();
     }
 
