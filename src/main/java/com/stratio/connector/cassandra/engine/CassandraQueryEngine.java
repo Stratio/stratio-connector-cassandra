@@ -177,6 +177,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         if (limitInc) {
             sb.append(" LIMIT ").append(limit);
         }
+
         return sb.toString().replace("  ", " ");
     }
 
@@ -189,9 +190,10 @@ public class CassandraQueryEngine implements IQueryEngine {
                 sb.append(",");
             }
             count=1;
-            sb.append(orderByClause.toString());
+            ColumnSelector columnSelector=(ColumnSelector)orderByClause.getSelector();
+            sb.append(columnSelector.getName().getName()).append(" ").append(orderByClause.getDirection().name());
         }
-        return null;
+        return sb.toString();
     }
 
     private String getWhereClause() {
