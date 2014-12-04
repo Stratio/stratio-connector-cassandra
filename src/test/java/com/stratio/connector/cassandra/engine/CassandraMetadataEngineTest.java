@@ -140,6 +140,22 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         }
     }
 
+    public void createCatalog(String name) {
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+        Map<TableName, TableMetadata> tables = new HashMap<>();
+
+        CatalogMetadata catalogmetadata = new CatalogMetadata(new CatalogName(name), options, tables);
+
+        try {
+            cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
+
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
     public void createIndex() {
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
@@ -203,7 +219,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         Map<TableName, TableMetadata> tables = new HashMap<>();
 
         CatalogMetadata catalogmetadata =
-                new CatalogMetadata(new CatalogName("demoMetadata2"), options, tables);
+                new CatalogMetadata(new CatalogName("demometadata5"), options, tables);
         int rowsFinal = rowsInitial;
         try {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
@@ -213,6 +229,28 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
+
+    }
+
+    @Test
+    public void alterCatalogWithOptionsTest() {
+
+        boolean done=false;
+        createCatalog("testAlterCatalog");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+        options.put(new StringSelector("REPLICATION"),
+                new StringSelector("'class' : 'NetworkTopologyStrategy', 'datacenter1' : 1"));
+        options.put(new StringSelector("durable_writes"), new StringSelector("false"));
+
+        try {
+            cme.alterCatalog(new ClusterName("cluster"), new CatalogName("testAlterCatalog"), options);
+            done=true;
+            Assert.assertEquals(done,true);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
 
     }
 
@@ -698,6 +736,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata2");
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata3");
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata4");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata5");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("testAlterCatalog");
     }
 
 }

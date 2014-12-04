@@ -45,6 +45,7 @@ import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Limit;
 import com.stratio.crossdata.common.logicalplan.LogicalStep;
 import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.OrderBy;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
@@ -52,6 +53,8 @@ import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Operator;
+import com.stratio.crossdata.common.statements.structures.OrderByClause;
+import com.stratio.crossdata.common.statements.structures.OrderDirection;
 import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
@@ -118,6 +121,64 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         assertEquals(cqe.parseQuery(),
                 "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "The select statement not match with the expected value");
+
+    }
+
+    @Test
+    public void selectOrderByTest() {
+
+        ClusterName targetCluster = new ClusterName("cluster");
+
+        List<LogicalStep> logicalSteps = new ArrayList<>();
+
+        TableName tableName = new TableName("demo", "users");
+
+        List<ColumnName> columnList = new ArrayList<>();
+        ColumnName columnName = new ColumnName(tableName, "name");
+        columnList.add(columnName);
+
+        //Generation of Data
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+
+        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector rightTerm = new StringSelector("name_5");
+
+        Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
+        Filter filter = new Filter(Operations.SELECT_ORDER_BY, relation);
+
+        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector rightTerm2 = new StringSelector("female");
+
+        Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
+        Filter filter2 = new Filter(Operations.SELECT_ORDER_BY, relation2);
+
+
+        List<OrderByClause> listOrderBy=new ArrayList<>();
+        Selector columnSelector=new ColumnSelector(new ColumnName("demo","users","email"));
+        OrderByClause orderByClause=new OrderByClause(OrderDirection.ASC,columnSelector);
+        listOrderBy.add(orderByClause);
+        OrderBy orderBy=new OrderBy(Operations.SELECT_ORDER_BY,listOrderBy);
+
+        //Compound workflow
+        filter2.setNextStep(orderBy);
+        filter.setNextStep(filter2);
+        project.setNextStep(filter);
+        logicalSteps.add(project);
+        LogicalWorkflow workflow = new LogicalWorkflow(logicalSteps);
+
+        Map<String, Session> sessions = new HashMap<>();
+        sessions.put("cluster", this._session);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+
+        try {
+            cqe.execute(workflow);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        assertEquals(cqe.parseQuery(),
+                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' ORDER BY email ASC LIMIT 100",
                 "The select statement not match with the expected value");
 
     }

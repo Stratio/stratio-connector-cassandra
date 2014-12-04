@@ -39,12 +39,17 @@ import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Limit;
 import com.stratio.crossdata.common.logicalplan.LogicalStep;
 import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.OrderBy;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.logicalplan.TransformationStep;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.result.Result;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Relation;
+
+import akka.io.StringByteStringAdapter;
 
 /**
  * Class CassandraQueryEngine: Allow to make select queries with the connector.
@@ -52,6 +57,7 @@ import com.stratio.crossdata.common.statements.structures.Relation;
 public class CassandraQueryEngine implements IQueryEngine {
     private static final int DEFAULT_LIMIT = 100;
     private Map<ColumnName, String> aliasColumns = new HashMap<>();
+    private List<OrderByClause> orderByColumns = new ArrayList<>();
     private Session session = null;
     private List<ColumnName> selectionClause;
     private boolean catalogInc;
@@ -128,6 +134,9 @@ public class CassandraQueryEngine implements IQueryEngine {
             } else if (transformation instanceof Select) {
                 Select select = (Select) transformation;
                 aliasColumns = select.getColumnMap();
+            } else if (transformation instanceof OrderBy) {
+                OrderBy orderBy = (OrderBy) transformation;
+                orderByColumns = orderBy.getIds();
             }
         }
     }
@@ -161,10 +170,30 @@ public class CassandraQueryEngine implements IQueryEngine {
             sb.append(getWhereClause());
         }
 
+        if (!orderByColumns.isEmpty()){
+            sb.append(getOrderByClause());
+        }
+
         if (limitInc) {
             sb.append(" LIMIT ").append(limit);
         }
+
         return sb.toString().replace("  ", " ");
+    }
+
+    private String getOrderByClause() {
+        StringBuffer sb=new StringBuffer();
+        sb.append(" ORDER BY ");
+        int count=0;
+        for (OrderByClause orderByClause:orderByColumns){
+            if (count!=0){
+                sb.append(",");
+            }
+            count=1;
+            ColumnSelector columnSelector=(ColumnSelector)orderByClause.getSelector();
+            sb.append(columnSelector.getName().getName()).append(" ").append(orderByClause.getDirection().name());
+        }
+        return sb.toString();
     }
 
     private String getWhereClause() {

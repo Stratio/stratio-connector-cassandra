@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
+import com.stratio.connector.cassandra.statements.AlterCatalogStatement;
 import com.stratio.connector.cassandra.statements.AlterTableStatement;
 import com.stratio.connector.cassandra.statements.CreateCatalogStatement;
 import com.stratio.connector.cassandra.statements.CreateIndexStatement;
@@ -111,7 +112,15 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override public void alterCatalog(ClusterName targetCluster, CatalogName catalogName,
             Map<Selector, Selector> options) throws ConnectorException {
-        throw new UnsupportedOperationException("Alter Catalog not supported yet");
+
+        session = sessions.get(targetCluster.getName());
+
+        String stringOptions = getStringOptions(options);
+
+        AlterCatalogStatement alterCatalogStatement =
+                new AlterCatalogStatement(catalogName.getName(), stringOptions);
+
+        CassandraExecutor.execute(alterCatalogStatement.toString(), session);
     }
 
     /**
@@ -204,8 +213,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             break;
         }
 
-
-
     }
 
     /**
@@ -269,7 +276,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             stringOption.append(key);
         } else if ("CLUSTERING ORDER BY".equals(key)) {
             stringOption.append(key).append(" (").append(value).append(")");
-        } else if (createTableOptions.contains(key)) {
+        } else if (createTableOptions.contains(key.toLowerCase())) {
             stringOption.append(key).append(" = ").append(value).append("");
         } else {
             stringOption.append(key).append(" = {")
