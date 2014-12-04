@@ -45,19 +45,19 @@ import com.stratio.connector.cassandra.engine.CassandraQueryEngine;
 import com.stratio.connector.cassandra.engine.CassandraStorageEngine;
 import com.stratio.connector.cassandra.engine.Engine;
 import com.stratio.connector.cassandra.engine.EngineConfig;
-import com.stratio.crossdata.connectors.ConnectorApp;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.connector.IConnector;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IStorageEngine;
+import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.security.ICredentials;
-import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.connectors.ConnectorApp;
 
 /**
  * Cassandra Connector class. This class contain a main that starts the connector.
@@ -99,7 +99,7 @@ public class CassandraConnector implements IConnector {
             // create an XPath object
             XPath xpath = xFactory.newXPath();
             Object result;
-            XPathExpression expr = null;
+            XPathExpression expr;
             try {
                 expr = xpath.compile("//ConnectorName/text()");
                 result = expr.evaluate(d, XPathConstants.NODESET);

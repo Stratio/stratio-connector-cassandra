@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.stratio.crossdata.common.exceptions.ConnectionException;
 
 /**
  * Execution com.stratio.connector.cassandra that creates all entities required for processing an executing a query:
@@ -46,7 +47,7 @@ public class Engine {
      *
      * @param config The {@link com.stratio.connector.cassandra.engine.EngineConfig}.
      */
-    public Engine(EngineConfig config) {
+    public Engine(EngineConfig config) throws ConnectionException {
         this.session = initializeDB(config);
     }
 
@@ -56,7 +57,7 @@ public class Engine {
      * @param config The {@link com.stratio.connector.cassandra.engine.EngineConfig}.
      * @return A new Session.
      */
-    private Session initializeDB(EngineConfig config) {
+    private Session initializeDB(EngineConfig config) throws ConnectionException {
         Cluster cluster = Cluster.builder()
                 .addContactPoints(config.getCassandraHosts())
                 .withPort(config.getCassandraPort()).build();
@@ -65,12 +66,13 @@ public class Engine {
 
         LOG.info("Connecting to Cassandra Cluster on "
                 + Arrays.toString(config.getCassandraHosts()) + ":" + config.getCassandraPort());
-        Session result = null;
+        Session result;
 
         try {
             result = cluster.connect();
         } catch (NoHostAvailableException nhae) {
-            LOG.error("Cannot connect to Cassandra", nhae);
+            LOG.error("Cannot connect to Cassandra: " + nhae.getMessage());
+            throw new ConnectionException(nhae.getMessage());
         }
 
         return result;
