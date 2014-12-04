@@ -133,7 +133,11 @@ public class CreateIndexStatement {
         if (name == null) {
             StringBuilder sb = new StringBuilder();
             if (IndexType.FULL_TEXT.equals(type)) {
-                sb.append("stratio_lucene_");
+                sb.append("stratio_fulltext");
+                for (ColumnMetadata columnMetadata:targetColumns.values()){
+                    sb.append("_");
+                    sb.append(columnMetadata.getName().getName());
+                }
                 sb.append(tableName);
             } else {
                 sb.append(tableName);
@@ -149,7 +153,7 @@ public class CreateIndexStatement {
         } else {
             result = name;
             if (IndexType.FULL_TEXT.equals(type)) {
-                result = "stratio_lucene_" + name;
+                result = name;
             }
         }
         return result;

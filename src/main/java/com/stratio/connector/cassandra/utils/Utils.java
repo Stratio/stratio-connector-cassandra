@@ -33,6 +33,7 @@ import com.datastax.driver.core.Row;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 
 /**
@@ -122,18 +123,14 @@ public class Utils {
 
         //Get the columns in order
         List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
-        List<com.stratio.crossdata.common.metadata.structures.ColumnMetadata> columnList =
+        List<ColumnMetadata> columnList =
                 new ArrayList<>();
-        com.stratio.crossdata.common.metadata.structures.ColumnMetadata columnMetadata = null;
+        ColumnMetadata columnMetadata = null;
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
-            String tableName = def.getKeyspace() + "." + def.getTable();
-            String columnName = def.getKeyspace() + "." + def.getTable() + "." + def.getName();
-            columnMetadata =
-                    new com.stratio.crossdata.common.metadata.structures.ColumnMetadata(tableName,
-                            columnName);
+            ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
-            columnMetadata.setType(type);
+            columnMetadata = new ColumnMetadata(columnName, null,type);
             columnList.add(columnMetadata);
         }
         crs.setColumnMetadata(columnList);
@@ -173,30 +170,22 @@ public class Utils {
 
         //Get the columns in order
         List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
-        List<com.stratio.crossdata.common.metadata.structures.ColumnMetadata> columnList =
+        List<ColumnMetadata> columnList =
                 new ArrayList<>();
-        com.stratio.crossdata.common.metadata.structures.ColumnMetadata columnMetadata = null;
+        ColumnMetadata columnMetadata = null;
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
-            String tableName = def.getKeyspace() + "." + def.getTable();
-            String columnName = def.getKeyspace() + "." + def.getTable() + "." + def.getName();
+
+            ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
+            ColumnType type = helper.toColumnType(def.getType().getName().toString());
             if (alias
                     .containsKey(new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
-                columnMetadata =
-                        new com.stratio.crossdata.common.metadata.structures.ColumnMetadata(tableName,
-                                columnName);
-                columnMetadata
-                        .setColumnAlias(alias.get(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())));
+                columnMetadata = new ColumnMetadata(columnName, null, type);
+                columnMetadata.getName().setAlias(alias.get(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())));
             } else {
-
-                columnMetadata =
-                        new com.stratio.crossdata.common.metadata.structures.ColumnMetadata(tableName,
-                                columnName);
-
+                columnMetadata =  new ColumnMetadata(columnName,null,type);
             }
-            ColumnType type = helper.toColumnType(def.getType().getName().toString());
-            columnMetadata.setType(type);
             columnList.add(columnMetadata);
         }
         crs.setColumnMetadata(columnList);

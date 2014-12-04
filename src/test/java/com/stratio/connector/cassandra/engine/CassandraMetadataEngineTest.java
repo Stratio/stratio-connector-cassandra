@@ -28,6 +28,8 @@ import org.testng.annotations.Test;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.crossdata.common.data.AlterOperation;
+import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
@@ -128,8 +130,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         Map<Selector, Selector> options = new HashMap<>();
         Map<TableName, TableMetadata> tables = new HashMap<>();
 
-        CatalogMetadata catalogmetadata =
-                new CatalogMetadata(new CatalogName("demoMetadata"), options, tables);
+        CatalogMetadata catalogmetadata = new CatalogMetadata(new CatalogName("demoMetadata"), options, tables);
 
         try {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
@@ -175,7 +176,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         Map<TableName, TableMetadata> tables = new HashMap<>();
 
         CatalogMetadata catalogmetadata =
-                new CatalogMetadata(new CatalogName("demoMetadata"), options, tables);
+                new CatalogMetadata(new CatalogName("demoMetadata4"), options, tables);
         int rowsFinal = rowsInitial;
         try {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
@@ -595,7 +596,100 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        Assert.assertEquals(assertIndex("phrase", "demometadata", "users1"), "stratio_lucene_indicelucene");
+        Assert.assertEquals(assertIndex("phrase", "demometadata", "users1"), "indicelucene");
+    }
+
+
+    @Test
+    public void alterTableAlterColumnIncompatibleTypeTest() {
+        createCatalog();
+        createTable("users7");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        Object[] parameters = { };
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users7"),
+                "bool"), parameters, ColumnType.TEXT);
+        AlterOptions alterOptions=new AlterOptions(AlterOperation.ALTER_COLUMN,null,columnMetadata);
+        try {
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users7"),alterOptions);
+            Assert.fail("Incompatible type to alter column");
+        } catch (ConnectorException e) {
+            Assert.assertTrue(true);
+        }
+
+    }
+
+    @Test
+    public void alterTableAlterColumnCompatibleTypeTest() {
+        createCatalog();
+        createTable("users8");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        Object[] parameters = { };
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users8"),
+                "name"), parameters, ColumnType.VARCHAR);
+        AlterOptions alterOptions=new AlterOptions(AlterOperation.ALTER_COLUMN,null,columnMetadata);
+        try {
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users8"),alterOptions);
+            Assert.assertTrue(true);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void alterTableAddColumnTest() {
+        createCatalog();
+        createTable("users9");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        Object[] parameters = { };
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users9"),
+                "other"), parameters, ColumnType.VARCHAR);
+        AlterOptions alterOptions=new AlterOptions(AlterOperation.ADD_COLUMN,null,columnMetadata);
+        try {
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users9"),alterOptions);
+            Assert.assertTrue(true);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void alterTableDropColumnTest() {
+        createCatalog();
+        createTable("users9");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        Object[] parameters = { };
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users9"),
+                "bool"), parameters, ColumnType.VARCHAR);
+        AlterOptions alterOptions=new AlterOptions(AlterOperation.DROP_COLUMN,null,columnMetadata);
+        try {
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users9"),alterOptions);
+            Assert.assertTrue(true);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void alterTableAlterOptionsTest() {
+        createCatalog();
+        createTable("users10");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        Map<Selector, Selector> properties=new HashMap<>();
+        Selector a= new StringSelector("comment");
+        Selector b= new StringSelector("The new comment");
+        properties.put(a,b);
+        ColumnMetadata columnMetadata=null;
+        AlterOptions alterOptions=new AlterOptions(AlterOperation.ALTER_OPTIONS,properties,columnMetadata);
+        try {
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users10"),alterOptions);
+            Assert.assertTrue(true);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+
     }
 
     @AfterClass
@@ -603,6 +697,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata");
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata2");
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata3");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata4");
     }
 
 }
