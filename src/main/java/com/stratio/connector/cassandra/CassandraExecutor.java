@@ -68,12 +68,14 @@ public final class CassandraExecutor {
             return com.stratio.crossdata.common.result
                     .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.debug("Cassandra executor failed", unSupportException);
-            throw new UnsupportedException(unSupportException);
+            LOG.error("Cassandra executor failed", unSupportException);
+            throw new UnsupportedException(unSupportException.getMessage());
         } catch (DriverException dex) {
-            throw new CriticalExecutionException(dex);
+            LOG.error("Cassandra executor failed", dex);
+            throw new CriticalExecutionException(dex.getMessage());
         } catch (Exception ex) {
-            throw new ExecutionException(ex);
+            LOG.error("Cassandra executor failed", ex);
+            throw new ExecutionException(ex.getMessage());
         }
 
     }
@@ -95,12 +97,14 @@ public final class CassandraExecutor {
                     .QueryResult
                     .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.debug("Cassandra executor failed", unSupportException);
-            throw new UnsupportedException(unSupportException);
+            LOG.error("Cassandra executor failed", unSupportException);
+            throw new UnsupportedException(unSupportException.getMessage());
         } catch (DriverException dex) {
-            throw new CriticalExecutionException(dex);
+            LOG.error("Cassandra executor failed", dex);
+            throw new CriticalExecutionException(dex.getMessage());
         } catch (Exception ex) {
-            throw new ExecutionException(ex);
+            LOG.error("Cassandra executor failed", ex);
+            throw new ExecutionException(ex.getMessage());
         }
     }
 
