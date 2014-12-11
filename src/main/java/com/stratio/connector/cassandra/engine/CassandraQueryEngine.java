@@ -49,8 +49,6 @@ import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Relation;
 
-import akka.io.StringByteStringAdapter;
-
 /**
  * Class CassandraQueryEngine: Allow to make select queries with the connector.
  */

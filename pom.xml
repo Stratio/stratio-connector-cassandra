@@ -59,7 +59,7 @@
     <properties>
         <cassandra.driver>2.0.6</cassandra.driver>
         <scala.version>2.10.4</scala.version>
-        <akka.version>2.2.4</akka.version>
+        <!--akka.version>2.2.4</akka.version-->
         <deep.version>0.3.2</deep.version>
         <infinispan.version>6.0.2.Final</infinispan.version>
         <scala.dep.version>2.10</scala.dep.version>
@@ -114,7 +114,7 @@
             <artifactId>scala-compiler</artifactId>
             <version>${scala.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
@@ -143,7 +143,7 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-agent_${scala.dep.version}</artifactId>
             <version>${akka.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
