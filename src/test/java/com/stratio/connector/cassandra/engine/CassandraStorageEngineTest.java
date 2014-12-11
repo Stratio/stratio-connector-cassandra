@@ -121,7 +121,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         int finalCount = initialCount;
         try {
-            cse.insert(new ClusterName("cluster"), table, row);
+            cse.insert(new ClusterName("cluster"), table, row, false);
             finalCount = select2InsertTest(_session, query);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -179,7 +179,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         int finalCount = initialCount;
         try {
-            cse.insert(new ClusterName("cluster"), table, row);
+            cse.insert(new ClusterName("cluster"), table, row, false);
             Assert.fail("Trying to add in a not existing column");
         }catch (ConnectorException e) {
             finalCount = select2InsertTest(_session, query);
@@ -248,7 +248,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         int finalCount = initialCount;
         try {
-            cse.insert(new ClusterName("cluster"), table, rows);
+            cse.insert(new ClusterName("cluster"), table, rows, false);
             finalCount = select2InsertTest(_session, query);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());

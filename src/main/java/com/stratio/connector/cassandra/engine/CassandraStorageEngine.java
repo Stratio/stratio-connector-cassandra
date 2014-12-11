@@ -69,7 +69,7 @@ public class CassandraStorageEngine implements IStorageEngine {
      */
     @Override
     public void insert(ClusterName targetCluster,
-            com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row)
+            com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row, boolean ifNotExists)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
         String query = insertBlock(row, targetTable, false);
@@ -85,7 +85,7 @@ public class CassandraStorageEngine implements IStorageEngine {
      * @throws ConnectorException
      */
     @Override
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows)
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows, boolean ifNotExists)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
         for (Row row : rows) {
