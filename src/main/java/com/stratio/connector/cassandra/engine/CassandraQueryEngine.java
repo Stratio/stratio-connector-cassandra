@@ -77,7 +77,6 @@ public class CassandraQueryEngine implements IQueryEngine {
         this.limit = limitDefault;
     }
 
-
     @Override
     public com.stratio.crossdata.common.result.QueryResult execute(LogicalWorkflow workflow)
             throws ConnectorException {
@@ -143,7 +142,6 @@ public class CassandraQueryEngine implements IQueryEngine {
     public void asyncExecute(String queryId, LogicalWorkflow workflow,
             IResultHandler resultHandler) throws ConnectorException {
         throw new UnsupportedException("Async execute not supported yet.");
-
     }
 
     @Override
@@ -175,7 +173,6 @@ public class CassandraQueryEngine implements IQueryEngine {
         if (limitInc) {
             sb.append(" LIMIT ").append(limit);
         }
-
         return sb.toString().replace("  ", " ");
     }
 
