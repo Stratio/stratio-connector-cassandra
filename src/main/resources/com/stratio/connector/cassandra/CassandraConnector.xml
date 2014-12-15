@@ -32,5 +32,6 @@
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
+        <operation>FILTER_PK_MATCH</operation>
     </SupportedOperations>
 </Connector>

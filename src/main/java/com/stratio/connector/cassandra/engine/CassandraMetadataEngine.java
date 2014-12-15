@@ -212,7 +212,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         default:
             break;
         }
-
     }
 
     /**
@@ -229,7 +228,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateIndexStatement indexStatement =
                 new CreateIndexStatement(indexMetadata, true, session);
         CassandraExecutor.execute(indexStatement.toString(), session);
-
     }
 
     /**
@@ -245,7 +243,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
         CassandraExecutor.execute(indexStatement.toString(), session);
-
     }
 
     private String getStringOptions(Map<Selector, Selector> options) {

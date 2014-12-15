@@ -77,7 +77,6 @@ public final class CassandraExecutor {
             LOG.error("Cassandra executor failed", ex);
             throw new ExecutionException(ex.getMessage());
         }
-
     }
 
     /**
