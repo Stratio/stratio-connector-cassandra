@@ -28,7 +28,6 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.IdentifierProperty;
 import com.stratio.connector.cassandra.utils.ValueProperty;
-
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
@@ -55,6 +54,8 @@ public class CreateIndexStatement {
         luceneTypes.put("INT", "{type:\"integer\"}");
         luceneTypes.put(DataType.uuid().toString(), "{type:\"uuid\"}");
     }
+
+    private String columnForIndex;
 
     private String keyspace = null;
     private boolean keyspaceIncluded = false;
@@ -87,9 +88,10 @@ public class CreateIndexStatement {
 
     /**
      * Basic Constructor.
-     * @param indexMetadata  Index metadata information .
+     *
+     * @param indexMetadata     Index metadata information .
      * @param createIfNotExists Condition of creation of the index.
-     * @param session Session that the Index affect.
+     * @param session           Session that the Index affect.
      * @throws ExecutionException
      */
     public CreateIndexStatement(IndexMetadata indexMetadata, boolean createIfNotExists,
@@ -110,9 +112,10 @@ public class CreateIndexStatement {
 
             //Create the new column for the Lucene Index
             try {
+                columnForIndex = getIndexName();
                 session.execute(
                         "ALTER TABLE " + indexMetadata.getName().getTableName().getQualifiedName() + " ADD "
-                                + getIndexName() + " varchar;");
+                                + columnForIndex + " varchar;");
             } catch (Exception e) {
                 throw new ExecutionException(
                         "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),
@@ -134,7 +137,7 @@ public class CreateIndexStatement {
             StringBuilder sb = new StringBuilder();
             if (IndexType.FULL_TEXT.equals(type)) {
                 sb.append("stratio_fulltext");
-                for (ColumnMetadata columnMetadata:targetColumns.values()){
+                for (ColumnMetadata columnMetadata : targetColumns.values()) {
                     sb.append("_");
                     sb.append(columnMetadata.getName().getName());
                 }
@@ -161,6 +164,7 @@ public class CreateIndexStatement {
 
     /**
      * Get the query in a String in CQL language.
+     *
      * @return String with the query
      */
     public String toString() {
@@ -183,13 +187,17 @@ public class CreateIndexStatement {
         }
         sb.append(tableName);
         sb.append(" (");
-        int i = 0;
-        for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
-            if (i != 0) {
-                sb.append(",");
+        if (type!=IndexType.FULL_TEXT) {
+            int i = 0;
+            for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
+                if (i != 0) {
+                    sb.append(",");
+                }
+                sb.append(entry.getValue().getName().getName());
+                i = 1;
             }
-            sb.append(entry.getValue().getName().getName());
-            i = 1;
+        } else {
+            sb.append(columnForIndex);
         }
         sb.append(")");
 

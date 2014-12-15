@@ -635,7 +635,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        Assert.assertEquals(assertIndex("phrase", "demometadata", "users1"), "indicelucene");
+        Assert.assertEquals(assertIndex("indicelucene", "demometadata", "users1"), "indicelucene");
     }
 
 
