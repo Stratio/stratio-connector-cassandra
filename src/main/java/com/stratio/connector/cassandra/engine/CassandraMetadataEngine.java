@@ -245,6 +245,20 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CassandraExecutor.execute(indexStatement.toString(), session);
     }
 
+    @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {
+        return null;
+    }
+
+    @Override public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)
+            throws ConnectorException {
+        return null;
+    }
+
+    @Override public TableMetadata provideTableMetadata(ClusterName clusterName, TableName tableName)
+            throws ConnectorException {
+        return null;
+    }
+
     private String getStringOptions(Map<Selector, Selector> options) {
         StringBuilder stringOptions = new StringBuilder();
         if ((options != null) && (!options.isEmpty())) {

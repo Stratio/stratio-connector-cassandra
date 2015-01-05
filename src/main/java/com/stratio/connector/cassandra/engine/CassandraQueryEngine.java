@@ -48,13 +48,14 @@ import com.stratio.crossdata.common.result.Result;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * Class CassandraQueryEngine: Allow to make select queries with the connector.
  */
 public class CassandraQueryEngine implements IQueryEngine {
     private static final int DEFAULT_LIMIT = 100;
-    private Map<ColumnName, String> aliasColumns = new HashMap<>();
+    private Map<Selector, String> aliasColumns = new HashMap<>();
     private List<OrderByClause> orderByColumns = new ArrayList<>();
     private Session session = null;
     private List<ColumnName> selectionClause;
@@ -252,12 +253,12 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String getAliasClause() {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for (Map.Entry<ColumnName,String> entry:aliasColumns.entrySet()) {
+        for (Map.Entry<Selector,String> entry:aliasColumns.entrySet()) {
             if (i != 0) {
                 sb.append(",");
             }
             i = 1;
-            sb.append(entry.getKey().getName());
+            sb.append(entry.getKey().getColumnName().getName());
         }
         return sb.toString();
     }

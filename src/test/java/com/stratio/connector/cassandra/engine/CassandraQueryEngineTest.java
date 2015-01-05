@@ -271,13 +271,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Relation relation = new Relation(selector, Operator.EQ, rightTerm);
         Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
 
-        Map<ColumnName, String> aliasColumns = new HashMap<>();
-        aliasColumns.put(new ColumnName("demo", "users", "name"), "nameAlias");
+        Map<Selector, String> aliasColumns = new HashMap<>();
+        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "nameAlias");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
-        Map<ColumnName, ColumnType> typeMapFromColumnName = new HashMap<>();
+        Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
         typeMap.put("demo.users.name", ColumnType.VARCHAR);
-        typeMapFromColumnName.put(new ColumnName("demo", "users", "name"), ColumnType.VARCHAR);
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), ColumnType.VARCHAR);
         Select aliasSelect = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
 
         //Compound workflow

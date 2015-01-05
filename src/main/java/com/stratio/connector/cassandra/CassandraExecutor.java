@@ -31,6 +31,7 @@ import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * CassandraExecutor allows to interact with the Cassandra Datastax Driver and execute the queries.
@@ -88,7 +89,7 @@ public final class CassandraExecutor {
      * @return a {@link com.stratio.crossdata.common.result.Result}.
      */
     public static com.stratio.crossdata.common.result.Result execute(String query,
-            Map<ColumnName, String> aliasColumns, Session session)
+            Map<Selector, String> aliasColumns, Session session)
             throws ConnectorException {
         try {
             ResultSet resultSet = session.execute(query);

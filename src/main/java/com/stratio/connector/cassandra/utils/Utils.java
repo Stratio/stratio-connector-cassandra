@@ -35,6 +35,8 @@ import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * Utils Class that implements a utility helper for Cassandra Connector.
@@ -163,7 +165,7 @@ public class Utils {
      * @return An equivalent Meta ResultSet.
      */
     public com.stratio.crossdata.common.data.ResultSet transformToMetaResultSet(
-            com.datastax.driver.core.ResultSet resultSet, Map<ColumnName, String> alias) {
+            com.datastax.driver.core.ResultSet resultSet, Map<Selector, String> alias) {
         ResultSet crs = new ResultSet();
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
@@ -180,9 +182,11 @@ public class Utils {
             ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
             if (alias
-                    .containsKey(new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
+                    .containsKey(new ColumnSelector(new ColumnName(def.getKeyspace(), def.getTable(),
+                            def.getName())))) {
                 columnMetadata = new ColumnMetadata(columnName, null, type);
-                columnMetadata.getName().setAlias(alias.get(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())));
+                columnMetadata.getName().setAlias(alias.get(new ColumnSelector(new ColumnName(def.getKeyspace(),
+                        def.getTable(), def.getName()))));
             } else {
                 columnMetadata =  new ColumnMetadata(columnName,null,type);
             }
@@ -199,10 +203,10 @@ public class Utils {
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
                     if (alias.containsKey(
-                            new ColumnName(def.getKeyspace(), def.getTable(), def.getName()))) {
+                            new ColumnSelector(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())))) {
                         metaRow.addCell(alias
-                                        .get(new ColumnName(def.getKeyspace(), def.getTable(),
-                                                def.getName())),
+                                        .get(new ColumnSelector(new ColumnName(def.getKeyspace(), def.getTable(),
+                                                def.getName()))),
                                 metaCell);
                     } else {
                         metaRow.addCell(def.getName(), metaCell);
