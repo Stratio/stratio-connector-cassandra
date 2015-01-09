@@ -309,8 +309,6 @@ public class CassandraConnector implements IConnector {
         return new CassandraMetadataEngine(sessions);
     }
 
-    @Override public boolean updateMetadata(IMetadata metadata) {
-        return false;
-    }
+
 
 }
