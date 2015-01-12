@@ -46,6 +46,7 @@ import com.stratio.crossdata.common.logicalplan.TransformationStep;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.result.Result;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.statements.structures.Selector;
@@ -59,6 +60,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     private List<OrderByClause> orderByColumns = new ArrayList<>();
     private Session session = null;
     private List<ColumnName> selectionClause;
+    private List<FunctionSelector> functions = new ArrayList<>();
     private boolean catalogInc;
     private String catalog;
     private TableName tableName;
@@ -119,7 +121,6 @@ public class CassandraQueryEngine implements IQueryEngine {
                 CatalogName catalogName = tableName.getCatalogName();
                 catalog = catalogName.getName();
             }
-            selectionClause = project.getColumnList();
         } else {
             if (transformation instanceof Filter) {
                 Filter filter = (Filter) transformation;
@@ -131,6 +132,12 @@ public class CassandraQueryEngine implements IQueryEngine {
                 limit = limitClause.getLimit();
             } else if (transformation instanceof Select) {
                 Select select = (Select) transformation;
+                //selectionClause=select.getColumnOrder();
+                for(Selector selector: select.getColumnMap().keySet()){
+                    if(selector instanceof FunctionSelector){
+                        functions.add((FunctionSelector) selector);
+                    }
+                }
                 aliasColumns = select.getColumnMap();
             } else if (transformation instanceof OrderBy) {
                 OrderBy orderBy = (OrderBy) transformation;
@@ -247,6 +254,16 @@ public class CassandraQueryEngine implements IQueryEngine {
             i = 1;
             sb.append(columnName.getName());
         }
+
+        for (FunctionSelector selectorFunction:functions){
+            if (selectorFunction.getFunctionName().toUpperCase().equals("COUNT")){
+               if(i!=0){
+                   sb.append(",");
+               }
+               i = 1;
+               sb.append("COUNT(*)");
+            }
+        }
         return sb.toString();
     }
 
@@ -258,7 +275,23 @@ public class CassandraQueryEngine implements IQueryEngine {
                 sb.append(",");
             }
             i = 1;
-            sb.append(entry.getKey().getColumnName().getName());
+            if (!(entry.getKey() instanceof FunctionSelector)) {
+                sb.append(entry.getKey().getColumnName().getName());
+            }else if (sb.length()==0){
+                i=0;
+
+            }
+
+        }
+
+        for (FunctionSelector selectorFunction:functions){
+            if (selectorFunction.getFunctionName().toUpperCase().equals("COUNT")){
+                if(i!=0){
+                    sb.append(",");
+                }
+                i = 1;
+                sb.append("COUNT(*)");
+            }
         }
         return sb.toString();
     }

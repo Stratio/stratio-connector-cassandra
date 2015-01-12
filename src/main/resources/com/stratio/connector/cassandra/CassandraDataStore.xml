@@ -15,6 +15,14 @@
     <Behaviors>
         <Behavior>UPSERT_ON_INSERT</Behavior>
     </Behaviors>
+    <Functions>
+        <Function>
+            <FunctionName>count</FunctionName>
+            <Signature>count(Tuple[Any*]):Tuple[Int]</Signature>
+            <FunctionType>aggregation</FunctionType>
+            <Description>It counts the number of rows</Description>
+        </Function>
+    </Functions>
 </DataStore>
 
 

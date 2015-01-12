@@ -26,6 +26,7 @@
         <operation>CREATE_INDEX</operation>
         <operation>DROP_INDEX</operation>
         <operation>PROJECT</operation>
+        <operation>SELECT_FUNCTIONS</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
         <operation>SELECT_ORDER_BY</operation>
