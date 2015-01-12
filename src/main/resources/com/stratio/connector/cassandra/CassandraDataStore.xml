@@ -22,7 +22,26 @@
             <FunctionType>aggregation</FunctionType>
             <Description>It counts the number of rows</Description>
         </Function>
+        <Function>
+            <FunctionName>now</FunctionName>
+            <Signature>now(Tuple[]):Tuple[Any]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Return the timestamp</Description>
+        </Function>
+        <Function>
+            <FunctionName>ttl</FunctionName>
+            <Signature>ttl(Tuple[Any*]):Tuple[String]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Return the ttl of a column</Description>
+        </Function>
+        <Function>
+            <FunctionName>writetime</FunctionName>
+            <Signature>writetime(Tuple[Any*]):Tuple[String]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Return the date of the insertion</Description>
+        </Function>
     </Functions>
+
 </DataStore>
 
 

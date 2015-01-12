@@ -72,7 +72,8 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     /**
      * Basic constructor.
-     * @param sessions Map of sessions.
+     *
+     * @param sessions     Map of sessions.
      * @param limitDefault Default limit for a query.
      */
     public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
@@ -133,8 +134,8 @@ public class CassandraQueryEngine implements IQueryEngine {
             } else if (transformation instanceof Select) {
                 Select select = (Select) transformation;
                 //selectionClause=select.getColumnOrder();
-                for(Selector selector: select.getColumnMap().keySet()){
-                    if(selector instanceof FunctionSelector){
+                for (Selector selector : select.getColumnMap().keySet()) {
+                    if (selector instanceof FunctionSelector) {
                         functions.add((FunctionSelector) selector);
                     }
                 }
@@ -159,13 +160,14 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     /**
      * Method that convert a query to a cassandra language.
+     *
      * @return java.lang.String with the Cassandra query.
      */
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
-        if (aliasColumns!=null && aliasColumns.size()!=0){
+        if (aliasColumns != null && aliasColumns.size() != 0) {
             sb.append(getAliasClause());
-        }else {
+        } else {
             sb.append(getSelectionClause());
         }
         sb.append(getFromClause());
@@ -174,7 +176,7 @@ public class CassandraQueryEngine implements IQueryEngine {
             sb.append(getWhereClause());
         }
 
-        if (!orderByColumns.isEmpty()){
+        if (!orderByColumns.isEmpty()) {
             sb.append(getOrderByClause());
         }
 
@@ -185,15 +187,15 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private String getOrderByClause() {
-        StringBuffer sb=new StringBuffer();
+        StringBuffer sb = new StringBuffer();
         sb.append(" ORDER BY ");
-        int count=0;
-        for (OrderByClause orderByClause:orderByColumns){
-            if (count!=0){
+        int count = 0;
+        for (OrderByClause orderByClause : orderByColumns) {
+            if (count != 0) {
                 sb.append(",");
             }
-            count=1;
-            ColumnSelector columnSelector=(ColumnSelector)orderByClause.getSelector();
+            count = 1;
+            ColumnSelector columnSelector = (ColumnSelector) orderByClause.getSelector();
             sb.append(columnSelector.getName().getName()).append(" ").append(orderByClause.getDirection().name());
         }
         return sb.toString();
@@ -255,13 +257,13 @@ public class CassandraQueryEngine implements IQueryEngine {
             sb.append(columnName.getName());
         }
 
-        for (FunctionSelector selectorFunction:functions){
-            if (selectorFunction.getFunctionName().toUpperCase().equals("COUNT")){
-               if(i!=0){
-                   sb.append(",");
-               }
-               i = 1;
-               sb.append("COUNT(*)");
+        for (FunctionSelector selectorFunction : functions) {
+            if (selectorFunction.getFunctionName().toUpperCase().equals("COUNT")) {
+                if (i != 0) {
+                    sb.append(",");
+                }
+                i = 1;
+                sb.append("COUNT(*)");
             }
         }
         return sb.toString();
@@ -270,29 +272,46 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String getAliasClause() {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for (Map.Entry<Selector,String> entry:aliasColumns.entrySet()) {
+        for (Map.Entry<Selector, String> entry : aliasColumns.entrySet()) {
             if (i != 0) {
                 sb.append(",");
             }
             i = 1;
             if (!(entry.getKey() instanceof FunctionSelector)) {
                 sb.append(entry.getKey().getColumnName().getName());
-            }else if (sb.length()==0){
-                i=0;
+            } else if (sb.length() == 0) {
+                i = 0;
 
             }
         }
 
-        for (FunctionSelector selectorFunction:functions){
-            if (selectorFunction.getFunctionName().toUpperCase().equals("COUNT")){
-                if(i!=0){
-                    sb.append(",");
-                }
-                i = 1;
-                sb.append("COUNT(*)");
+        for (FunctionSelector selectorFunction : functions) {
+            String functionString = getFunctionString(selectorFunction);
+
+            if (i != 0) {
+                sb.append(",");
             }
+            i = 1;
+            sb.append(functionString);
+
         }
         return sb.toString();
+    }
+
+    private String getFunctionString(FunctionSelector selectorFunction) {
+        String result = "";
+        switch (selectorFunction.getFunctionName().toUpperCase()) {
+        case "COUNT":
+            result = "COUNT(*)";
+            break;
+        case "NOW":
+            result = "NOW()";
+            break;
+        default:
+            result = "";
+        }
+
+        return result;
     }
 
     private String getLuceneIndex() {

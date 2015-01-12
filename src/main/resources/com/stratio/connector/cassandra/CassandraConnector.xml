@@ -29,7 +29,6 @@
         <operation>SELECT_FUNCTIONS</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
-        <operation>SELECT_ORDER_BY</operation>
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
