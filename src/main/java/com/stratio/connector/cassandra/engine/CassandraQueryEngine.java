@@ -300,6 +300,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     private String getFunctionString(FunctionSelector selectorFunction) {
         String result = "";
+        StringBuffer sb=new StringBuffer();
         switch (selectorFunction.getFunctionName().toUpperCase()) {
         case "COUNT":
             result = "COUNT(*)";
@@ -308,7 +309,24 @@ public class CassandraQueryEngine implements IQueryEngine {
             result = "NOW()";
             break;
         default:
-            result = "";
+            List<Selector> columns=selectorFunction.getFunctionColumns();
+            sb.append(selectorFunction.getFunctionName()).append("(");
+            for (Selector s:columns){
+                if (s instanceof ColumnSelector) {
+                    ColumnSelector columnSelector = (ColumnSelector) s;
+                    sb.append(columnSelector.getColumnName().getName());
+                    sb.append(",");
+                }else if (s instanceof FunctionSelector){
+                    FunctionSelector functionSelector=(FunctionSelector)s;
+                    String subFunction=getFunctionString(functionSelector);
+                    sb.append(subFunction);
+                }
+            }
+            if (sb.toString().endsWith(",")) {
+                sb.deleteCharAt(sb.lastIndexOf(","));
+            }
+            sb.append(")");
+            result= sb.toString();
         }
 
         return result;

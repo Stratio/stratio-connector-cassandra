@@ -30,15 +30,21 @@
         </Function>
         <Function>
             <FunctionName>ttl</FunctionName>
-            <Signature>ttl(Tuple[Any*]):Tuple[String]</Signature>
+            <Signature>ttl(Tuple[Any*]):Tuple[Any]</Signature>
             <FunctionType>simple</FunctionType>
             <Description>Return the ttl of a column</Description>
         </Function>
         <Function>
             <FunctionName>writetime</FunctionName>
-            <Signature>writetime(Tuple[Any*]):Tuple[String]</Signature>
+            <Signature>writetime(Tuple[Any*]):Tuple[Any]</Signature>
             <FunctionType>simple</FunctionType>
             <Description>Return the date of the insertion</Description>
+        </Function>
+        <Function>
+            <FunctionName>dateOf</FunctionName>
+            <Signature>dateof(Tuple[Any*]):Tuple[Any]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Return the date of a timeuuid</Description>
         </Function>
     </Functions>
 </DataStore>

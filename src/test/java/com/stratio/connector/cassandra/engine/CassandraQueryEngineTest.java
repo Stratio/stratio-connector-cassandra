@@ -494,6 +494,74 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
     @Test
+    public void functionWithParametersTest(){
+        ClusterName targetCluster = new ClusterName("cluster");
+
+        List<LogicalStep> logicalSteps = new ArrayList<>();
+
+        TableName tableName = new TableName("demo", "users");
+
+        List<ColumnName> columnList = new ArrayList<>();
+
+
+        //Generation of Data
+        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+
+        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector rightTerm = new StringSelector("name_5");
+
+        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector rightTerm2 = new StringSelector("female");
+
+        Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
+        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+
+        Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
+        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+
+        //Function count
+        List<Selector> functionColumns=new ArrayList<Selector>();
+        Selector columnSelector=new ColumnSelector(new ColumnName("demo","users","phrase"));
+        functionColumns.add(columnSelector);
+
+        Selector functionSelector=new FunctionSelector("ttl", functionColumns);
+        Map<Selector, String> aliasColumns = new LinkedHashMap<>();
+        aliasColumns.put(functionSelector,"ttl");
+
+        Map<String, ColumnType> typeMap = new HashMap<>();
+        Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
+
+        typeMapFromColumnName.put(functionSelector, ColumnType.VARCHAR);
+
+        Select select = new Select(Operations.SELECT_FUNCTIONS, aliasColumns, typeMap, typeMapFromColumnName);
+
+
+        //Compound workflow
+        filter2.setNextStep(select);
+        filter.setNextStep(filter2);
+        project.setNextStep(filter);
+        logicalSteps.add(project);
+        LogicalWorkflow workflow = new LogicalWorkflow(logicalSteps);
+
+        Map<String, Session> sessions = new HashMap<>();
+        sessions.put("cluster", this._session);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+
+        QueryResult qr = null;
+        try {
+            qr = cqe.execute(workflow);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        assertEquals(cqe.parseQuery(),
+                "SELECT ttl(phrase) FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "The select statement not match with the expected value");
+
+    }
+
+
+    @Test
     public void LuceneSelectTest() {
 
         ClusterName targetCluster = new ClusterName("cluster");
