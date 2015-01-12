@@ -303,10 +303,10 @@ public class CassandraQueryEngine implements IQueryEngine {
         StringBuffer sb=new StringBuffer();
         switch (selectorFunction.getFunctionName().toUpperCase()) {
         case "COUNT":
-            result = "COUNT(*)";
+            result = selectorFunction.getFunctionName()+"(*)";
             break;
         case "NOW":
-            result = "NOW()";
+            result = selectorFunction.getFunctionName()+"()";
             break;
         default:
             List<Selector> columns=selectorFunction.getFunctionColumns();

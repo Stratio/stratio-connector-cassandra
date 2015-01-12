@@ -419,7 +419,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         assertEquals(cqe.parseQuery(),
-                "SELECT COUNT(*) FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "SELECT Count(*) FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -487,7 +487,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         assertEquals(cqe.parseQuery(),
-                "SELECT NOW() FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "SELECT Now() FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
