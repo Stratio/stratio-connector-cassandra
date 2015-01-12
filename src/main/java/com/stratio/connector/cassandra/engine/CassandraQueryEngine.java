@@ -281,7 +281,6 @@ public class CassandraQueryEngine implements IQueryEngine {
                 i=0;
 
             }
-
         }
 
         for (FunctionSelector selectorFunction:functions){
