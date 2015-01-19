@@ -110,51 +110,7 @@ public class Utils {
         return new Cell(value);
     }
 
-    /**
-     * Transforms a Cassandra {@link com.datastax.driver.core.ResultSet} into a {@link
-     * com.stratio.crossdata.common.data.ResultSet}.
-     *
-     * @param resultSet The input Cassandra result set.
-     * @return An equivalent Meta ResultSet
-     */
-    public com.stratio.crossdata.common.data.ResultSet transformToMetaResultSet(
-            com.datastax.driver.core.ResultSet resultSet) {
-        ResultSet crs = new ResultSet();
 
-        CassandraMetadataHelper helper = new CassandraMetadataHelper();
-
-        //Get the columns in order
-        List<ColumnDefinitions.Definition> definitions = resultSet.getColumnDefinitions().asList();
-        List<ColumnMetadata> columnList =
-                new ArrayList<>();
-        ColumnMetadata columnMetadata = null;
-        //Obtain the metadata associated with the columns.
-        for (ColumnDefinitions.Definition def : definitions) {
-            ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
-            ColumnType type = helper.toColumnType(def.getType().getName().toString());
-            columnMetadata = new ColumnMetadata(columnName, null,type);
-            columnList.add(columnMetadata);
-        }
-        crs.setColumnMetadata(columnList);
-
-        try {
-            for (Row row : resultSet.all()) {
-                com.stratio.crossdata.common.data.Row metaRow = new com.stratio.crossdata.common.data.Row();
-                for (ColumnDefinitions.Definition def : definitions) {
-                    if (def.getName().toLowerCase().startsWith("stratio")) {
-                        continue;
-                    }
-                    Cell metaCell = getCell(def.getType(), row, def.getName());
-                    metaRow.addCell(def.getName(), metaCell);
-                }
-                crs.add(metaRow);
-            }
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            LOG.error("Cannot transform result set", e);
-            crs = new ResultSet();
-        }
-        return crs;
-    }
 
     /**
      * Transforms a Cassandra {@link com.datastax.driver.core.ResultSet} into a {@link

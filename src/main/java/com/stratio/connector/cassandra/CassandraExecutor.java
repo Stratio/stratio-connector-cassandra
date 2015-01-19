@@ -18,6 +18,7 @@
 
 package com.stratio.connector.cassandra;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -37,10 +38,6 @@ import com.stratio.crossdata.common.statements.structures.Selector;
  */
 public final class CassandraExecutor {
 
-    /**
-     * Class logger.
-     */
-    private static final Logger LOG = Logger.getLogger(CassandraExecutor.class);
 
     /**
      * The {@link com.stratio.connector.cassandra.utils.Utils}.
@@ -66,7 +63,7 @@ public final class CassandraExecutor {
         try {
             resultSet = session.execute(query);
             return com.stratio.crossdata.common.result
-                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
+                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet, new HashMap<Selector, String>()));
         } catch (UnsupportedOperationException unSupportException) {
             throw new UnsupportedException(unSupportException);
         } catch (DriverException dex) {
@@ -93,9 +90,9 @@ public final class CassandraExecutor {
                     .QueryResult
                     .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns));
         } catch (UnsupportedOperationException unSupportException) {
-            throw new UnsupportedException(unSupportException.getMessage());
+            throw new UnsupportedException(unSupportException);
         } catch (DriverException dex) {
-            throw new CriticalExecutionException(dex.getMessage());
+            throw new CriticalExecutionException(dex);
         } catch (Exception ex) {
             throw new ExecutionException(ex);
         }
