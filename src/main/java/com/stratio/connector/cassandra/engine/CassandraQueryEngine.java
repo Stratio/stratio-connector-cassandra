@@ -133,7 +133,6 @@ public class CassandraQueryEngine implements IQueryEngine {
                 limit = limitClause.getLimit();
             } else if (transformation instanceof Select) {
                 Select select = (Select) transformation;
-                //selectionClause=select.getColumnOrder();
                 for (Selector selector : select.getColumnMap().keySet()) {
                     if (selector instanceof FunctionSelector) {
                         functions.add((FunctionSelector) selector);
@@ -165,7 +164,7 @@ public class CassandraQueryEngine implements IQueryEngine {
      */
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
-        if (aliasColumns != null && aliasColumns.size() != 0) {
+        if (aliasColumns != null && !aliasColumns.isEmpty()) {
             sb.append(getAliasClause());
         } else {
             sb.append(getSelectionClause());
@@ -258,7 +257,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         }
 
         for (FunctionSelector selectorFunction : functions) {
-            if (selectorFunction.getFunctionName().toUpperCase().equals("COUNT")) {
+            if ("Count".equals(selectorFunction.getFunctionName())) {
                 if (i != 0) {
                     sb.append(",");
                 }

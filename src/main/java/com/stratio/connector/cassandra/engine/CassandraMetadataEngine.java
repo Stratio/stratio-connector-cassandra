@@ -246,7 +246,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     }
 
     @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)

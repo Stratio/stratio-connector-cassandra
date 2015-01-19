@@ -167,6 +167,7 @@ public class CreateIndexStatement {
      *
      * @return String with the query
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("CREATE ");
         if (type == (IndexType.FULL_TEXT)) {
