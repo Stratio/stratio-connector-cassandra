@@ -26,7 +26,6 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.stratio.connector.cassandra.utils.Utils;
-import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;

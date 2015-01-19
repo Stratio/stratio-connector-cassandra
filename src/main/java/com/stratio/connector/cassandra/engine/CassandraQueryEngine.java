@@ -30,7 +30,6 @@ import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.CatalogName;
-import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -59,7 +58,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     private Map<Selector, String> aliasColumns = new HashMap<>();
     private List<OrderByClause> orderByColumns = new ArrayList<>();
     private Session session = null;
-    private List<ColumnName> selectionClause;
+
     private List<FunctionSelector> functions = new ArrayList<>();
     private boolean catalogInc;
     private String catalog;
@@ -97,11 +96,9 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         Result result;
         if (session != null) {
-            if (aliasColumns.isEmpty()) {
-                result = CassandraExecutor.execute(query, session);
-            } else {
-                result = CassandraExecutor.execute(query, aliasColumns, session);
-            }
+
+            result = CassandraExecutor.execute(query, aliasColumns, session);
+
         } else {
             throw new ExecutionException("No session to cluster established");
         }
@@ -167,7 +164,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         if (aliasColumns != null && !aliasColumns.isEmpty()) {
             sb.append(getAliasClause());
         } else {
-            sb.append(getSelectionClause());
+            sb.append(" * ");
         }
         sb.append(getFromClause());
 
@@ -245,29 +242,6 @@ public class CassandraQueryEngine implements IQueryEngine {
         return sb.toString();
     }
 
-    private String getSelectionClause() {
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        for (ColumnName columnName : selectionClause) {
-            if (i != 0) {
-                sb.append(",");
-            }
-            i = 1;
-            sb.append(columnName.getName());
-        }
-
-        for (FunctionSelector selectorFunction : functions) {
-            if ("Count".equals(selectorFunction.getFunctionName())) {
-                if (i != 0) {
-                    sb.append(",");
-                }
-                i = 1;
-                sb.append("COUNT(*)");
-            }
-        }
-        return sb.toString();
-    }
-
     private String getAliasClause() {
         StringBuilder sb = new StringBuilder();
         int i = 0;
@@ -299,25 +273,25 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     private String getFunctionString(FunctionSelector selectorFunction) {
         String result;
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         switch (selectorFunction.getFunctionName().toUpperCase()) {
         case "COUNT":
-            result = selectorFunction.getFunctionName()+"(*)";
+            result = selectorFunction.getFunctionName() + "(*)";
             break;
         case "NOW":
-            result = selectorFunction.getFunctionName()+"()";
+            result = selectorFunction.getFunctionName() + "()";
             break;
         default:
-            List<Selector> columns=selectorFunction.getFunctionColumns();
+            List<Selector> columns = selectorFunction.getFunctionColumns();
             sb.append(selectorFunction.getFunctionName()).append("(");
-            for (Selector s:columns){
+            for (Selector s : columns) {
                 if (s instanceof ColumnSelector) {
                     ColumnSelector columnSelector = (ColumnSelector) s;
                     sb.append(columnSelector.getColumnName().getName());
                     sb.append(",");
-                }else if (s instanceof FunctionSelector){
-                    FunctionSelector functionSelector=(FunctionSelector)s;
-                    String subFunction=getFunctionString(functionSelector);
+                } else if (s instanceof FunctionSelector) {
+                    FunctionSelector functionSelector = (FunctionSelector) s;
+                    String subFunction = getFunctionString(functionSelector);
                     sb.append(subFunction);
                 }
             }
@@ -325,7 +299,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                 sb.deleteCharAt(sb.lastIndexOf(","));
             }
             sb.append(")");
-            result= sb.toString();
+            result = sb.toString();
         }
 
         return result;
