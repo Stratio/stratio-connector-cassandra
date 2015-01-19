@@ -186,7 +186,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private String getOrderByClause() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(" ORDER BY ");
         int count = 0;
         for (OrderByClause orderByClause : orderByColumns) {
@@ -298,8 +298,8 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     private String getFunctionString(FunctionSelector selectorFunction) {
-        String result = "";
-        StringBuffer sb=new StringBuffer();
+        String result;
+        StringBuilder sb=new StringBuilder();
         switch (selectorFunction.getFunctionName().toUpperCase()) {
         case "COUNT":
             result = selectorFunction.getFunctionName()+"(*)";

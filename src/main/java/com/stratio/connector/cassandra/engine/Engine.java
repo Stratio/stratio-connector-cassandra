@@ -71,7 +71,7 @@ public class Engine {
         try {
             result = cluster.connect();
         } catch (NoHostAvailableException nhae) {
-            throw new ConnectionException(nhae.getMessage());
+            throw new ConnectionException(nhae);
         }
 
         return result;
