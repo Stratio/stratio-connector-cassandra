@@ -68,14 +68,11 @@ public final class CassandraExecutor {
             return com.stratio.crossdata.common.result
                     .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.error("Cassandra executor failed", unSupportException);
-            throw new UnsupportedException(unSupportException.getMessage());
+            throw new UnsupportedException(unSupportException);
         } catch (DriverException dex) {
-            LOG.error("Cassandra executor failed", dex);
-            throw new CriticalExecutionException(dex.getMessage());
+            throw new CriticalExecutionException(dex);
         } catch (Exception ex) {
-            LOG.error("Cassandra executor failed", ex);
-            throw new ExecutionException(ex.getMessage());
+            throw new ExecutionException(ex);
         }
     }
 
@@ -96,14 +93,11 @@ public final class CassandraExecutor {
                     .QueryResult
                     .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.error("Cassandra executor failed", unSupportException);
             throw new UnsupportedException(unSupportException.getMessage());
         } catch (DriverException dex) {
-            LOG.error("Cassandra executor failed", dex);
             throw new CriticalExecutionException(dex.getMessage());
         } catch (Exception ex) {
-            LOG.error("Cassandra executor failed", ex);
-            throw new ExecutionException(ex.getMessage());
+            throw new ExecutionException(ex);
         }
     }
 
