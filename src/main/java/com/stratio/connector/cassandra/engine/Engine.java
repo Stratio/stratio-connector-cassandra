@@ -71,8 +71,7 @@ public class Engine {
         try {
             result = cluster.connect();
         } catch (NoHostAvailableException nhae) {
-            LOG.error("Cannot connect to Cassandra: " + nhae.getMessage());
-            throw new ConnectionException(nhae.getMessage());
+            throw new ConnectionException(nhae);
         }
 
         return result;
