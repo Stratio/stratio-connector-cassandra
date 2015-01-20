@@ -224,10 +224,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
             throws ConnectorException {
-        session = sessions.get(targetCluster.getName());
+        /*session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
                 new CreateIndexStatement(indexMetadata, true, session);
-        CassandraExecutor.execute(indexStatement.toString(), session);
+        CassandraExecutor.execute(indexStatement.toString(), session);*/
     }
 
     /**
