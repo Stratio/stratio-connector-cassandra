@@ -18,15 +18,13 @@
 
 package com.stratio.connector.cassandra;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.stratio.connector.cassandra.utils.Utils;
-import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -38,10 +36,6 @@ import com.stratio.crossdata.common.statements.structures.Selector;
  */
 public final class CassandraExecutor {
 
-    /**
-     * Class logger.
-     */
-    private static final Logger LOG = Logger.getLogger(CassandraExecutor.class);
 
     /**
      * The {@link com.stratio.connector.cassandra.utils.Utils}.
@@ -67,15 +61,12 @@ public final class CassandraExecutor {
         try {
             resultSet = session.execute(query);
             return com.stratio.crossdata.common.result
-                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
+                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet, new HashMap<Selector, String>()));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.error("Cassandra executor failed", unSupportException);
             throw new UnsupportedException(unSupportException.getMessage());
         } catch (DriverException dex) {
-            LOG.error("Cassandra executor failed", dex);
             throw new CriticalExecutionException(dex.getMessage());
         } catch (Exception ex) {
-            LOG.error("Cassandra executor failed", ex);
             throw new ExecutionException(ex.getMessage());
         }
     }
@@ -97,13 +88,10 @@ public final class CassandraExecutor {
                     .QueryResult
                     .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.error("Cassandra executor failed", unSupportException);
             throw new UnsupportedException(unSupportException.getMessage());
         } catch (DriverException dex) {
-            LOG.error("Cassandra executor failed", dex);
             throw new CriticalExecutionException(dex.getMessage());
         } catch (Exception ex) {
-            LOG.error("Cassandra executor failed", ex);
             throw new ExecutionException(ex.getMessage());
         }
     }

@@ -63,6 +63,7 @@ public class DropTableStatement {
      * Obtain the query in CQL language.
      * @return String with the query.
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("DROP TABLE ");
         if (ifExists) {

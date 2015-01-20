@@ -45,7 +45,7 @@ public class DropIndexStatement {
      */
     public DropIndexStatement(IndexMetadata index, boolean ifExists) {
 
-        if (index.getColumns() != null && index.getColumns().size() != 0) {
+        if (index.getColumns() != null && !index.getColumns().isEmpty()) {
             this.catalogInc = true;
             this.catalog = index.getName().getTableName().getCatalogName().getName();
 
