@@ -87,16 +87,12 @@ public class CassandraConnector implements IConnector {
      */
     public CassandraConnector() {
         sessions = new HashMap<>();
-        XPathFactory xFactory=null;
+        XPathFactory xFactory = XPathFactory.newInstance();
         Document d=null;
         try {
             InputStream inputStream = getClass()
                     .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
             d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
-
-            //Search for the limit properties and connectorName
-            xFactory = XPathFactory.newInstance();
-
         } catch (SAXException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration");
         } catch (IOException e) {
