@@ -95,11 +95,11 @@ public class CassandraConnector implements IConnector {
             d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
 
         } catch (SAXException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration",e);
         } catch (IOException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration",e);
         } catch (ParserConfigurationException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration",e);
         }
         // create an XPath object
         XPath xpath = xFactory.newXPath();
@@ -110,6 +110,7 @@ public class CassandraConnector implements IConnector {
             result = expr.evaluate(d, XPathConstants.NODESET);
             this.connectorName = ((NodeList) result).item(0).getNodeValue();
         } catch (XPathExpressionException e) {
+            LOG.trace("Impossible to read Manifest with the connector name",e);
             this.connectorName = "UNKNOWN";
         }
 
@@ -122,6 +123,7 @@ public class CassandraConnector implements IConnector {
 
             }
         } catch (XPathExpressionException e) {
+            LOG.trace("Impossible to read Manifest with the Datastore name ",e);
             datastoreName = new String[1];
             this.datastoreName[0] = "UNKNOWN";
         }
