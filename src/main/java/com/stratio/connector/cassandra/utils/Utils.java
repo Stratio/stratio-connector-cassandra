@@ -137,14 +137,16 @@ public class Utils {
 
             ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
-            if (alias
-                    .containsKey(new ColumnSelector(new ColumnName(def.getKeyspace(), def.getTable(),
-                            def.getName())))) {
-                columnMetadata = new ColumnMetadata(columnName, null, type);
-                columnMetadata.getName().setAlias(alias.get(new ColumnSelector(new ColumnName(def.getKeyspace(),
-                        def.getTable(), def.getName()))));
-            } else {
-                columnMetadata =  new ColumnMetadata(columnName,null,type);
+            ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
+            for (Map.Entry<Selector,String> entry : alias.entrySet())
+            {
+                if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())){
+                    columnMetadata = new ColumnMetadata(columnName, null, type);
+                    columnMetadata.getName().setAlias(entry.getValue());
+                    break;
+                } else{
+                    columnMetadata =  new ColumnMetadata(columnName,null,type);
+                }
             }
             columnList.add(columnMetadata);
         }
@@ -158,14 +160,15 @@ public class Utils {
                         continue;
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
-                    if (alias.containsKey(
-                            new ColumnSelector(new ColumnName(def.getKeyspace(), def.getTable(), def.getName())))) {
-                        metaRow.addCell(alias
-                                        .get(new ColumnSelector(new ColumnName(def.getKeyspace(), def.getTable(),
-                                                def.getName()))),
-                                metaCell);
-                    } else {
-                        metaRow.addCell(def.getName(), metaCell);
+                    ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
+                    for (Map.Entry<Selector,String> entry : alias.entrySet())
+                    {
+                        if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())){
+                            metaRow.addCell(entry.getValue(), metaCell);
+                            break;
+                        } else{
+                            metaRow.addCell(def.getName(), metaCell);
+                        }
                     }
                 }
                 crs.add(metaRow);
