@@ -161,14 +161,17 @@ public class Utils {
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
                     ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
+                    boolean findIt=false;
                     for (Map.Entry<Selector,String> entry : alias.entrySet())
                     {
                         if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())){
                             metaRow.addCell(entry.getValue(), metaCell);
+                            findIt=true;
                             break;
-                        } else{
-                            metaRow.addCell(def.getName(), metaCell);
                         }
+                    }
+                    if (!findIt){
+                        metaRow.addCell(def.getName(), metaCell);
                     }
                 }
                 crs.add(metaRow);
