@@ -88,10 +88,14 @@ public class CassandraStorageEngine implements IStorageEngine {
     public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows, boolean ifNotExists)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
+        StringBuilder sb= new StringBuilder();
+        sb.append("BEGIN BATCH ");
         for (Row row : rows) {
             String query = insertBlock(row, targetTable, ifNotExists);
-            CassandraExecutor.execute(query, session);
+            sb.append(query).append(" ");
         }
+        sb.append("APPLY BATCH");
+        CassandraExecutor.execute(sb.toString(), session);
     }
 
     private String insertBlock(Row row, TableMetadata targetTable, boolean ifNotExists) throws ExecutionException {
