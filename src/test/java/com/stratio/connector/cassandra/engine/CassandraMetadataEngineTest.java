@@ -858,6 +858,13 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata5");
         BasicCoreCassandraTest.dropKeyspaceIfExists("testAlterCatalog");
         BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog1");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog11");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog111");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog2");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog22");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog222");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog3");
+
     }
 
 }
