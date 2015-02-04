@@ -30,9 +30,11 @@ import org.apache.log4j.Logger;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.TableMetadata;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
@@ -182,5 +184,52 @@ public class Utils {
         }
         return crs;
     }
+
+    /**
+     * Get the Crossdata ColumnType from Cassandra DataType
+     * @param type The {@link com.datastax.driver.core.DataType} of the column.
+     * @return A {@link com.stratio.crossdata.common.metadata.ColumnType}
+     */
+    public ColumnType getCrossdataColumn(DataType type) {
+        switch(type.getName()){
+        case ASCII:
+        case BLOB:
+        case COUNTER:
+        case INET:
+        case TIMESTAMP:
+        case UUID:
+        case TIMEUUID:
+        case UDT:
+        case TUPLE:
+        case CUSTOM:
+            return ColumnType.NATIVE;
+        case BIGINT:
+            return ColumnType.BIGINT;
+        case BOOLEAN:
+            return ColumnType.BOOLEAN;
+        case DECIMAL:
+        case FLOAT:
+            return ColumnType.FLOAT;
+        case DOUBLE:
+            return ColumnType.DOUBLE;
+        case INT:
+            return ColumnType.INT;
+        case TEXT:
+        case VARCHAR:
+            return ColumnType.TEXT;
+        case VARINT:
+            return ColumnType.INT;
+        case LIST:
+            return ColumnType.LIST;
+        case SET:
+            return ColumnType.SET;
+        case MAP:
+            return ColumnType.MAP;
+        default:
+            return null;
+        }
+
+    }
+
 
 }

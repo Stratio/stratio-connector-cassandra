@@ -125,6 +125,53 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         }
     }
 
+    public void createTable(String catalog,String tableName) {
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+        TableName targetTable = new TableName(catalog, tableName);
+
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
+        ClusterName clusterRef = new ClusterName("cluster");
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
+        ColumnName partitionColumn1 = new ColumnName(catalog, tableName, "name");
+        ColumnName partitionColumn2 = new ColumnName(catalog, tableName, "gender");
+        partitionKey.add(partitionColumn1);
+        partitionKey.add(partitionColumn2);
+
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
+        Object[] parameters = { };
+        columns.put(new ColumnName(new TableName(catalog, tableName), "name"),
+                new ColumnMetadata(new ColumnName(new TableName(catalog, tableName), "name"),
+                        parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName(catalog, tableName), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName(catalog, tableName), "gender"),
+                        parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName(catalog, tableName), "age"),
+                new ColumnMetadata(new ColumnName(new TableName(catalog, tableName), "age"),
+                        parameters, ColumnType.INT));
+        columns.put(new ColumnName(new TableName(catalog, tableName), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName(catalog, tableName), "bool"),
+                        parameters, ColumnType.BOOLEAN));
+        columns.put(new ColumnName(new TableName(catalog, tableName), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName(catalog, tableName), "phrase"),
+                        parameters, ColumnType.TEXT));
+        columns.put(new ColumnName(new TableName(catalog, tableName), "email"),
+                new ColumnMetadata(new ColumnName(new TableName(catalog, tableName), "email"),
+                        parameters, ColumnType.TEXT));
+
+        Map<IndexName, IndexMetadata> indexes = new HashMap<>();
+        TableMetadata table =
+                new TableMetadata(targetTable, options, columns, indexes, clusterRef, partitionKey,
+                        clusterKey);
+
+        try {
+            cme.createTable(new ClusterName("cluster"), table);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
     public void createCatalog() {
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
 
@@ -142,6 +189,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
     }
 
     public void createCatalog(String name) {
+
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
 
         Map<Selector, Selector> options = new HashMap<>();
@@ -729,6 +777,78 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         }
     }
 
+
+    @Test
+    public void provideMetadataTest(){
+        createCatalog("importCatalog1");
+        createCatalog("importCatalog11");
+        createCatalog("importCatalog111");
+        createTable("importCatalog1","importTables");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        try{
+            List<CatalogMetadata> catalogMetadataList=cme.provideMetadata(new ClusterName("cluster"));
+            boolean findit1=false;
+            boolean findit11=false;
+            boolean findit111=false;
+            for(CatalogMetadata catalogMetadata:catalogMetadataList){
+                if ("importcatalog1".equals(catalogMetadata.getName().getName())){
+                    findit1=true;
+                }
+                if ("importcatalog11".equals(catalogMetadata.getName().getName())){
+                    findit11=true;
+                }
+                if ("importcatalog111".equals(catalogMetadata.getName().getName())){
+                    findit111=true;
+                }
+            }
+            Assert.assertTrue(findit1,"importCatalog1 not imported");
+            Assert.assertTrue(findit11,"importCatalog11 not imported");
+            Assert.assertTrue(findit111,"importCatalog111 not imported");
+        }catch(ConnectorException e){
+            Assert.fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void provideCatalogMetadataTest(){
+        createCatalog("importCatalog2");
+        createCatalog("importCatalog22");
+        createCatalog("importCatalog222");
+        createTable("importCatalog2","importTables");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        try{
+            CatalogMetadata catalogMetadata=cme.provideCatalogMetadata(new ClusterName("cluster"),
+                    new CatalogName("importCatalog22"));
+            Assert.assertEquals(catalogMetadata.getName().getName(), "importcatalog22", "importcatalog22 not imported");
+
+        }catch(ConnectorException e){
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void provideTableMetadataTest(){
+        createCatalog("importCatalog3");
+        createTable("importCatalog3","importTables");
+        createTable("importCatalog3","importTables2");
+        createTable("importCatalog3","importTables3");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+        try{
+            TableMetadata tableMetadata=cme.provideTableMetadata(new ClusterName("cluster"),
+                    new TableName("importCatalog3", "importTables2"));
+            Assert.assertEquals(tableMetadata.getName().getName(),"importtables2", "importTables2 not imported");
+            Map<ColumnName,ColumnMetadata> columns=tableMetadata.getColumns();
+
+            TableName tableName=new TableName("importCatalog3","importTables2");
+            ColumnMetadata columnMetadata=columns.get(new ColumnName(tableName,"name"));
+            Assert.assertEquals(columnMetadata.getName().getName(), "name", "Columns not imported well");
+            Assert.assertEquals(columnMetadata.getColumnType(), ColumnType.TEXT, "Columns Type not imported well");
+        }catch(ConnectorException e){
+            Assert.fail(e.getMessage());
+        }
+    }
+
     @AfterClass
     public void restore() {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata");
@@ -737,6 +857,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata4");
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata5");
         BasicCoreCassandraTest.dropKeyspaceIfExists("testAlterCatalog");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog1");
     }
 
 }
