@@ -5,7 +5,7 @@ Native connector for Cassandra using Crossdata.
 ## Requirements ##
 
 [Stratio Cassandra](https://github.com/Stratio/stratio-cassandra) version 2.1 must be installed and started.  
-[Crossdata] (https://github.com/Stratio/crossdata) version 0.2.0 is needed to interact with this connector.
+[Crossdata] (https://github.com/Stratio/crossdata) version 0.2.0-001 is needed to interact with this connector.
 
 ## Compiling Stratio Connector Cassandra ##
 
@@ -33,13 +33,13 @@ To generate the executable execute the following command:
 To run Connector Cassandra execute:
 
 
-    > target/stratio-connector-cassandra-0.2.0/bin/stratio-connector-cassandra-0.2.0 start
+    > target/stratio-connector-cassandra-0.2.0/bin/stratio-connector-cassandra-0.2.0-001 start
 
 
 To stop the connector execute:
 
 
-    > target/stratio-connector-cassandra-0.2.0/bin/stratio-connector-cassandra-0.2.0 stop
+    > target/stratio-connector-cassandra-0.2.0/bin/stratio-connector-cassandra-0.2.0-001 stop
 
 
 ## How to use Cassandra Connector ##
