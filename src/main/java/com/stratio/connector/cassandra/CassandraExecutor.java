@@ -119,7 +119,7 @@ public final class CassandraExecutor {
      * @param session The cassandra session.
      * @return A list of {@link com.stratio.crossdata.common.metadata.CatalogMetadata} .
      */
-    public static List<CatalogMetadata> getKeyspaces(Session session){
+    public static List<CatalogMetadata> getKeyspaces(Session session,String cluster){
         List<CatalogMetadata> catalogMetadataList=new ArrayList<>();
         List<KeyspaceMetadata> keyspaceMetadataList=session.getCluster().getMetadata().getKeyspaces();
 
@@ -136,7 +136,7 @@ public final class CassandraExecutor {
             }
 
             //Tables
-            Map<TableName, TableMetadata> tables=getTablesFromKeyspace(session,keyspaceMetadata);
+            Map<TableName, TableMetadata> tables=getTablesFromKeyspace(session,keyspaceMetadata,cluster);
 
             CatalogMetadata catalogMetadata=new CatalogMetadata(name,options,tables);
             catalogMetadataList.add(catalogMetadata);
@@ -151,7 +151,7 @@ public final class CassandraExecutor {
      * @param catalogName The catalog name of the cassandra keyspace.
      * @return A {@link com.stratio.crossdata.common.metadata.CatalogMetadata} .
      */
-    public static CatalogMetadata getKeyspacesByName(Session session, CatalogName catalogName) {
+    public static CatalogMetadata getKeyspacesByName(Session session, CatalogName catalogName, String cluster) {
 
         KeyspaceMetadata keyspace=session.getCluster().getMetadata().getKeyspace(catalogName.getName());
         CatalogName name=new CatalogName(keyspace.getName());
@@ -164,7 +164,7 @@ public final class CassandraExecutor {
             options.put(new StringSelector(entry.getKey()),new StringSelector(entry.getValue()));
         }
 
-        Map<TableName, TableMetadata> tables=getTablesFromKeyspace(session,keyspace);
+        Map<TableName, TableMetadata> tables=getTablesFromKeyspace(session,keyspace,cluster);
         CatalogMetadata catalogMetadata=new CatalogMetadata(name,options,tables);
         return catalogMetadata;
     }
@@ -175,11 +175,11 @@ public final class CassandraExecutor {
      * @param tableName The table name to search.
      * @return A {@link com.stratio.crossdata.common.metadata.TableMetadata} .
      */
-    public static TableMetadata getTablesByTableName(Session session, TableName tableName) {
+    public static TableMetadata getTablesByTableName(Session session, TableName tableName, String cluster) {
         com.datastax.driver.core.TableMetadata cassandraTableMetadata=session.getCluster().getMetadata().getKeyspace
                 (tableName.getCatalogName().getName()).getTable(tableName.getName());
 
-        return getXDTableMetadata(session,cassandraTableMetadata);
+        return getXDTableMetadata(session,cassandraTableMetadata,cluster);
     }
 
     /**
@@ -189,12 +189,12 @@ public final class CassandraExecutor {
      * @return A map of tables.
      */
     private static Map<TableName, TableMetadata> getTablesFromKeyspace(Session session,KeyspaceMetadata
-            keyspaceMetadata) {
+            keyspaceMetadata, String cluster) {
         Map<TableName, TableMetadata> tables=new HashMap<>();
         Collection<com.datastax.driver.core.TableMetadata> cassandraTables=keyspaceMetadata.getTables();
         for(com.datastax.driver.core.TableMetadata cassandraTable:cassandraTables) {
             TableName tableName=new TableName(keyspaceMetadata.getName(),cassandraTable.getName());
-            TableMetadata tableMetadata=getXDTableMetadata(session,cassandraTable);
+            TableMetadata tableMetadata=getXDTableMetadata(session,cassandraTable,cluster);
             tables.put(tableName,tableMetadata);
         }
         return tables;
@@ -207,7 +207,7 @@ public final class CassandraExecutor {
      * @return A {@link com.stratio.crossdata.common.metadata.TableMetadata} .
      */
     private static TableMetadata getXDTableMetadata(Session session,com.datastax.driver.core.TableMetadata
-            cassandraTableMetadata) {
+            cassandraTableMetadata, String cluster) {
         Map<IndexName, IndexMetadata> indexes=new HashMap<>();
         LinkedHashMap<ColumnName, ColumnMetadata> columns=new LinkedHashMap<>();
         List<com.datastax.driver.core.ColumnMetadata> cassandraColumns=cassandraTableMetadata.getColumns();
@@ -236,7 +236,7 @@ public final class CassandraExecutor {
             }
         }
 
-        ClusterName clusterRef=new ClusterName(session.getCluster().getClusterName());
+        ClusterName clusterRef=new ClusterName(cluster);
 
         List<ColumnName> partitionKey=new ArrayList<>();
         List<com.datastax.driver.core.ColumnMetadata> partitionColumns=cassandraTableMetadata.getPartitionKey();

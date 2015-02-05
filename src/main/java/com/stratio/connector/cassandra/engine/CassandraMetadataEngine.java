@@ -247,19 +247,19 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {
         session = sessions.get(clusterName.getName());
-        return  CassandraExecutor.getKeyspaces(session);
+        return  CassandraExecutor.getKeyspaces(session,clusterName.getName());
     }
 
     @Override public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)
             throws ConnectorException {
         session = sessions.get(clusterName.getName());
-        return CassandraExecutor.getKeyspacesByName(session,catalogName);
+        return CassandraExecutor.getKeyspacesByName(session,catalogName,clusterName.getName());
     }
 
     @Override public TableMetadata provideTableMetadata(ClusterName clusterName, TableName tableName)
             throws ConnectorException {
         session=sessions.get(clusterName.getName());
-        return CassandraExecutor.getTablesByTableName(session, tableName);
+        return CassandraExecutor.getTablesByTableName(session, tableName,clusterName.getName());
     }
 
     private String getStringOptions(Map<Selector, Selector> options) {
