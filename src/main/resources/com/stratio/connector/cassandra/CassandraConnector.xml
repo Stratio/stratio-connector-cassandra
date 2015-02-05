@@ -4,7 +4,7 @@
     <DataStores>
         <DataStoreName>Cassandra</DataStoreName>
     </DataStores>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <RequiredProperties>
         <Property>
             <PropertyName>DefaultLimit</PropertyName>
@@ -26,11 +26,12 @@
         <operation>CREATE_INDEX</operation>
         <operation>DROP_INDEX</operation>
         <operation>PROJECT</operation>
+        <operation>SELECT_FUNCTIONS</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
-        <operation>SELECT_ORDER_BY</operation>
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
+        <operation>FILTER_PK_MATCH</operation>
     </SupportedOperations>
 </Connector>

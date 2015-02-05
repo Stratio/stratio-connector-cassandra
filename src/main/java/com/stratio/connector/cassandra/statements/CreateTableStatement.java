@@ -114,7 +114,7 @@ public class CreateTableStatement {
             this.properties = properties;
         }
 
-        if (partitionKey == null || partitionKey.size() == 0) {
+        if (partitionKey == null || partitionKey.isEmpty()) {
             throw new ExecutionException("PrimaryKey must contain partition Key");
         } else if (clusterKey == null && primaryKeyType == PRIMARY_AND_CLUSTERING_SPECIFIED) {
             throw new ExecutionException(

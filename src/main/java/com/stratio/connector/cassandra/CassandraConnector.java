@@ -45,19 +45,19 @@ import com.stratio.connector.cassandra.engine.CassandraQueryEngine;
 import com.stratio.connector.cassandra.engine.CassandraStorageEngine;
 import com.stratio.connector.cassandra.engine.Engine;
 import com.stratio.connector.cassandra.engine.EngineConfig;
-import com.stratio.crossdata.connectors.ConnectorApp;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.connector.IConnector;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IStorageEngine;
+import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.security.ICredentials;
-import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.connectors.ConnectorApp;
 
 /**
  * Cassandra Connector class. This class contain a main that starts the connector.
@@ -87,51 +87,52 @@ public class CassandraConnector implements IConnector {
      */
     public CassandraConnector() {
         sessions = new HashMap<>();
+        XPathFactory xFactory = XPathFactory.newInstance();
+        Document d=null;
         try {
             InputStream inputStream = getClass()
                     .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
-            Document d =
-                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
-
-            //Search for the limit properties and connectorName
-            XPathFactory xFactory = XPathFactory.newInstance();
-
-            // create an XPath object
-            XPath xpath = xFactory.newXPath();
-            Object result;
-            XPathExpression expr = null;
-            try {
-                expr = xpath.compile("//ConnectorName/text()");
-                result = expr.evaluate(d, XPathConstants.NODESET);
-                this.connectorName = ((NodeList) result).item(0).getNodeValue();
-            } catch (XPathExpressionException e) {
-                this.connectorName = "UNKNOWN";
-            }
-
-            try {
-                expr = xpath.compile("//DataStores/DataStoreName/text()");
-                result = expr.evaluate(d, XPathConstants.NODESET);
-                datastoreName = new String[((NodeList) result).getLength()];
-                for (int i = 0; i < ((NodeList) result).getLength(); i++) {
-                    this.datastoreName[i] = ((NodeList) result).item(i).getNodeValue();
-
-                }
-            } catch (XPathExpressionException e) {
-                datastoreName = new String[1];
-                this.datastoreName[0] = "UNKNOWN";
-            }
+            d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
 
         } catch (SAXException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration",e);
         } catch (IOException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration",e);
         } catch (ParserConfigurationException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration");
+            LOG.trace("Impossible to read Manifest with the connector configuration",e);
         }
+        // create an XPath object
+        XPath xpath = xFactory.newXPath();
+        Object result;
+        XPathExpression expr;
+        try {
+            expr = xpath.compile("//ConnectorName/text()");
+            result = expr.evaluate(d, XPathConstants.NODESET);
+            this.connectorName = ((NodeList) result).item(0).getNodeValue();
+        } catch (XPathExpressionException e) {
+            LOG.trace("Impossible to read Manifest with the connector name",e);
+            this.connectorName = "UNKNOWN";
+        }
+
+        try {
+            expr = xpath.compile("//DataStores/DataStoreName/text()");
+            result = expr.evaluate(d, XPathConstants.NODESET);
+            datastoreName = new String[((NodeList) result).getLength()];
+            for (int i = 0; i < ((NodeList) result).getLength(); i++) {
+                this.datastoreName[i] = ((NodeList) result).item(i).getNodeValue();
+
+            }
+        } catch (XPathExpressionException e) {
+            LOG.trace("Impossible to read Manifest with the Datastore name ",e);
+            datastoreName = new String[1];
+            this.datastoreName[0] = "UNKNOWN";
+        }
+
     }
 
     /**
      * Main method that start the connector and controls the unexpected shutdowns.
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -176,6 +177,7 @@ public class CassandraConnector implements IConnector {
 
     /**
      * Init Method with the needed configuration for the connector.
+     *
      * @param configuration
      * @throws InitializationException
      */
@@ -186,8 +188,9 @@ public class CassandraConnector implements IConnector {
 
     /**
      * Connect Method: Enabled the connector with his own configuration.
+     *
      * @param credentials The credentials.
-     * @param config The cluster config
+     * @param config      The cluster config
      * @throws ConnectionException
      */
     @Override
@@ -196,7 +199,6 @@ public class CassandraConnector implements IConnector {
         ClusterName clusterName = config.getName();
         Map<String, String> clusterOptions = config.getClusterOptions();
         Map<String, String> connectorOptions = config.getConnectorOptions();
-
 
         EngineConfig engineConfig = new EngineConfig();
         //the hosts must be received as [host1:port,host2:port,host3:port...]
@@ -221,6 +223,7 @@ public class CassandraConnector implements IConnector {
 
     /**
      * Close the session of the cluster name specified.
+     *
      * @param name Name of the cluster.
      * @throws ConnectionException
      */
@@ -233,6 +236,7 @@ public class CassandraConnector implements IConnector {
 
     /**
      * Close all the sessions of the connector.
+     *
      * @throws ExecutionException
      */
     @Override
@@ -256,6 +260,7 @@ public class CassandraConnector implements IConnector {
 
     /**
      * Controls if there is a session started for a cluster name.
+     *
      * @param name cluster name.
      * @return if the connector is connected to the cluster.
      */

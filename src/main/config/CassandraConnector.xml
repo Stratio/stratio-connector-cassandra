@@ -4,7 +4,7 @@
     <DataStores>
         <DataStoreName>Cassandra</DataStoreName>
     </DataStores>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <RequiredProperties>
         <Property>
             <PropertyName>DefaultLimit</PropertyName>
@@ -14,6 +14,7 @@
     <SupportedOperations>
         <operation>CREATE_CATALOG</operation>
         <operation>DROP_CATALOG</operation>
+        <operation>ALTER_CATALOG</operation>
         <operation>CREATE_TABLE</operation>
         <operation>DROP_TABLE</operation>
         <operation>ALTER_TABLE</operation>
@@ -27,9 +28,10 @@
         <operation>PROJECT</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
-        <operation>SELECT_ORDER_BY</operation>
+        <operation>SELECT_FUNCTIONS</operation>
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
+        <operation>FILTER_PK_MATCH</operation>
     </SupportedOperations>
 </Connector>

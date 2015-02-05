@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.testng.Assert;
@@ -80,10 +81,10 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         TableName targetTable = new TableName("demo", "users");
         Map<Selector, Selector> options = new HashMap<>();
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
@@ -120,7 +121,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         int finalCount = initialCount;
         try {
-            cse.insert(new ClusterName("cluster"), table, row);
+            cse.insert(new ClusterName("cluster"), table, row, false);
             finalCount = select2InsertTest(_session, query);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -137,10 +138,10 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         TableName targetTable = new TableName("demo", "users");
         Map<Selector, Selector> options = new HashMap<>();
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
@@ -178,7 +179,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         int finalCount = initialCount;
         try {
-            cse.insert(new ClusterName("cluster"), table, row);
+            cse.insert(new ClusterName("cluster"), table, row, false);
             Assert.fail("Trying to add in a not existing column");
         }catch (ConnectorException e) {
             finalCount = select2InsertTest(_session, query);
@@ -193,10 +194,10 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         TableName targetTable = new TableName("demo", "users");
         Map<Selector, Selector> options = new HashMap<>();
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
@@ -247,7 +248,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
         int finalCount = initialCount;
         try {
-            cse.insert(new ClusterName("cluster"), table, rows);
+            cse.insert(new ClusterName("cluster"), table, rows, false);
             finalCount = select2InsertTest(_session, query);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());

@@ -69,10 +69,10 @@ public class CassandraStorageEngine implements IStorageEngine {
      */
     @Override
     public void insert(ClusterName targetCluster,
-            com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row)
+            com.stratio.crossdata.common.metadata.TableMetadata targetTable, Row row, boolean ifNotExists)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
-        String query = insertBlock(row, targetTable);
+        String query = insertBlock(row, targetTable, ifNotExists);
         CassandraExecutor.execute(query, session);
     }
 
@@ -85,16 +85,20 @@ public class CassandraStorageEngine implements IStorageEngine {
      * @throws ConnectorException
      */
     @Override
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows)
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows, boolean ifNotExists)
             throws ConnectorException {
         Session session = sessions.get(targetCluster.getName());
+        StringBuilder sb= new StringBuilder();
+        sb.append("BEGIN BATCH ");
         for (Row row : rows) {
-            String query = insertBlock(row, targetTable);
-            CassandraExecutor.execute(query, session);
+            String query = insertBlock(row, targetTable, ifNotExists);
+            sb.append(query).append(" ");
         }
+        sb.append("APPLY BATCH");
+        CassandraExecutor.execute(sb.toString(), session);
     }
 
-    private String insertBlock(Row row, TableMetadata targetTable) throws ExecutionException {
+    private String insertBlock(Row row, TableMetadata targetTable, boolean ifNotExists) throws ExecutionException {
         Set<String> keys = row.getCells().keySet();
         Map<ColumnName, ColumnMetadata> columnsWithMetadata = targetTable.getColumns();
         Map<String, ColumnInsertCassandra> columnsMetadata = new HashMap<>();
@@ -112,7 +116,7 @@ public class CassandraStorageEngine implements IStorageEngine {
         }
 
         InsertIntoStatement insertStatement =
-                new InsertIntoStatement(targetTable, columnsMetadata, true);
+                new InsertIntoStatement(targetTable, columnsMetadata, ifNotExists);
         return insertStatement.toString();
     }
 

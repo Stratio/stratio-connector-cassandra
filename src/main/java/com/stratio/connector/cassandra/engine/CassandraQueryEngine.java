@@ -30,7 +30,6 @@ import com.stratio.connector.cassandra.CassandraExecutor;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.CatalogName;
-import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -39,21 +38,28 @@ import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Limit;
 import com.stratio.crossdata.common.logicalplan.LogicalStep;
 import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.OrderBy;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.logicalplan.TransformationStep;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.result.Result;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
+import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * Class CassandraQueryEngine: Allow to make select queries with the connector.
  */
 public class CassandraQueryEngine implements IQueryEngine {
-    private static final int DEFAULT_LIMIT = 100;
-    private Map<ColumnName, String> aliasColumns = new HashMap<>();
+    private static final int DEFAULT_LIMIT = 10000;
+    private Map<Selector, String> aliasColumns = new HashMap<>();
+    private List<OrderByClause> orderByColumns = new ArrayList<>();
     private Session session = null;
-    private List<ColumnName> selectionClause;
+
+    private List<FunctionSelector> functions = new ArrayList<>();
     private boolean catalogInc;
     private String catalog;
     private TableName tableName;
@@ -65,14 +71,14 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     /**
      * Basic constructor.
-     * @param sessions Map of sessions.
+     *
+     * @param sessions     Map of sessions.
      * @param limitDefault Default limit for a query.
      */
     public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
         this.sessions = sessions;
         this.limit = limitDefault;
     }
-
 
     @Override
     public com.stratio.crossdata.common.result.QueryResult execute(LogicalWorkflow workflow)
@@ -90,11 +96,9 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         Result result;
         if (session != null) {
-            if (aliasColumns.isEmpty()) {
-                result = CassandraExecutor.execute(query, session);
-            } else {
-                result = CassandraExecutor.execute(query, aliasColumns, session);
-            }
+
+            result = CassandraExecutor.execute(query, aliasColumns, session);
+
         } else {
             throw new ExecutionException("No session to cluster established");
         }
@@ -115,7 +119,6 @@ public class CassandraQueryEngine implements IQueryEngine {
                 CatalogName catalogName = tableName.getCatalogName();
                 catalog = catalogName.getName();
             }
-            selectionClause = project.getColumnList();
         } else {
             if (transformation instanceof Filter) {
                 Filter filter = (Filter) transformation;
@@ -127,7 +130,15 @@ public class CassandraQueryEngine implements IQueryEngine {
                 limit = limitClause.getLimit();
             } else if (transformation instanceof Select) {
                 Select select = (Select) transformation;
+                for (Selector selector : select.getColumnMap().keySet()) {
+                    if (selector instanceof FunctionSelector) {
+                        functions.add((FunctionSelector) selector);
+                    }
+                }
                 aliasColumns = select.getColumnMap();
+            } else if (transformation instanceof OrderBy) {
+                OrderBy orderBy = (OrderBy) transformation;
+                orderByColumns = orderBy.getIds();
             }
         }
     }
@@ -136,7 +147,6 @@ public class CassandraQueryEngine implements IQueryEngine {
     public void asyncExecute(String queryId, LogicalWorkflow workflow,
             IResultHandler resultHandler) throws ConnectorException {
         throw new UnsupportedException("Async execute not supported yet.");
-
     }
 
     @Override
@@ -146,14 +156,15 @@ public class CassandraQueryEngine implements IQueryEngine {
 
     /**
      * Method that convert a query to a cassandra language.
+     *
      * @return java.lang.String with the Cassandra query.
      */
     public String parseQuery() {
         StringBuilder sb = new StringBuilder("SELECT ");
-        if (aliasColumns!=null && aliasColumns.size()!=0){
+        if (aliasColumns != null && !aliasColumns.isEmpty()) {
             sb.append(getAliasClause());
-        }else {
-            sb.append(getSelectionClause());
+        } else {
+            sb.append(" * ");
         }
         sb.append(getFromClause());
 
@@ -161,10 +172,29 @@ public class CassandraQueryEngine implements IQueryEngine {
             sb.append(getWhereClause());
         }
 
+        if (!orderByColumns.isEmpty()) {
+            sb.append(getOrderByClause());
+        }
+
         if (limitInc) {
             sb.append(" LIMIT ").append(limit);
         }
         return sb.toString().replace("  ", " ");
+    }
+
+    private String getOrderByClause() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ORDER BY ");
+        int count = 0;
+        for (OrderByClause orderByClause : orderByColumns) {
+            if (count != 0) {
+                sb.append(",");
+            }
+            count = 1;
+            ColumnSelector columnSelector = (ColumnSelector) orderByClause.getSelector();
+            sb.append(columnSelector.getName().getName()).append(" ").append(orderByClause.getDirection().name());
+        }
+        return sb.toString();
     }
 
     private String getWhereClause() {
@@ -212,30 +242,67 @@ public class CassandraQueryEngine implements IQueryEngine {
         return sb.toString();
     }
 
-    private String getSelectionClause() {
+    private String getAliasClause() {
         StringBuilder sb = new StringBuilder();
         int i = 0;
-        for (ColumnName columnName : selectionClause) {
+        for (Map.Entry<Selector, String> entry : aliasColumns.entrySet()) {
             if (i != 0) {
                 sb.append(",");
             }
             i = 1;
-            sb.append(columnName.getName());
+            if (!(entry.getKey() instanceof FunctionSelector)) {
+                sb.append(entry.getKey().getColumnName().getName());
+            } else if (sb.length() == 0) {
+                i = 0;
+
+            }
+        }
+
+        for (FunctionSelector selectorFunction : functions) {
+            String functionString = getFunctionString(selectorFunction);
+
+            if (i != 0) {
+                sb.append(",");
+            }
+            i = 1;
+            sb.append(functionString);
+
         }
         return sb.toString();
     }
 
-    private String getAliasClause() {
+    private String getFunctionString(FunctionSelector selectorFunction) {
+        String result;
         StringBuilder sb = new StringBuilder();
-        int i = 0;
-        for (Map.Entry<ColumnName,String> entry:aliasColumns.entrySet()) {
-            if (i != 0) {
-                sb.append(",");
+        switch (selectorFunction.getFunctionName().toUpperCase()) {
+        case "COUNT":
+            result = selectorFunction.getFunctionName() + "(*)";
+            break;
+        case "NOW":
+            result = selectorFunction.getFunctionName() + "()";
+            break;
+        default:
+            List<Selector> columns = selectorFunction.getFunctionColumns();
+            sb.append(selectorFunction.getFunctionName()).append("(");
+            for (Selector s : columns) {
+                if (s instanceof ColumnSelector) {
+                    ColumnSelector columnSelector = (ColumnSelector) s;
+                    sb.append(columnSelector.getColumnName().getName());
+                    sb.append(",");
+                } else if (s instanceof FunctionSelector) {
+                    FunctionSelector functionSelector = (FunctionSelector) s;
+                    String subFunction = getFunctionString(functionSelector);
+                    sb.append(subFunction);
+                }
             }
-            i = 1;
-            sb.append(entry.getKey().getName());
+            if (sb.toString().endsWith(",")) {
+                sb.deleteCharAt(sb.lastIndexOf(","));
+            }
+            sb.append(")");
+            result = sb.toString();
         }
-        return sb.toString();
+
+        return result;
     }
 
     private String getLuceneIndex() {

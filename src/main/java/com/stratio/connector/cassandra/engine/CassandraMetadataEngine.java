@@ -24,6 +24,7 @@ import java.util.Map;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
+import com.stratio.connector.cassandra.statements.AlterCatalogStatement;
 import com.stratio.connector.cassandra.statements.AlterTableStatement;
 import com.stratio.connector.cassandra.statements.CreateCatalogStatement;
 import com.stratio.connector.cassandra.statements.CreateIndexStatement;
@@ -107,6 +108,19 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
+    }
+
+    @Override public void alterCatalog(ClusterName targetCluster, CatalogName catalogName,
+            Map<Selector, Selector> options) throws ConnectorException {
+
+        session = sessions.get(targetCluster.getName());
+
+        String stringOptions = getStringOptions(options);
+
+        AlterCatalogStatement alterCatalogStatement =
+                new AlterCatalogStatement(catalogName.getName(), stringOptions);
+
+        CassandraExecutor.execute(alterCatalogStatement.toString(), session);
     }
 
     /**
@@ -198,9 +212,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         default:
             break;
         }
-
-
-
     }
 
     /**
@@ -217,7 +228,6 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateIndexStatement indexStatement =
                 new CreateIndexStatement(indexMetadata, true, session);
         CassandraExecutor.execute(indexStatement.toString(), session);
-
     }
 
     /**
@@ -233,7 +243,20 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
         CassandraExecutor.execute(indexStatement.toString(), session);
+    }
 
+    @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {
+        return new ArrayList<>();
+    }
+
+    @Override public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)
+            throws ConnectorException {
+        return null;
+    }
+
+    @Override public TableMetadata provideTableMetadata(ClusterName clusterName, TableName tableName)
+            throws ConnectorException {
+        return null;
     }
 
     private String getStringOptions(Map<Selector, Selector> options) {
@@ -264,7 +287,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             stringOption.append(key);
         } else if ("CLUSTERING ORDER BY".equals(key)) {
             stringOption.append(key).append(" (").append(value).append(")");
-        } else if (createTableOptions.contains(key)) {
+        } else if (createTableOptions.contains(key.toLowerCase())) {
             stringOption.append(key).append(" = ").append(value).append("");
         } else {
             stringOption.append(key).append(" = {")

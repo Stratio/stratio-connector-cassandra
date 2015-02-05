@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-cassandra</artifactId>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
     <name>Stratio Connector Cassandra</name>
     <description>Native Cassandra Connector</description>
     <url>https://github.com/Stratio/stratio-connector-cassandra</url>
@@ -59,7 +59,6 @@
     <properties>
         <cassandra.driver>2.0.6</cassandra.driver>
         <scala.version>2.10.4</scala.version>
-        <akka.version>2.2.4</akka.version>
         <deep.version>0.3.2</deep.version>
         <infinispan.version>6.0.2.Final</infinispan.version>
         <scala.dep.version>2.10</scala.dep.version>
@@ -70,7 +69,7 @@
         <dependency>
             <groupId>com.stratio.crossdata</groupId>
             <artifactId>crossdata-connector</artifactId>
-            <version>0.1.1</version>
+            <version>0.2.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -100,7 +99,7 @@
         <dependency>
             <groupId>com.stratio.crossdata</groupId>
             <artifactId>crossdata-common</artifactId>
-            <version>0.1.1</version>
+            <version>0.2.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.stratio.connector</groupId>
@@ -108,41 +107,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- SCALA AND AKKA -->
+        <!-- SCALA -->
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
             <version>${scala.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_${scala.dep.version}</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-contrib_2.10</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-cluster_${scala.dep.version}</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-remote_${scala.dep.version}</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-slf4j_${scala.dep.version}</artifactId>
-            <version>${akka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-agent_${scala.dep.version}</artifactId>
-            <version>${akka.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -205,7 +174,7 @@
             <plugin>
                 <artifactId>crossdata-connector-maven-plugin</artifactId>
                 <groupId>com.stratio.crossdata</groupId>
-                <version>0.1.1</version>
+                <version>0.2.0</version>
                 <configuration>
                     <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
                     <jmxPort>7192</jmxPort>

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -83,15 +84,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         Map<Selector, Selector> options = new HashMap<>();
         TableName targetTable = new TableName("demometadata", tableName);
 
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
         ColumnName partitionColumn1 = new ColumnName("demometadata", tableName, "name");
         ColumnName partitionColumn2 = new ColumnName("demometadata", tableName, "gender");
         partitionKey.add(partitionColumn1);
         partitionKey.add(partitionColumn2);
 
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demometadata", tableName), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", tableName), "name"),
@@ -131,6 +132,22 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         Map<TableName, TableMetadata> tables = new HashMap<>();
 
         CatalogMetadata catalogmetadata = new CatalogMetadata(new CatalogName("demoMetadata"), options, tables);
+
+        try {
+            cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
+
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
+    }
+
+    public void createCatalog(String name) {
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+        Map<TableName, TableMetadata> tables = new HashMap<>();
+
+        CatalogMetadata catalogmetadata = new CatalogMetadata(new CatalogName(name), options, tables);
 
         try {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
@@ -203,7 +220,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         Map<TableName, TableMetadata> tables = new HashMap<>();
 
         CatalogMetadata catalogmetadata =
-                new CatalogMetadata(new CatalogName("demoMetadata2"), options, tables);
+                new CatalogMetadata(new CatalogName("demometadata5"), options, tables);
         int rowsFinal = rowsInitial;
         try {
             cme.createCatalog(new ClusterName("cluster"), catalogmetadata);
@@ -213,6 +230,28 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
         Assert.assertNotEquals(rowsInitial, rowsFinal);
+
+    }
+
+    @Test
+    public void alterCatalogWithOptionsTest() {
+
+        boolean done=false;
+        createCatalog("testAlterCatalog");
+        CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
+
+        Map<Selector, Selector> options = new HashMap<>();
+        options.put(new StringSelector("REPLICATION"),
+                new StringSelector("'class' : 'NetworkTopologyStrategy', 'datacenter1' : 1"));
+        options.put(new StringSelector("durable_writes"), new StringSelector("false"));
+
+        try {
+            cme.alterCatalog(new ClusterName("cluster"), new CatalogName("testAlterCatalog"), options);
+            done=true;
+            Assert.assertEquals(done,true);
+        } catch (ConnectorException e) {
+            Assert.fail(e.getMessage());
+        }
 
     }
 
@@ -253,15 +292,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         TableName targetTable = new TableName("demometadata", "users");
 
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
         ColumnName partitionColumn1 = new ColumnName("demometadata", "users", "name");
         ColumnName partitionColumn2 = new ColumnName("demometadata", "users", "gender");
         partitionKey.add(partitionColumn1);
         partitionKey.add(partitionColumn2);
 
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demometadata", "users"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "name"),
@@ -307,15 +346,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         TableName targetTable = new TableName("demometadata", "users4");
 
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
         ColumnName partitionColumn1 = new ColumnName("demometadata", "users4", "name");
         ColumnName clusterColumn1 = new ColumnName("demometadata", "users4", "bool");
 
         partitionKey.add(partitionColumn1);
 
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         clusterKey.add(clusterColumn1);
 
         Object[] parameters = { };
@@ -363,14 +402,14 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         TableName targetTable = new TableName("demometadata", "users6");
 
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
         ColumnName partitionColumn1 = new ColumnName("demometadata", "users6", "name");
 
         partitionKey.add(partitionColumn1);
 
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demometadata", "users6"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "name"),
@@ -424,15 +463,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         TableName targetTable = new TableName("demometadata", "users3");
 
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
-        List<ColumnName> partitionKey = new ArrayList<>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<>();
         ColumnName partitionColumn1 = new ColumnName("demometadata", "users3", "name");
         ColumnName partitionColumn2 = new ColumnName("demometadata", "users3", "gender");
         partitionKey.add(partitionColumn1);
         partitionKey.add(partitionColumn2);
 
-        List<ColumnName> clusterKey = new ArrayList<>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demometadata", "users3"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users3"), "name"),
@@ -596,7 +635,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        Assert.assertEquals(assertIndex("phrase", "demometadata", "users1"), "indicelucene");
+        Assert.assertEquals(assertIndex("indicelucene", "demometadata", "users1"), "indicelucene");
     }
 
 
@@ -669,7 +708,6 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-
     }
 
     @Test
@@ -689,7 +727,6 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-
     }
 
     @AfterClass
@@ -698,6 +735,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata2");
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata3");
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata4");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata5");
+        BasicCoreCassandraTest.dropKeyspaceIfExists("testAlterCatalog");
     }
 
 }

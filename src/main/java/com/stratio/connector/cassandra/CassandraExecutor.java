@@ -18,29 +18,24 @@
 
 package com.stratio.connector.cassandra;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.stratio.connector.cassandra.utils.Utils;
-import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.CriticalExecutionException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * CassandraExecutor allows to interact with the Cassandra Datastax Driver and execute the queries.
  */
 public final class CassandraExecutor {
 
-    /**
-     * Class logger.
-     */
-    private static final Logger LOG = Logger.getLogger(CassandraExecutor.class);
 
     /**
      * The {@link com.stratio.connector.cassandra.utils.Utils}.
@@ -62,20 +57,18 @@ public final class CassandraExecutor {
      */
     public static com.stratio.crossdata.common.result.Result execute(String query, Session session)
             throws ConnectorException {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         try {
             resultSet = session.execute(query);
             return com.stratio.crossdata.common.result
-                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet));
+                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet, new HashMap<Selector, String>()));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.debug("Cassandra executor failed", unSupportException);
-            throw new UnsupportedException(unSupportException);
+            throw new UnsupportedException(unSupportException.getMessage(),unSupportException);
         } catch (DriverException dex) {
-            throw new CriticalExecutionException(dex);
+            throw new CriticalExecutionException(dex.getMessage(),dex);
         } catch (Exception ex) {
-            throw new ExecutionException(ex);
+            throw new ExecutionException(ex.getMessage(),ex);
         }
-
     }
 
     /**
@@ -87,7 +80,7 @@ public final class CassandraExecutor {
      * @return a {@link com.stratio.crossdata.common.result.Result}.
      */
     public static com.stratio.crossdata.common.result.Result execute(String query,
-            Map<ColumnName, String> aliasColumns, Session session)
+            Map<Selector, String> aliasColumns, Session session)
             throws ConnectorException {
         try {
             ResultSet resultSet = session.execute(query);
@@ -95,12 +88,11 @@ public final class CassandraExecutor {
                     .QueryResult
                     .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns));
         } catch (UnsupportedOperationException unSupportException) {
-            LOG.debug("Cassandra executor failed", unSupportException);
-            throw new UnsupportedException(unSupportException);
+            throw new UnsupportedException(unSupportException.getMessage(),unSupportException);
         } catch (DriverException dex) {
-            throw new CriticalExecutionException(dex);
+            throw new CriticalExecutionException(dex.getMessage(),dex);
         } catch (Exception ex) {
-            throw new ExecutionException(ex);
+            throw new ExecutionException(ex.getMessage(),ex);
         }
     }
 
