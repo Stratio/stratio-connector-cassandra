@@ -6,7 +6,7 @@ Native connector for Cassandra using Crossdata.
 Requirements
 =============
 `Stratio Cassandra <https://github.com/Stratio/stratio-cassandra>`_ version 2.1 must be installed and started.
-`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.2.0-SNAPSHOT is needed to interact with this connector.
+`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.2.0-001 is needed to interact with this connector.
 
 Compiling Stratio Connector Cassandra
 ======================================
@@ -35,13 +35,13 @@ To generate the executable execute the following command::
 To run Connector Cassandra execute::
 
 
-    > target/stratio-connector-cassandra-0.2.0-SNAPSHOT/bin/stratio-connector-cassandra-0.2.0-SNAPSHOT start
+    > target/stratio-connector-cassandra-0.2.0T/bin/stratio-connector-cassandra-0.2.0-001 start
 
 
 To stop the connector execute::
 
 
-    > target/stratio-connector-cassandra-0.2.0-SNAPSHOT/bin/stratio-connector-cassandra-0.2.0-SNAPSHOT stop
+    > target/stratio-connector-cassandra-0.2.0/bin/stratio-connector-cassandra-0.2.0-001 stop
 
 
 How to use Cassandra Connector
@@ -52,7 +52,7 @@ How to use Cassandra Connector
     
 -   Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be 
 found in the path of the Cassandra Connector in target/stratio-connector-cassandra-0.2
-.0-SNAPSHOT/conf/CassandraDataStore.xml ::
+.0/conf/CassandraDataStore.xml ::
 
     xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
     
@@ -63,7 +63,7 @@ found in the path of the Cassandra Connector in target/stratio-connector-cassand
     
     
 -   Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in 
-target/stratio-connector-cassandra-0.2.0-SNAPSHOT/conf/CassandraConnector.xml ::
+target/stratio-connector-cassandra-0.2.0/conf/CassandraConnector.xml ::
 
    xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
     
