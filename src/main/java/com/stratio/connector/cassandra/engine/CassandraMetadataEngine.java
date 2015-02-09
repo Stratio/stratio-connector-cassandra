@@ -104,7 +104,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String stringOptions = getStringOptions(catalogOptions);
 
         CreateCatalogStatement catalogStatement =
-                new CreateCatalogStatement(catalogName, true, stringOptions);
+                new CreateCatalogStatement(catalogName, false, stringOptions);
 
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
@@ -154,7 +154,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         CreateTableStatement tableStatement =
                 new CreateTableStatement(tableMetadata, primaryKey, partitionKey, clusterKey,
-                        primaryKeyType, stringOptions, true);
+                        primaryKeyType, stringOptions, false);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
     }
@@ -170,7 +170,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     public void dropCatalog(ClusterName targetCluster, CatalogName name)
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
-        DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), true);
+        DropCatalogStatement catalogStatement = new DropCatalogStatement(name.getName(), false);
         CassandraExecutor.execute(catalogStatement.toString(), session);
 
     }
@@ -186,7 +186,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     public void dropTable(ClusterName targetCluster, TableName name)
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
-        DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), true);
+        DropTableStatement tableStatement = new DropTableStatement(name.getQualifiedName(), false);
         CassandraExecutor.execute(tableStatement.toString(), session);
 
     }
@@ -241,7 +241,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     public void dropIndex(ClusterName targetCluster, IndexMetadata indexName)
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
-        DropIndexStatement indexStatement = new DropIndexStatement(indexName, true);
+        DropIndexStatement indexStatement = new DropIndexStatement(indexName, false);
         CassandraExecutor.execute(indexStatement.toString(), session);
     }
 

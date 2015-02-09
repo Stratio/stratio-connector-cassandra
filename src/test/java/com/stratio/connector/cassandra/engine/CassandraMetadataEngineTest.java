@@ -59,10 +59,10 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         return numberOfKS;
     }
 
-    private int assertTable() {
+    private int assertTable(String catalog) {
         Session session = sessions.get("cluster");
         Collection<com.datastax.driver.core.TableMetadata> tables =
-                _session.getCluster().getMetadata().getKeyspace("demometadata").getTables();
+                _session.getCluster().getMetadata().getKeyspace(catalog).getTables();
         int numberOfTables = tables.size();
         return numberOfTables;
     }
@@ -205,16 +205,16 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         }
     }
 
-    public void createIndex() {
+    public void createIndex(String catalog, String table) {
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         Object[] parameters = { };
-        columns.put(new ColumnName("demometadata", "users1", "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "age"),
+        columns.put(new ColumnName(catalog,table, "age"),
+                new ColumnMetadata(new ColumnName(new TableName(catalog,table), "age"),
                         parameters, ColumnType.TEXT));
 
         IndexMetadata indexMetadata =
-                new IndexMetadata(new IndexName("demometadata", "users1", "Indice2"), columns,
+                new IndexMetadata(new IndexName(catalog,table, "Indice3"), columns,
                         IndexType.DEFAULT, null);
         try {
             cme.createIndex(new ClusterName("cluster"), indexMetadata);
@@ -229,6 +229,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
         sessions = new HashMap<>();
         sessions.put("cluster", _session);
+        createCatalog();
+        createTable("demometadata","users1");
     }
 
     @Test
@@ -333,40 +335,40 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void createTableTest() {
-        int rowsInitial = assertTable();
+        int rowsInitial = assertTable("demometadata");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
 
         Map<Selector, Selector> options = new HashMap<>();
 
-        TableName targetTable = new TableName("demometadata", "users");
+        TableName targetTable = new TableName("demometadata", "users12");
 
         LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
         LinkedList<ColumnName> partitionKey = new LinkedList<>();
-        ColumnName partitionColumn1 = new ColumnName("demometadata", "users", "name");
-        ColumnName partitionColumn2 = new ColumnName("demometadata", "users", "gender");
+        ColumnName partitionColumn1 = new ColumnName("demometadata", "users12", "name");
+        ColumnName partitionColumn2 = new ColumnName("demometadata", "users12", "gender");
         partitionKey.add(partitionColumn1);
         partitionKey.add(partitionColumn2);
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demometadata", "users"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "name"),
+        columns.put(new ColumnName(new TableName("demometadata", "users12"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users12"), "name"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "gender"),
+        columns.put(new ColumnName(new TableName("demometadata", "users12"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users12"), "gender"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "age"),
+        columns.put(new ColumnName(new TableName("demometadata", "users12"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users12"), "age"),
                         parameters, ColumnType.INT));
-        columns.put(new ColumnName(new TableName("demometadata", "users"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "bool"),
+        columns.put(new ColumnName(new TableName("demometadata", "users12"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users12"), "bool"),
                         parameters, ColumnType.BOOLEAN));
-        columns.put(new ColumnName(new TableName("demometadata", "users"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "phrase"),
+        columns.put(new ColumnName(new TableName("demometadata", "users12"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users12"), "phrase"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "email"),
+        columns.put(new ColumnName(new TableName("demometadata", "users12"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users12"), "email"),
                         parameters, ColumnType.TEXT));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
@@ -377,7 +379,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         int rowsFinal = rowsInitial;
         try {
             cme.createTable(new ClusterName("cluster"), table);
-            rowsFinal = assertTable();
+            rowsFinal = assertTable("demometadata");
 
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -387,18 +389,18 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void createTableSinglePKTest() {
-        int rowsInitial = assertTable();
+        int rowsInitial = assertTable("demometadata");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
 
         Map<Selector, Selector> options = new HashMap<>();
 
-        TableName targetTable = new TableName("demometadata", "users4");
+        TableName targetTable = new TableName("demometadata", "users11");
 
         LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
         LinkedList<ColumnName> partitionKey = new LinkedList<>();
-        ColumnName partitionColumn1 = new ColumnName("demometadata", "users4", "name");
-        ColumnName clusterColumn1 = new ColumnName("demometadata", "users4", "bool");
+        ColumnName partitionColumn1 = new ColumnName("demometadata", "users11", "name");
+        ColumnName clusterColumn1 = new ColumnName("demometadata", "users11", "bool");
 
         partitionKey.add(partitionColumn1);
 
@@ -406,22 +408,22 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         clusterKey.add(clusterColumn1);
 
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demometadata", "users4"), "name"),
+        columns.put(new ColumnName(new TableName("demometadata", "users11"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "name"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users4"), "gender"),
+        columns.put(new ColumnName(new TableName("demometadata", "users11"), "gender"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "gender"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users4"), "age"),
+        columns.put(new ColumnName(new TableName("demometadata", "users11"), "age"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "age"),
                         parameters, ColumnType.INT));
-        columns.put(new ColumnName(new TableName("demometadata", "users4"), "bool"),
+        columns.put(new ColumnName(new TableName("demometadata", "users11"), "bool"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "bool"),
                         parameters, ColumnType.BOOLEAN));
-        columns.put(new ColumnName(new TableName("demometadata", "users4"), "phrase"),
+        columns.put(new ColumnName(new TableName("demometadata", "users11"), "phrase"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "phrase"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users4"), "email"),
+        columns.put(new ColumnName(new TableName("demometadata", "users11"), "email"),
                 new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "email"),
                         parameters, ColumnType.TEXT));
 
@@ -433,7 +435,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         int rowsFinal = rowsInitial;
         try {
             cme.createTable(new ClusterName("cluster"), table);
-            rowsFinal = assertTable();
+            rowsFinal = assertTable("demometadata");
 
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -443,39 +445,39 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void createTablePKwihtClusterKeyTest() {
-        int rowsInitial = assertTable();
+        int rowsInitial = assertTable("demometadata");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
 
         Map<Selector, Selector> options = new HashMap<>();
 
-        TableName targetTable = new TableName("demometadata", "users6");
+        TableName targetTable = new TableName("demometadata", "users10");
 
         LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
         LinkedList<ColumnName> partitionKey = new LinkedList<>();
-        ColumnName partitionColumn1 = new ColumnName("demometadata", "users6", "name");
+        ColumnName partitionColumn1 = new ColumnName("demometadata", "users10", "name");
 
         partitionKey.add(partitionColumn1);
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demometadata", "users6"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "name"),
+        columns.put(new ColumnName(new TableName("demometadata", "users10"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users10"), "name"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users6"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "gender"),
+        columns.put(new ColumnName(new TableName("demometadata", "users10"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users10"), "gender"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users6"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "age"),
+        columns.put(new ColumnName(new TableName("demometadata", "users10"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users10"), "age"),
                         parameters, ColumnType.INT));
-        columns.put(new ColumnName(new TableName("demometadata", "users6"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "bool"),
+        columns.put(new ColumnName(new TableName("demometadata", "users10"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users10"), "bool"),
                         parameters, ColumnType.BOOLEAN));
-        columns.put(new ColumnName(new TableName("demometadata", "users6"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "phrase"),
+        columns.put(new ColumnName(new TableName("demometadata", "users10"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users10"), "phrase"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users6"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users"), "email"),
+        columns.put(new ColumnName(new TableName("demometadata", "users10"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users10"), "email"),
                         parameters, ColumnType.TEXT));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
@@ -486,7 +488,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         int rowsFinal = rowsInitial;
         try {
             cme.createTable(new ClusterName("cluster"), table);
-            rowsFinal = assertTable();
+            rowsFinal = assertTable("demometadata");
 
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -496,7 +498,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void createTableTestWithOptions() {
-        int rowsInitial = assertTable();
+        int rowsInitial = assertTable("demometadata");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
 
         Map<Selector, Selector> options = new HashMap<>();
@@ -509,35 +511,35 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         options.put(new StringSelector("compression"), new StringSelector(
                 "'sstable_compression' : 'DeflateCompressor', 'chunk_length_kb' : 64"));
 
-        TableName targetTable = new TableName("demometadata", "users3");
+        TableName targetTable = new TableName("demometadata", "users13");
 
         LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         ClusterName clusterRef = new ClusterName("cluster");
         LinkedList<ColumnName> partitionKey = new LinkedList<>();
-        ColumnName partitionColumn1 = new ColumnName("demometadata", "users3", "name");
-        ColumnName partitionColumn2 = new ColumnName("demometadata", "users3", "gender");
+        ColumnName partitionColumn1 = new ColumnName("demometadata", "users13", "name");
+        ColumnName partitionColumn2 = new ColumnName("demometadata", "users13", "gender");
         partitionKey.add(partitionColumn1);
         partitionKey.add(partitionColumn2);
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demometadata", "users3"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users3"), "name"),
+        columns.put(new ColumnName(new TableName("demometadata", "users13"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users13"), "name"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users3"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users3"), "gender"),
+        columns.put(new ColumnName(new TableName("demometadata", "users13"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users13"), "gender"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users3"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users3"), "age"),
+        columns.put(new ColumnName(new TableName("demometadata", "users13"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users13"), "age"),
                         parameters, ColumnType.INT));
-        columns.put(new ColumnName(new TableName("demometadata", "users3"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users3"), "bool"),
+        columns.put(new ColumnName(new TableName("demometadata", "users13"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users13"), "bool"),
                         parameters, ColumnType.BOOLEAN));
-        columns.put(new ColumnName(new TableName("demometadata", "users3"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users3"), "phrase"),
+        columns.put(new ColumnName(new TableName("demometadata", "users13"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users13"), "phrase"),
                         parameters, ColumnType.TEXT));
-        columns.put(new ColumnName(new TableName("demometadata", "users3"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users3"), "email"),
+        columns.put(new ColumnName(new TableName("demometadata", "users13"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users13"), "email"),
                         parameters, ColumnType.TEXT));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
@@ -548,7 +550,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         int rowsFinal = rowsInitial;
         try {
             cme.createTable(new ClusterName("cluster"), table);
-            rowsFinal = assertTable();
+            rowsFinal = assertTable("demometadata");
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -557,34 +559,34 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void dropTest() {
-        createCatalog();
-        createTable("users1");
-        createIndex();
+        createCatalog("demometadata12");
+        createTable("demometadata12","users14");
+        createIndex("demometadata12","users14");
 
         //drop Index
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         Object[] parameters = { };
-        columns.put(new ColumnName("demometada", "users1", "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "age"),
+        columns.put(new ColumnName("demometada12", "users14", "age"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata12", "users14"), "age"),
                         parameters, ColumnType.TEXT));
         IndexMetadata index =
-                new IndexMetadata(new IndexName("demometadata", "users1", "Indice2"), columns,
+                new IndexMetadata(new IndexName("demometadata12", "users14", "Indice3"), columns,
                         IndexType.DEFAULT, null);
         try {
             cme.dropIndex(new ClusterName("cluster"), index);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-        Assert.assertNotEquals(assertIndex("age", "demometadata", "users1"), "Indice2");
+        Assert.assertNotEquals(assertIndex("age", "demometadata12", "users14"), "Indice3");
 
         //drop table
-        int rowsInitial = assertTable();
+        int rowsInitial = assertTable("demometadata12");
         cme = new CassandraMetadataEngine(sessions);
         int rowsFinal = rowsInitial;
         try {
-            cme.dropTable(new ClusterName("cluster"), new TableName("demometadata", "users1"));
-            rowsFinal = assertTable();
+            cme.dropTable(new ClusterName("cluster"), new TableName("demometadata12", "users14"));
+            rowsFinal = assertTable("demometadata12");
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -594,7 +596,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         rowsInitial = assertCatalog();
         rowsFinal = rowsInitial;
         try {
-            cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata"));
+            cme.dropCatalog(new ClusterName("cluster"), new CatalogName("demometadata12"));
             rowsFinal = assertCatalog();
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -604,18 +606,18 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void createSimpleIndexTest() {
-        createCatalog();
-        createTable("users1");
+        createCatalog("demometadata10");
+        createTable("demometadata10","users1");
 
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         Object[] parameters = { };
-        columns.put(new ColumnName("demometada", "users1", "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "email"),
+        columns.put(new ColumnName("demometada10", "users1", "email"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata10", "users1"), "email"),
                         parameters, ColumnType.TEXT));
 
         IndexMetadata indexMetadata =
-                new IndexMetadata(new IndexName("demometadata", "users1", "Indice"), columns,
+                new IndexMetadata(new IndexName("demometadata10", "users1", "Indice"), columns,
                         IndexType.DEFAULT, null);
 
         try {
@@ -623,23 +625,23 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-        Assert.assertEquals(assertIndex("email", "demometadata", "users1"), "indice");
+        Assert.assertEquals(assertIndex("email", "demometadata10", "users1"), "Indice");
     }
 
     @Test
     public void createSimpleIndexWithoutNameTest() {
-        createCatalog();
-        createTable("users5");
+        createCatalog("demometadata11");
+        createTable("demometadata11","users5");
 
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         Object[] parameters = { };
-        columns.put(new ColumnName("demometada", "users5", "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users5"), "email"),
+        columns.put(new ColumnName("demometada11", "users5", "email"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata11", "users5"), "email"),
                         parameters, ColumnType.TEXT));
 
         IndexMetadata indexMetadata =
-                new IndexMetadata(new IndexName(new TableName("demometadata", "users5"), "email"), columns,
+                new IndexMetadata(new IndexName(new TableName("demometadata11", "users5"), "email"), columns,
                         IndexType.DEFAULT, null);
 
         try {
@@ -647,35 +649,35 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-        Assert.assertEquals(assertIndex("email", "demometadata", "users5"), "email");
+        Assert.assertEquals(assertIndex("email", "demometadata11", "users5"), "email");
     }
 
     @Test
     public void createLuceneIndexTest() {
-        createCatalog();
-        createTable("users1");
+        createCatalog("demometadata9");
+        createTable("demometadata9","users1");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         Object[] parameters = { };
-        columns.put(new ColumnName("demometada", "users1", "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "phrase"),
+        columns.put(new ColumnName("demometada9", "users1", "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata9", "users1"), "phrase"),
                         parameters, ColumnType.TEXT));
 
         Map<Selector, Selector> options = new LinkedHashMap<>();
 
         List<ColumnMetadata> columnsIndex = new ArrayList<>();
         columnsIndex.add(
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata9", "users1"), "name"),
                         parameters, ColumnType.TEXT));
         columnsIndex.add(
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata9", "users1"), "age"),
                         parameters, ColumnType.INT));
         columnsIndex.add(
-                new ColumnMetadata(new ColumnName(new TableName("demometadata", "users1"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("demometadata9", "users1"), "email"),
                         parameters, ColumnType.TEXT));
 
         IndexMetadata indexMetadata =
-                new IndexMetadata(new IndexName("demometadata", "users1", "IndiceLucene"), columns,
+                new IndexMetadata(new IndexName("demometadata9", "users1", "IndiceLucene"), columns,
                         IndexType.FULL_TEXT, options);
         try {
             cme.createIndex(new ClusterName("cluster"), indexMetadata);
@@ -683,21 +685,21 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        Assert.assertEquals(assertIndex("indicelucene", "demometadata", "users1"), "indicelucene");
+        Assert.assertEquals(assertIndex("IndiceLucene", "demometadata9", "users1"), "IndiceLucene");
     }
 
 
     @Test
     public void alterTableAlterColumnIncompatibleTypeTest() {
-        createCatalog();
-        createTable("users7");
+        createCatalog("demometadata7");
+        createTable("demometadata7","users7");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Object[] parameters = { };
-        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users7"),
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata7", "users7"),
                 "bool"), parameters, ColumnType.TEXT);
         AlterOptions alterOptions=new AlterOptions(AlterOperation.ALTER_COLUMN,null,columnMetadata);
         try {
-            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users7"),alterOptions);
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata7", "users7"),alterOptions);
             Assert.fail("Incompatible type to alter column");
         } catch (ConnectorException e) {
             Assert.assertTrue(true);
@@ -707,15 +709,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void alterTableAlterColumnCompatibleTypeTest() {
-        createCatalog();
-        createTable("users8");
+        createCatalog("demometadata6");
+        createTable("demometadata6","users8");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Object[] parameters = { };
-        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users8"),
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata6", "users8"),
                 "name"), parameters, ColumnType.VARCHAR);
         AlterOptions alterOptions=new AlterOptions(AlterOperation.ALTER_COLUMN,null,columnMetadata);
         try {
-            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users8"),alterOptions);
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata6", "users8"),alterOptions);
             Assert.assertTrue(true);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -725,15 +727,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void alterTableAddColumnTest() {
-        createCatalog();
-        createTable("users9");
+        createCatalog("demometadata13");
+        createTable("demometadata13","users9");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Object[] parameters = { };
-        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users9"),
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata13", "users9"),
                 "other"), parameters, ColumnType.VARCHAR);
         AlterOptions alterOptions=new AlterOptions(AlterOperation.ADD_COLUMN,null,columnMetadata);
         try {
-            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users9"),alterOptions);
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata13", "users9"),alterOptions);
             Assert.assertTrue(true);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -743,15 +745,15 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void alterTableDropColumnTest() {
-        createCatalog();
-        createTable("users9");
+        createCatalog("demometadata8");
+        createTable("demometadata8","users9");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Object[] parameters = { };
-        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata", "users9"),
+        ColumnMetadata columnMetadata=new ColumnMetadata(new ColumnName(new TableName("demometadata8", "users9"),
                 "bool"), parameters, ColumnType.VARCHAR);
         AlterOptions alterOptions=new AlterOptions(AlterOperation.DROP_COLUMN,null,columnMetadata);
         try {
-            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users9"),alterOptions);
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata8", "users9"),alterOptions);
             Assert.assertTrue(true);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -760,8 +762,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @Test
     public void alterTableAlterOptionsTest() {
-        createCatalog();
-        createTable("users10");
+        createCatalog("demometadata14");
+        createTable("demometadata14","users10");
         CassandraMetadataEngine cme = new CassandraMetadataEngine(sessions);
         Map<Selector, Selector> properties=new HashMap<>();
         Selector a= new StringSelector("comment");
@@ -770,7 +772,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         ColumnMetadata columnMetadata=null;
         AlterOptions alterOptions=new AlterOptions(AlterOperation.ALTER_OPTIONS,properties,columnMetadata);
         try {
-            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata", "users10"),alterOptions);
+            cme.alterTable(new ClusterName("cluster"),new TableName("demometadata14", "users10"),alterOptions);
             Assert.assertTrue(true);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
@@ -840,7 +842,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.assertEquals(tableMetadata.getName().getName(),"importtables2", "importTables2 not imported");
             Map<ColumnName,ColumnMetadata> columns=tableMetadata.getColumns();
 
-            TableName tableName=new TableName("importCatalog3","importTables2");
+            TableName tableName=new TableName("importcatalog3","importtables2");
             ColumnMetadata columnMetadata=columns.get(new ColumnName(tableName,"name"));
             Assert.assertEquals(columnMetadata.getName().getName(), "name", "Columns not imported well");
             Assert.assertEquals(columnMetadata.getColumnType(), ColumnType.TEXT, "Columns Type not imported well");
@@ -852,10 +854,9 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
     @AfterClass
     public void restore() {
         BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata2");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata3");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata4");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata5");
+        for(int i=1; i<15; i++){
+            BasicCoreCassandraTest.dropKeyspaceIfExists("demometadata" + i);
+        }
         BasicCoreCassandraTest.dropKeyspaceIfExists("testAlterCatalog");
         BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog1");
         BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog11");
