@@ -22,18 +22,20 @@ start() {
   cd /opt/sds/stratio-connector-cassandra/
         pwd
 #nohup "/opt/maven/maven/bin/mvn exec:java" 
-    nohup bin/stratio-connector-cassandra > $LOGFILE & echo $! $RUNAS > $PIDFILE
+    nohup bin/stratio-connector-cassandra start > $LOGFILE & echo $! $RUNAS > $PIDFILE
   echo 'Service started' >&2
 }
 
 stop() {
- if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-    echo 'Service not running' >&2
-    return 1
-  fi
-  echo 'Stopping service…' >&2
-  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
-  echo 'Service stopped' >&2
+# if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+#    echo 'Service not running' >&2
+#    return 1
+#  fi
+#  echo 'Stopping service…' >&2
+#  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+#  echo 'Service stopped' >&2
+    cd /opt/sds/stratio-connector-cassandra/
+    nohup bin/stratio-connector-cassandra stop > $LOGFILE & echo $! $RUNAS > $PIDFILE
 }
 
 uninstall() {
