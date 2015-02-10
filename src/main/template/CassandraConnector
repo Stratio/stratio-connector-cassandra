@@ -35,7 +35,8 @@ stop() {
 #  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
 #  echo 'Service stopped' >&2
     cd /opt/sds/stratio-connector-cassandra/
-    nohup bin/stratio-connector-cassandra stop > $LOGFILE & echo $! $RUNAS > $PIDFILE
+    nohup bin/stratio-connector-cassandra stop > $LOGFILE
+    echo 'Service stopped'
 }
 
 uninstall() {
