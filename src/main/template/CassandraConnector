@@ -22,7 +22,7 @@ start() {
   cd /opt/sds/stratio-connector-cassandra/
         pwd
 #nohup "/opt/maven/maven/bin/mvn exec:java" 
-    nohup bin/crossdata-server > $LOGFILE & echo $! $RUNAS > $PIDFILE
+    nohup bin/stratio-connector-cassandra > $LOGFILE & echo $! $RUNAS > $PIDFILE
   echo 'Service started' >&2
 }
 

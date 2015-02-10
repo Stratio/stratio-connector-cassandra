@@ -174,8 +174,8 @@
                             <to>opt/sds/stratio-connector-cassandra/conf</to>
                         </copyDirectory>
                         <copyDirectory>
-                            <from>src/main/unix/scripts/CassandraConnector</from>
-                            <to>opt/sds/stratio-connector-cassandra/bin</to>
+                            <from>src/main/template</from>
+                            <to>opt/sds/stratio-connector-cassandra/template</to>
                         </copyDirectory>
                         <copyDirectory>
                             <from>src/main/config</from>

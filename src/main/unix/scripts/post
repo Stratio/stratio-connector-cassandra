@@ -39,7 +39,7 @@ case "$1" in
   ;;
 esac
 cp /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra-* /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra
-cp /opt/sds/stratio-connector-cassandra/bin/CassandraConnector /etc/init.d/stratio-connector-cassandra
+cp /opt/sds/stratio-connector-cassandra/template/CassandraConnector /etc/init.d/stratio-connector-cassandra
 chmod 755 /etc/init.d/stratio-connector-cassandra
 chmod 755 /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra
 chmod +x /etc/default/stratio-connector-cassandra
