@@ -1,0 +1,4 @@
+/etc/default/stratio-connector-cassandra
+/etc/sds/stratio-connector-cassandra/connector-application.conf
+/etc/sds/stratio-connector-cassandra/log.properties
+/etc/sds/stratio-connector-cassandra/connector-reference.conf

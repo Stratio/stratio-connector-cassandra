@@ -133,6 +133,72 @@
         </pluginManagement>
         <plugins>
 
+            <!--RPM and deb packages  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+            <plugin>
+                <groupId>com.stratio.mojo.unix</groupId>
+                <artifactId>unix-maven-plugin</artifactId>
+                <version>1.0-alpha-9</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <contact><![CDATA[Stratio <jjlopez@stratio.com>]]></contact>
+                    <contactEmail>jjlopez@stratio.com</contactEmail>
+                    <size>2048</size>
+                    <deb>
+                        <section>devel</section>
+                    </deb>
+                    <rpm>
+                        <group>stratio</group>
+                    </rpm>
+                    <assembly>
+                        <mkdirs>
+                            <paths>
+                                <path>etc/sds/stratio-connector-cassandra</path>
+                                <path>etc/default</path>
+                                <path>var/run/sds</path>
+                            </paths>
+                            <attributes>
+                                <user>stratio</user>
+                                <group>stratio</group>
+                                <mode>644</mode>
+                            </attributes>
+                        </mkdirs>
+                        <copyDirectory>
+                            <from>target/stratio-connector-cassandra-${project.version}/bin</from>
+                            <to>opt/sds/stratio-connector-cassandra/bin</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>target/stratio-connector-cassandra-${project.version}/lib</from>
+                            <to>opt/sds/stratio-connector-cassandra/lib</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>target/stratio-connector-cassandra-${project.version}/conf</from>
+                            <to>opt/sds/stratio-connector-cassandra/conf</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/template</from>
+                            <to>opt/sds/stratio-connector-cassandra/template</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/config</from>
+                            <to>etc/sds/stratio-connector-cassandra</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/unix/files_and_dirs/etc/default</from>
+                            <to>etc/default</to>
+                        </copyDirectory>
+                        <copyFile>
+                            <path>src/main/include/LICENSE</path>
+                            <toFile>opt/sds/stratio-connector-cassandra/LICENSE</toFile>
+                        </copyFile>
+                        <copyFile>
+                            <path>src/main/include/NOTICE</path>
+                            <toFile>opt/sds/stratio-connector-cassandra/NOTICE</toFile>
+                        </copyFile>
+                    </assembly>
+                </configuration>
+            </plugin>
+
+            <!--*****************************************************************************************************-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
