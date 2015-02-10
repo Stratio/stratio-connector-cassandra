@@ -1,0 +1,52 @@
+#!/bin/sh
+
+set -e
+
+GROUP='stratio'
+USER='stratio'
+DIR_INSTALL='/opt/sds/stratio-connector-cassandra'
+DIR_CONF='/etc/sds/stratio-connector-cassandra'
+DIR_LOG='/var/log/sds/stratio-connector-cassandra'
+
+cp /opt/sds/crossdata/bin/stratio-connector-cassandra /etc/init.d/stratio-connector-cassandra
+chmod 755 /etc/init.d/stratio-connector-cassandra
+chmod 755 /opt/sds/crossdata/bin/stratio-connector-cassandra
+chmod +x /etc/default/stratio-connector-cassandra
+export CASSANDRA_CONNECTOR_LIB=/opt/sds/stratio-connector-cassandra
+export CASSANDRA_CONNECTOR_CONF="/etc/sds/stratio-connector-cassandra"
+
+case "$1" in
+  configure)
+
+  # Add stratio group if it doesn't already exists
+  if ! getent group $GROUP >/dev/null 2>&1; then
+    groupadd ${GROUP} 
+  fi
+
+  # Add stratio user if it doesn't already exists
+  if ! getent passwd $USER >/dev/null 2>&1; then
+    [ -d /opt ] || mkdir /opt
+    useradd -M -d /opt/sds -g ${GROUP} -s /bin/bash ${USER}
+  else
+    usermod -G $GROUP $USER
+  fi
+
+  chown -R ${USER}:${GROUP} /opt/sds /etc/sds
+
+  chown root:root /etc/init.d/stratio-connector-cassandra
+ 
+  chown -R ${USER}:${GROUP} $DIR_INSTALL
+  chown -R ${USER}:${GROUP} $DIR_CONF
+  chown -R ${USER}:${GROUP} $DIR_LOG
+  chmod 775 $DIR_INSTALL
+  chmod 775 $DIR_CONF
+  chmod 775 $DIR_LOG
+  
+  update-rc.d stratio-connector-cassandra defaults
+
+  ;;
+esac    
+
+
+exit 0
+
