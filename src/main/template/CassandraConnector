@@ -20,10 +20,9 @@ start() {
   fi
   echo 'Starting service…' >&2
   cd /opt/sds/stratio-connector-cassandra/
-        pwd
-#nohup "/opt/maven/maven/bin/mvn exec:java" 
+
     nohup bin/stratio-connector-cassandra start > $LOGFILE & echo $! $RUNAS > $PIDFILE
-  echo 'Service started' >&2
+  echo 'Service started'
 }
 
 stop() {
