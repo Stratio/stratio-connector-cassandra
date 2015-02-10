@@ -37,10 +37,11 @@ case "$1" in
   update-rc.d stratio-connector-cassandra defaults
 
   ;;
-esac    
-cp /opt/sds/crossdata/bin/stratio-connector-cassandra /etc/init.d/stratio-connector-cassandra
+esac
+mv /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra-* /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra
+cp /opt/sds/stratio-connector-cassandra/bin /etc/init.d/stratio-connector-cassandra
 chmod 755 /etc/init.d/stratio-connector-cassandra
-chmod 755 /opt/sds/crossdata/bin/stratio-connector-cassandra
+chmod 755 /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra
 chmod +x /etc/default/stratio-connector-cassandra
 export CASSANDRA_CONNECTOR_LIB=/opt/sds/stratio-connector-cassandra
 export CASSANDRA_CONNECTOR_CONF="/etc/sds/stratio-connector-cassandra"
