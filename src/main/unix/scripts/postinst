@@ -9,7 +9,7 @@ DIR_CONF='/etc/sds/stratio-connector-cassandra'
 DIR_LOG='/var/log/sds/stratio-connector-cassandra'
 
 mv /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra-* /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra
-cp /opt/sds/stratio-connector-cassandra/bin /etc/init.d/stratio-connector-cassandra
+cp /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra /etc/init.d/stratio-connector-cassandra
 chmod 755 /etc/init.d/stratio-connector-cassandra
 chmod 755 /opt/sds/crossdata/bin/stratio-connector-cassandra
 chmod +x /etc/default/stratio-connector-cassandra
