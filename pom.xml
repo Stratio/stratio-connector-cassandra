@@ -166,25 +166,25 @@
                             <to>opt/sds/stratio-connector-cassandra/bin</to>
                         </copyDirectory>
                         <copyDirectory>
-                            <from>src/main/config</from>
-                            <to>etc/sds/stratio-connector-cassandra</to>
-                        </copyDirectory>
-                        <copyDirectory>
                             <from>target/stratio-connector-cassandra-${project.version}/lib</from>
                             <to>opt/sds/stratio-connector-cassandra/lib</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>target/stratio-connector-cassandra-${project.version}/conf</from>
+                            <to>opt/sds/stratio-connector-cassandra/conf</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/unix/scripts/CassandraConnector</from>
+                            <to>opt/sds/stratio-connector-cassandra/bin</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/config</from>
+                            <to>etc/sds/stratio-connector-cassandra</to>
                         </copyDirectory>
                         <copyDirectory>
                             <from>src/main/unix/files_and_dirs/etc/default</from>
                             <to>etc/default</to>
                         </copyDirectory>
-                        <!--<copyFile>
-                            <path>src/main/unix/files_and_dirs/DEBIAN/conffiles</path>
-                            <toFile>DEBIAN/conffiles</toFile>
-                        </copyFile>
-                        <copyFile>
-                            <path>src/main/unix/files_and_dirs/DEBIAN/copyright</path>
-                            <toFile>DEBIAN/copyright</toFile>
-                        </copyFile>-->
                         <copyFile>
                             <path>src/main/include/LICENSE</path>
                             <toFile>opt/sds/stratio-connector-cassandra/LICENSE</toFile>
