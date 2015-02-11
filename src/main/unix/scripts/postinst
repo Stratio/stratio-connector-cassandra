@@ -12,6 +12,7 @@ cp /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra-* /opt/s
 cp /opt/sds/stratio-connector-cassandra/template/CassandraConnector /etc/init.d/stratio-connector-cassandra
 chmod 755 /etc/init.d/stratio-connector-cassandra
 chmod 755 /opt/sds/stratio-connector-cassandra/bin
+chmod +x /opt/sds/stratio-connector-cassandra/bin
 chmod +x /etc/default/stratio-connector-cassandra
 export CASSANDRA_CONNECTOR_LIB=/opt/sds/stratio-connector-cassandra
 export CASSANDRA_CONNECTOR_CONF="/etc/sds/stratio-connector-cassandra"
