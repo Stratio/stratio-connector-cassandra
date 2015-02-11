@@ -44,6 +44,33 @@ To stop the connector execute::
     > target/stratio-connector-cassandra-0.2.0/bin/stratio-connector-cassandra-0.2.0-001 stop
 
 
+Build a redistributable package
+================================
+It is possible too, to create a RPM or DEB redistributable package.
+
+RPM Package::
+
+    > mvn unix:package-rpm -N
+
+DEB Package::
+
+    > mvn unix:package-deb -N
+
+Once the package it's created, execute this commands to install:
+
+RPM Package::
+
+    > rpm -i target/stratio-connector-cassandra-0.3.0-SNAPSHOT.rpm
+
+DEB Package::
+
+    > dpkg -i target/stratio-connector-cassandra-0.3.0-SNAPSHOT.deb
+
+Now to start/stop the connector::
+
+    > service stratio-connector-cassandra start
+    > service stratio-connector-cassandra stop
+
 How to use Cassandra Connector
 ===============================
 1. Start `crossdata-server and then crossdata-shell <https://github.com/Stratio/crossdata>`_.  
