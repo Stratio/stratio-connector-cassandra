@@ -61,7 +61,7 @@ public final class CassandraExecutor {
         try {
             resultSet = session.execute(query);
             return com.stratio.crossdata.common.result
-                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet, new HashMap<Selector, String>()));
+                    .QueryResult.createQueryResult(utils.transformToMetaResultSet(resultSet, new HashMap<Selector, String>()),0,true);
         } catch (UnsupportedOperationException unSupportException) {
             throw new UnsupportedException(unSupportException.getMessage(),unSupportException);
         } catch (DriverException dex) {
@@ -86,7 +86,7 @@ public final class CassandraExecutor {
             ResultSet resultSet = session.execute(query);
             return com.stratio.crossdata.common.result
                     .QueryResult
-                    .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns));
+                    .createQueryResult(utils.transformToMetaResultSet(resultSet, aliasColumns),0,true);
         } catch (UnsupportedOperationException unSupportException) {
             throw new UnsupportedException(unSupportException.getMessage(),unSupportException);
         } catch (DriverException dex) {
