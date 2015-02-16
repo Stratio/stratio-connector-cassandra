@@ -69,6 +69,8 @@ public class CassandraQueryEngine implements IQueryEngine {
     private int limit = DEFAULT_LIMIT;
     private Map<String, Session> sessions;
 
+
+
     /**
      * Basic constructor.
      *
@@ -146,13 +148,58 @@ public class CassandraQueryEngine implements IQueryEngine {
     @Override
     public void asyncExecute(String queryId, LogicalWorkflow workflow,
             IResultHandler resultHandler) throws ConnectorException {
-        throw new UnsupportedException("Async execute not supported yet.");
+
+        LogicalStep logicalStep = workflow.getInitialSteps().get(0);
+        while (logicalStep != null) {
+            if (logicalStep instanceof TransformationStep) {
+                getTransformationStep(logicalStep);
+            }
+            logicalStep = logicalStep.getNextStep();
+        }
+
+        String query = parseQuery();
+
+        if (session != null) {
+
+            CassandraExecutor.asyncExecute(query, aliasColumns, session, queryId,resultHandler);
+
+        } else {
+            throw new ExecutionException("No session to cluster established");
+        }
+    }
+
+    @Override
+    public void pagedExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler,
+            int pageSize) throws ConnectorException {
+
+
+        LogicalStep logicalStep = workflow.getInitialSteps().get(0);
+        while (logicalStep != null) {
+            if (logicalStep instanceof TransformationStep) {
+                getTransformationStep(logicalStep);
+            }
+            logicalStep = logicalStep.getNextStep();
+        }
+
+        String query = parseQuery();
+
+        if (session != null) {
+
+            CassandraExecutor.asyncExecutePaging(query, aliasColumns, session, queryId,resultHandler,pageSize);
+
+        } else {
+            throw new ExecutionException("No session to cluster established");
+        }
+
     }
 
     @Override
     public void stop(String queryId) throws ConnectorException {
         throw new UnsupportedException("Stop for Async execute not supported yet.");
     }
+
+
+
 
     /**
      * Method that convert a query to a cassandra language.

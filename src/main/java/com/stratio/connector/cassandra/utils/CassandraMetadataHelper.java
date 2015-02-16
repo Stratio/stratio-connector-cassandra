@@ -52,9 +52,11 @@ public class CassandraMetadataHelper {
      * Mapping of native datatypes to SQL types.
      */
     private static Map<DataType.Name, String> nativeODBCType = new HashMap<>();
-    private static Map<ColumnType, String> dbType = new HashMap<>();
-    private static Map<ColumnType, Class<?>> dbClass = new HashMap<>();
-
+   // private static Map<ColumnType, String> dbType = new HashMap<>();
+   // private static Map<ColumnType, Class<?>> dbClass = new HashMap<>();
+    private static Map<com.stratio.crossdata.common.metadata.DataType, String> dbType = new HashMap<>();
+    private static Map<com.stratio.crossdata.common.metadata.DataType, Class<?>> dbClass = new HashMap<>();
+/*
     static {
 
         dbClass.put(ColumnType.BIGINT, Long.class);
@@ -75,18 +77,40 @@ public class CassandraMetadataHelper {
 
         nativeODBCType.put(DataType.Name.COUNTER, "SQL_INTEGER");
 
+    }*/
+
+    static {
+
+        dbClass.put(com.stratio.crossdata.common.metadata.DataType.BIGINT, Long.class);
+        dbClass.put(com.stratio.crossdata.common.metadata.DataType.BOOLEAN, Boolean.class);
+        dbClass.put(com.stratio.crossdata.common.metadata.DataType.DOUBLE, Double.class);
+        dbClass.put(com.stratio.crossdata.common.metadata.DataType.FLOAT, Float.class);
+        dbClass.put(com.stratio.crossdata.common.metadata.DataType.INT, Integer.class);
+        dbClass.put(com.stratio.crossdata.common.metadata.DataType.TEXT, String.class);
+        dbClass.put(com.stratio.crossdata.common.metadata.DataType.VARCHAR, String.class);
+
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.BIGINT, "BIGINT");
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.BOOLEAN, "BOOLEAN");
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.DOUBLE, "DOUBLE");
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.FLOAT, "FLOAT");
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.INT, "INT");
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.TEXT, "TEXT");
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.VARCHAR, "VARCHAR");
+
+        nativeODBCType.put(DataType.Name.COUNTER, "SQL_INTEGER");
+
     }
 
     /**
      * Mapping between Cassandra datatypes and META datatypes.
      */
-    private static Map<String, ColumnType> typeMapping = new HashMap<>();
+    private static Map<String, com.stratio.crossdata.common.metadata.DataType> typeMapping = new HashMap<>();
 
     /**
      * Class constructor.
      */
     public CassandraMetadataHelper() {
-        for (Map.Entry<ColumnType, String> entry : dbType.entrySet()) {
+        for (Map.Entry<com.stratio.crossdata.common.metadata.DataType, String> entry : dbType.entrySet()) {
             typeMapping.put(entry.getValue(), entry.getKey());
         }
     }
@@ -97,21 +121,21 @@ public class CassandraMetadataHelper {
      * @return The Crossdata ColumnType.
      */
     public ColumnType toColumnType(String dbTypeName) {
-        ColumnType result = typeMapping.get(dbTypeName.toUpperCase());
-        if (result == null) {
+        ColumnType result;
+        if (typeMapping.get(dbTypeName.toUpperCase())!=null) {
+            result = new ColumnType(typeMapping.get(dbTypeName.toUpperCase()));
+            result.setDBMapping(dbType.get(result), dbClass.get(result));
+        }else{
             try {
                 DataType.Name cassandraType = DataType.Name.valueOf(dbTypeName.toUpperCase());
-                result = ColumnType.NATIVE;
+                result = new ColumnType(com.stratio.crossdata.common.metadata.DataType.NATIVE);
                 result.setDBMapping(cassandraType.name(), cassandraType.asJavaClass());
                 result.setODBCType(nativeODBCType.get(cassandraType));
             } catch (IllegalArgumentException iae) {
                 LOG.error("Invalid database type: " + dbTypeName, iae);
                 result = null;
             }
-        } else {
-            result.setDBMapping(dbType.get(result), dbClass.get(result));
         }
-
         return result;
     }
 

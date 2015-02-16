@@ -105,7 +105,7 @@ public class InsertIntoStatement {
             }
             cont = 1;
 
-            switch (type) {
+            switch (type.getDataType()) {
             case TEXT:
             case VARCHAR:
                 sb.append("'" + value + "'");

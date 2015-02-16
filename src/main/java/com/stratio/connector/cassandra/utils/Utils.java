@@ -191,6 +191,7 @@ public class Utils {
      * @return A {@link com.stratio.crossdata.common.metadata.ColumnType}
      */
     public ColumnType getCrossdataColumn(DataType type) {
+
         switch(type.getName()){
         case ASCII:
         case BLOB:
@@ -202,29 +203,28 @@ public class Utils {
         case UDT:
         case TUPLE:
         case CUSTOM:
-            return ColumnType.NATIVE;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.NATIVE);
         case BIGINT:
-            return ColumnType.BIGINT;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.BIGINT);
         case BOOLEAN:
-            return ColumnType.BOOLEAN;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.BOOLEAN);
         case DECIMAL:
         case FLOAT:
-            return ColumnType.FLOAT;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.FLOAT);
         case DOUBLE:
-            return ColumnType.DOUBLE;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.DOUBLE);
         case INT:
-            return ColumnType.INT;
+        case VARINT:
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.INT);
         case TEXT:
         case VARCHAR:
-            return ColumnType.TEXT;
-        case VARINT:
-            return ColumnType.INT;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
         case LIST:
-            return ColumnType.LIST;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.LIST);
         case SET:
-            return ColumnType.SET;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.SET);
         case MAP:
-            return ColumnType.MAP;
+            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.MAP);
         default:
             return null;
         }

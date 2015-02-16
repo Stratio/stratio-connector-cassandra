@@ -28,9 +28,13 @@ import java.util.Map;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.SimpleStatement;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.stratio.connector.cassandra.utils.Utils;
+import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
@@ -46,6 +50,7 @@ import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.IndexType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
@@ -114,6 +119,82 @@ public final class CassandraExecutor {
             throw new ExecutionException(ex.getMessage(),ex);
         }
     }
+
+    /**
+     * Executes an asynchronous query from a String and add the alias in the Result for Selects qith paging .
+     *
+     * @param query        The query in a String.
+     * @param aliasColumns The Map with the alias
+     * @param session      Cassandra datastax java driver session.
+     * @param queryId      The id of the query.
+     * @param resultHandler The handler of the result.
+     * @param pageSize      The number of fetching paging.
+     */
+    public static void asyncExecutePaging(String query,
+            Map<Selector, String> aliasColumns, Session session, String queryId, IResultHandler resultHandler,
+            int pageSize)
+            throws ConnectorException {
+        try {
+            Statement st=new SimpleStatement(query);
+            st.setFetchSize(pageSize);
+            ResultSetFuture resultSet = session.executeAsync(st);
+            int numPage=0;
+            while (!resultSet.isDone()) {
+                ResultSet partialResultSet=resultSet.getUninterruptibly();
+                QueryResult queryResult = com.stratio.crossdata.common.result
+                        .QueryResult
+                        .createQueryResult(utils.transformToMetaResultSet(partialResultSet, aliasColumns),
+                                numPage, partialResultSet.isFullyFetched());
+
+                resultHandler.processResult(queryResult);
+                numPage++;
+            }
+        } catch (UnsupportedOperationException unSupportException) {
+            resultHandler.processException(queryId,new ExecutionException(unSupportException.getMessage(),
+                    unSupportException));
+        } catch (DriverException dex) {
+            resultHandler.processException(queryId,new ExecutionException(dex.getMessage(),dex));
+        } catch (Exception ex) {
+            resultHandler.processException(queryId,new ExecutionException(ex.getMessage(), ex));
+        }
+    }
+
+    /**
+     * Executes an asynchronous query from a String and add the alias in the Result for Selects qith paging .
+     *
+     * @param query        The query in a String.
+     * @param aliasColumns The Map with the alias
+     * @param session      Cassandra datastax java driver session.
+     * @param queryId      The id of the query.
+     * @param resultHandler The handler of the result.
+     */
+    public static void asyncExecute(String query,
+            Map<Selector, String> aliasColumns, Session session, String queryId, IResultHandler resultHandler)
+            throws ConnectorException {
+        try {
+
+            ResultSetFuture resultSet = session.executeAsync(query);
+
+            while (!resultSet.isDone()) {
+
+            }
+            ResultSet partialResultSet=resultSet.get();
+
+            QueryResult queryResult = com.stratio.crossdata.common.result
+                    .QueryResult
+                    .createQueryResult(utils.transformToMetaResultSet(partialResultSet, aliasColumns),
+                            0, true);
+            resultHandler.processResult(queryResult);
+        } catch (UnsupportedOperationException unSupportException) {
+            resultHandler.processException(queryId,new ExecutionException(unSupportException.getMessage(),
+                    unSupportException));
+        } catch (DriverException dex) {
+            resultHandler.processException(queryId,new ExecutionException(dex.getMessage(),dex));
+        } catch (Exception ex) {
+            resultHandler.processException(queryId,new ExecutionException(ex.getMessage(), ex));
+        }
+    }
+
 
     /**
      * Obtain the existing keyspaces in cassandra.

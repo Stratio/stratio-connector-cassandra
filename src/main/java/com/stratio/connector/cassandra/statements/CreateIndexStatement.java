@@ -42,17 +42,17 @@ public class CreateIndexStatement {
     /**
      * Map of lucene types associated with Cassandra data types.
      */
-    private static Map<String, String> luceneTypes = new HashMap<>();
+    private static Map<com.stratio.crossdata.common.metadata.DataType, String> luceneTypes = new HashMap<>();
 
     static {
-        luceneTypes.put("VARCHAR", "{type:\"string\"}");
-        luceneTypes.put("TEXT", "{type:\"string\"}");
-        luceneTypes.put("BOOLEAN", "{type:\"boolean\"}");
-        luceneTypes.put("DOUBLE", "{type:\"double\"}");
-        luceneTypes.put("BIGINT", "{type:\"long\"}");
-        luceneTypes.put("FLOAT", "{type:\"float\"}");
-        luceneTypes.put("INT", "{type:\"integer\"}");
-        luceneTypes.put(DataType.uuid().toString(), "{type:\"uuid\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.VARCHAR, "{type:\"string\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.TEXT, "{type:\"string\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.BOOLEAN, "{type:\"boolean\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.DOUBLE, "{type:\"double\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.BIGINT, "{type:\"long\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.FLOAT, "{type:\"float\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.INT, "{type:\"integer\"}");
+        //luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.UUID, "{type:\"uuid\"}");
     }
 
     private String columnForIndex;
@@ -267,7 +267,7 @@ public class CreateIndexStatement {
         for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
             sb.append(entry.getValue().getName().getName());
             sb.append(":");
-            sb.append(luceneTypes.get(entry.getValue().getColumnType().name()));
+            sb.append(luceneTypes.get(entry.getValue().getColumnType().getDataType()));
             sb.append(",");
         }
 
