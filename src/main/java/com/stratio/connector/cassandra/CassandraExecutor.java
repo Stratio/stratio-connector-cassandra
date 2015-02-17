@@ -328,7 +328,6 @@ public final class CassandraExecutor {
             ColumnName columnName = new ColumnName(cassandraTableMetadata.getKeyspace().getName(),
                     cassandraTableMetadata.getName(), cassandraColumn.getName());
             ColumnType columnType = utils.getCrossdataColumn(cassandraColumn.getType());
-            cassandraColumn.getType().asJavaClass();
             ColumnMetadata columnMetadata = new ColumnMetadata(columnName, null, columnType);
             columns.put(columnName, columnMetadata);
 

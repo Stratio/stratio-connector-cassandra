@@ -26,6 +26,8 @@ import java.util.Set;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
@@ -136,8 +138,14 @@ public class CreateTableStatement {
             }
             i = 1;
             String key = column.getName().substring(column.getName().lastIndexOf(".") + 1);
-            String vp = tableColumns.get(column).getColumnType().toString();
-            sb.append(key).append(" ").append(vp);
+            ColumnType columnType=tableColumns.get(column).getColumnType();
+            String type;
+            if (columnType.getDataType()== DataType.NATIVE){
+                type=columnType.getDbType();
+            }else {
+                type = tableColumns.get(column).getColumnType().toString();
+            }
+            sb.append(key).append(" ").append(type);
 
             if (key.equals(primaryKey.get(0).getName())) {
                 sb.append(" PRIMARY KEY");
@@ -209,8 +217,14 @@ public class CreateTableStatement {
             Set<ColumnName> keySet = tableColumns.keySet();
             sb.append(" (");
             for (ColumnName key : keySet) {
-                String vp = tableColumns.get(key).getColumnType().toString();
-                sb.append(key.getName()).append(" ").append(vp).append(", ");
+                ColumnType columnType = tableColumns.get(key).getColumnType();
+                String type;
+                if (columnType.getDataType()== DataType.NATIVE){
+                    type=columnType.getDbType();
+                }else {
+                    type = tableColumns.get(key).getColumnType().toString();
+                }
+                sb.append(key.getName()).append(" ").append(type).append(", ");
             }
             sb.append(getCompositePKString()).append(")");
         }

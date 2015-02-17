@@ -110,6 +110,9 @@ public class InsertIntoStatement {
             case VARCHAR:
                 sb.append("'" + value + "'");
                 break;
+            case NATIVE:
+                sb.append(getNativeValueColumn(type,value));
+                break;
             default:
                 sb.append(value);
                 break;
@@ -123,5 +126,19 @@ public class InsertIntoStatement {
 
         return sb.toString();
     }
+
+    public String getNativeValueColumn(ColumnType type, String value) {
+
+        switch(type.getDbType().toLowerCase()){
+        case "inet":
+        case "ascii":
+        case "varchar":
+            return "'" + value + "'";
+        default:
+            return value;
+        }
+
+    }
+
 
 }

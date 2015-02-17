@@ -264,7 +264,7 @@ public class Utils {
      * @return A {@link com.stratio.crossdata.common.metadata.ColumnType}
      */
     public ColumnType getCrossdataColumn(DataType type) {
-
+        ColumnType columnType;
         switch(type.getName()){
         case ASCII:
         case BLOB:
@@ -276,33 +276,45 @@ public class Utils {
         case UDT:
         case TUPLE:
         case CUSTOM:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.NATIVE);
+            columnType= new ColumnType(com.stratio.crossdata.common.metadata.DataType.NATIVE);
+            break;
         case BIGINT:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.BIGINT);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.BIGINT);
+            break;
         case BOOLEAN:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.BOOLEAN);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.BOOLEAN);
+            break;
         case DECIMAL:
         case FLOAT:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.FLOAT);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.FLOAT);
+            break;
         case DOUBLE:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.DOUBLE);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.DOUBLE);
+            break;
         case INT:
         case VARINT:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.INT);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.INT);
+            break;
         case TEXT:
         case VARCHAR:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
+            break;
         case LIST:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.LIST);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.LIST);
+            break;
         case SET:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.SET);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.SET);
+            break;
         case MAP:
-            return new ColumnType(com.stratio.crossdata.common.metadata.DataType.MAP);
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.MAP);
+            break;
         default:
-            return null;
+            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
         }
-
+        columnType.setDbType(type.getName().toString());
+        return columnType;
     }
+
 
 
 }
