@@ -34,5 +34,6 @@
         <operation>FILTER_INDEXED_MATCH</operation>
         <operation>FILTER_PK_MATCH</operation>
         <operation>IMPORT_METADATA</operation>
+        <operation>PAGINATION</operation>
     </SupportedOperations>
 </Connector>
