@@ -316,5 +316,8 @@ public class Utils {
     }
 
 
+    public static String toCaseSensitive(String s){
+        return "\"" + s + "\"";
+    }
 
 }

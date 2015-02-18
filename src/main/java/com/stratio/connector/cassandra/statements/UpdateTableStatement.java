@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.statements.structures.Relation;
@@ -70,12 +71,14 @@ public class UpdateTableStatement {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("UPDATE ");
-        sb.append(tableName.getQualifiedName());
+        sb.append(Utils.toCaseSensitive(tableName.getCatalogName().getName())).append('.')
+                .append(Utils.toCaseSensitive(tableName
+                        .getName()));
 
         sb.append(" ").append("SET ");
         for (Relation relation : assignations) {
             String leftTerm = getLeftTerm(relation);
-            sb.append(leftTerm).append(relation.getOperator().toString()).append
+            sb.append(Utils.toCaseSensitive(leftTerm)).append(relation.getOperator().toString()).append
                     (relation.getRightTerm().toString()).append(", ");
         }
 
@@ -86,7 +89,7 @@ public class UpdateTableStatement {
             for (Filter filter : whereClauses) {
                 Relation relation = filter.getRelation();
                 String leftTerm = getLeftTerm(relation);
-                sb.append(leftTerm).append(relation.getOperator().toString()).append
+                sb.append(Utils.toCaseSensitive(leftTerm)).append(relation.getOperator().toString()).append
                         (relation.getRightTerm().toString()).append(" AND ");
             }
             sb.delete(sb.lastIndexOf(" AND"), sb.length());
@@ -95,7 +98,7 @@ public class UpdateTableStatement {
         return sb.toString();
     }
 
-    private String getLeftTerm(Relation relation){
+    private String getLeftTerm(Relation relation) {
         String leftTerm = relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
                 .getStringValue().lastIndexOf('.') + 1, relation.getLeftTerm().getStringValue().length());
 

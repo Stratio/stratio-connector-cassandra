@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.stratio.connector.cassandra.utils.ColumnInsertCassandra;
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.utils.StringUtils;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
@@ -79,7 +80,7 @@ public class InsertIntoStatement {
         }
 
         for (String id : columnsMetadata.keySet()) {
-            ids.add(id);
+            ids.add(Utils.toCaseSensitive(id));
         }
         this.cellValues = columnsMetadata;
         this.ifNotExists = ifNotExists;
@@ -89,9 +90,9 @@ public class InsertIntoStatement {
     public String toString() {
         StringBuilder sb = new StringBuilder("INSERT INTO ");
         if (catalogInc) {
-            sb.append(catalog).append(".");
+            sb.append(Utils.toCaseSensitive(catalog)).append(".");
         }
-        sb.append(tableName).append(" (");
+        sb.append(Utils.toCaseSensitive(tableName)).append(" (");
         sb.append(StringUtils.stringList(ids, ", ")).append(") ");
 
         sb.append("VALUES (");
@@ -111,7 +112,7 @@ public class InsertIntoStatement {
                 sb.append("'" + value + "'");
                 break;
             case NATIVE:
-                sb.append(getNativeValueColumn(type,value));
+                sb.append(getNativeValueColumn(type, value));
                 break;
             default:
                 sb.append(value);

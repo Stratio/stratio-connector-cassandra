@@ -61,9 +61,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         return numberOfRows;
     }
 
-    private void createTable(TableName tableName){
 
-    }
 
     @BeforeClass
     public void setUp() {

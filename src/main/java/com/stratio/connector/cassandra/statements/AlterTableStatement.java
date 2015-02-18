@@ -20,6 +20,7 @@ package com.stratio.connector.cassandra.statements;
 
 import java.util.Map;
 
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.AlterOperation;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
@@ -98,20 +99,21 @@ public class AlterTableStatement {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("ALTER TABLE ");
-        sb.append(tableName.getQualifiedName());
+        sb.append(Utils.toCaseSensitive(tableName.getCatalogName().getName())).append('.').append(Utils.toCaseSensitive
+                (tableName.getName()));
         switch (option) {
         case ALTER_COLUMN:
-            sb.append(" ALTER ").append(column.getName());
+            sb.append(" ALTER ").append(Utils.toCaseSensitive(column.getName()));
             sb.append(" TYPE ").append(type);
             break;
         case ADD_COLUMN:
             sb.append(" ADD ");
-            sb.append(column.getName()).append(" ");
+            sb.append(Utils.toCaseSensitive(column.getName())).append(" ");
             sb.append(type);
             break;
         case DROP_COLUMN:
             sb.append(" DROP ");
-            sb.append(column.getName());
+            sb.append(Utils.toCaseSensitive(column.getName()));
             break;
         case ALTER_OPTIONS:
             sb.append(" WITH ");

@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.CatalogName;
@@ -68,8 +69,6 @@ public class CassandraQueryEngine implements IQueryEngine {
     private List<Relation> where = new ArrayList<>();
     private int limit = DEFAULT_LIMIT;
     private Map<String, Session> sessions;
-
-
 
     /**
      * Basic constructor.
@@ -161,7 +160,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         if (session != null) {
 
-            CassandraExecutor.asyncExecute(query, aliasColumns, session, queryId,resultHandler);
+            CassandraExecutor.asyncExecute(query, aliasColumns, session, queryId, resultHandler);
 
         } else {
             throw new ExecutionException("No session to cluster established");
@@ -171,7 +170,6 @@ public class CassandraQueryEngine implements IQueryEngine {
     @Override
     public void pagedExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler,
             int pageSize) throws ConnectorException {
-
 
         LogicalStep logicalStep = workflow.getInitialSteps().get(0);
         while (logicalStep != null) {
@@ -185,7 +183,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         if (session != null) {
 
-            CassandraExecutor.asyncExecutePaging(query, aliasColumns, session, queryId,resultHandler,pageSize);
+            CassandraExecutor.asyncExecutePaging(query, aliasColumns, session, queryId, resultHandler, pageSize);
 
         } else {
             throw new ExecutionException("No session to cluster established");
@@ -197,9 +195,6 @@ public class CassandraQueryEngine implements IQueryEngine {
     public void stop(String queryId) throws ConnectorException {
         throw new UnsupportedException("Stop for Async execute not supported yet.");
     }
-
-
-
 
     /**
      * Method that convert a query to a cassandra language.
@@ -239,7 +234,8 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
             count = 1;
             ColumnSelector columnSelector = (ColumnSelector) orderByClause.getSelector();
-            sb.append(columnSelector.getName().getName()).append(" ").append(orderByClause.getDirection().name());
+            sb.append(Utils.toCaseSensitive(columnSelector.getName().getName())).append(" ").append(orderByClause
+                    .getDirection().name());
         }
         return sb.toString();
     }
@@ -259,7 +255,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                 break;
             case MATCH:
                 String nameIndex = getLuceneIndex();
-                sb.append(nameIndex).append(" = '");
+                sb.append(Utils.toCaseSensitive(nameIndex)).append(" = '");
                 sb.append(getLuceneWhereClause(relation));
                 sb.append("'");
                 break;
@@ -267,7 +263,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                 String whereWithQualification = relation.toString();
                 String parts[] = whereWithQualification.split(" ");
                 String columnName = parts[0].substring(parts[0].lastIndexOf('.') + 1);
-                sb.append(columnName);
+                sb.append(Utils.toCaseSensitive(columnName));
                 for (int i = 1; i < parts.length; i++) {
                     sb.append(" ").append(parts[i]);
                 }
@@ -283,9 +279,9 @@ public class CassandraQueryEngine implements IQueryEngine {
         StringBuilder sb = new StringBuilder();
         sb.append(" FROM ");
         if (catalogInc) {
-            sb.append(catalog).append(".");
+            sb.append(Utils.toCaseSensitive(catalog)).append(".");
         }
-        sb.append(tableName.getName());
+        sb.append(Utils.toCaseSensitive(tableName.getName()));
         return sb.toString();
     }
 
@@ -298,7 +294,7 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
             i = 1;
             if (!(entry.getKey() instanceof FunctionSelector)) {
-                sb.append(entry.getKey().getColumnName().getName());
+                sb.append(Utils.toCaseSensitive(entry.getKey().getColumnName().getName()));
             } else if (sb.length() == 0) {
                 i = 0;
 
@@ -334,7 +330,7 @@ public class CassandraQueryEngine implements IQueryEngine {
             for (Selector s : columns) {
                 if (s instanceof ColumnSelector) {
                     ColumnSelector columnSelector = (ColumnSelector) s;
-                    sb.append(columnSelector.getColumnName().getName());
+                    sb.append(Utils.toCaseSensitive(columnSelector.getColumnName().getName()));
                     sb.append(",");
                 } else if (s instanceof FunctionSelector) {
                     FunctionSelector functionSelector = (FunctionSelector) s;
@@ -355,7 +351,9 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String getLuceneIndex() {
         String indexName = "";
         List<ColumnMetadata> columns =
-                session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
+                session.getCluster().getMetadata().getKeyspace(Utils.toCaseSensitive(catalog)).getTable(
+                        Utils.toCaseSensitive(tableName
+                                .getName()))
                         .getColumns();
         for (ColumnMetadata column : columns) {
             if (column.getIndex() != null && column.getIndex().isCustomIndex()) {

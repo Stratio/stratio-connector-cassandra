@@ -137,7 +137,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         assertEquals(value, "name_5", "The value not match with the expected value");
 
         assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -206,7 +206,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' ORDER BY email ASC LIMIT 100",
+                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' ORDER BY \"email\" ASC LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -278,7 +278,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         assertEquals(value, "name_5", "The value not match with the expected value");
 
         assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 50",
+                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 50",
                 "The select statement query obtained not match with the expected query");
 
     }
@@ -351,7 +351,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             assertEquals(value, "name_5", "The value not match with the expected value");
 
             assertEquals(cqe.parseQuery(),
-                    "SELECT name,gender FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                    "SELECT \"name\",\"gender\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                     "The select query obtained not match with the expected query");
         } catch (Exception ex) {
             Assert.fail("No alias found");
@@ -422,7 +422,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         assertEquals(cqe.parseQuery(),
-                "SELECT Count(*) FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "SELECT Count(*) FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -490,7 +490,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         assertEquals(cqe.parseQuery(),
-                "SELECT now() FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "SELECT now() FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -558,7 +558,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         assertEquals(cqe.parseQuery(),
-                "SELECT ttl(phrase) FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "SELECT ttl(\"phrase\") FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -723,7 +723,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         assertEquals(cqe.parseQuery(),
-                "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female' LIMIT 100",
+                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
