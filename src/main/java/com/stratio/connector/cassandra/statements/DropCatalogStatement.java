@@ -18,6 +18,8 @@
 
 package com.stratio.connector.cassandra.statements;
 
+import com.stratio.connector.cassandra.utils.Utils;
+
 /**
  * Class that models a {@code DROP KEYSPACE} statement from the META language.
  */
@@ -50,7 +52,7 @@ public class DropCatalogStatement {
         if (ifExists) {
             sb.append("IF EXISTS ");
         }
-        sb.append(catalog);
+        sb.append(Utils.toCaseSensitive(catalog));
         return sb.toString();
     }
 

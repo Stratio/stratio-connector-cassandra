@@ -261,7 +261,8 @@ public final class CassandraExecutor {
      */
     public static CatalogMetadata getKeyspacesByName(Session session, CatalogName catalogName, String cluster) {
 
-        KeyspaceMetadata keyspace = session.getCluster().getMetadata().getKeyspace(catalogName.getName());
+        KeyspaceMetadata keyspace = session.getCluster().getMetadata().getKeyspace(Utils.toCaseSensitive(catalogName
+                .getName()));
         CatalogName name = new CatalogName(keyspace.getName());
 
         Map<Selector, Selector> options = new HashMap<>();
@@ -285,7 +286,8 @@ public final class CassandraExecutor {
      */
     public static TableMetadata getTablesByTableName(Session session, TableName tableName, String cluster) {
         com.datastax.driver.core.TableMetadata cassandraTableMetadata = session.getCluster().getMetadata().getKeyspace
-                (tableName.getCatalogName().getName()).getTable(tableName.getName());
+                (Utils.toCaseSensitive(tableName.getCatalogName().getName())).getTable(Utils.toCaseSensitive
+                (tableName.getName()));
 
         return getXDTableMetadata(session, cassandraTableMetadata, cluster);
     }

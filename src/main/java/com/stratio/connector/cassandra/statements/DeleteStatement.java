@@ -20,6 +20,7 @@ package com.stratio.connector.cassandra.statements;
 
 import java.util.List;
 
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.statements.structures.Relation;
@@ -65,16 +66,16 @@ public class DeleteStatement {
     public String toString() {
         StringBuilder sb = new StringBuilder("DELETE FROM ");
         if (catalogInc) {
-            sb.append(catalog).append(".");
+            sb.append(Utils.toCaseSensitive(catalog)).append(".");
         }
-        sb.append(tableName.getName());
+        sb.append(Utils.toCaseSensitive(tableName.getName()));
         if (!whereClauses.isEmpty()) {
             sb.append(" WHERE ");
             for (Filter filter : whereClauses) {
                 Relation relation = filter.getRelation();
                 String leftTerm = relation.getLeftTerm().getStringValue().substring(relation.getLeftTerm()
                         .getStringValue().lastIndexOf('.') + 1, relation.getLeftTerm().getStringValue().length());
-                sb.append(leftTerm).append(relation.getOperator().toString()).append
+                sb.append(Utils.toCaseSensitive(leftTerm)).append(relation.getOperator().toString()).append
                         (relation.getRightTerm().toString()).append(" AND ");
             }
             sb.delete(sb.lastIndexOf(" AND"), sb.length());

@@ -18,6 +18,8 @@
 
 package com.stratio.connector.cassandra.statements;
 
+import com.stratio.connector.cassandra.utils.Utils;
+
 /**
  * Class that models a {@code DROP TABLE} statement from the META language.
  */
@@ -70,9 +72,9 @@ public class DropTableStatement {
             sb.append("IF EXISTS ");
         }
         if (catalogInc) {
-            sb.append(catalog).append(".");
+            sb.append(Utils.toCaseSensitive(catalog)).append(".");
         }
-        sb.append(tableName);
+        sb.append(Utils.toCaseSensitive(tableName));
         return sb.toString();
     }
 

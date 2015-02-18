@@ -18,6 +18,7 @@
 
 package com.stratio.connector.cassandra.statements;
 
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.TableName;
 
@@ -70,9 +71,9 @@ public class TruncateStatement {
     public String toString() {
         StringBuilder sb = new StringBuilder("TRUNCATE ");
         if (catalogInc) {
-            sb.append(catalog).append(".");
+            sb.append(Utils.toCaseSensitive(catalog)).append(".");
         }
-        sb.append(tableName.getName());
+        sb.append(Utils.toCaseSensitive(tableName.getName()));
         return sb.toString();
     }
 
