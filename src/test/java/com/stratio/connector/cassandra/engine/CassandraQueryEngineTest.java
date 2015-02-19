@@ -627,6 +627,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
     }
 
+
+
+
     @Test
     public void processLuceneQueryType() {
 
