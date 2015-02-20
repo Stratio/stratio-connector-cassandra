@@ -23,9 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
@@ -136,8 +139,14 @@ public class CreateTableStatement {
             }
             i = 1;
             String key = column.getName().substring(column.getName().lastIndexOf(".") + 1);
-            String vp = tableColumns.get(column).getColumnType().toString();
-            sb.append(key).append(" ").append(vp);
+            ColumnType columnType=tableColumns.get(column).getColumnType();
+            String type;
+            if (columnType.getDataType()== DataType.NATIVE){
+                type=columnType.getDbType();
+            }else {
+                type = tableColumns.get(column).getColumnType().toString();
+            }
+            sb.append(Utils.toCaseSensitive(key)).append(" ").append(type);
 
             if (key.equals(primaryKey.get(0).getName())) {
                 sb.append(" PRIMARY KEY");
@@ -159,7 +168,7 @@ public class CreateTableStatement {
 
             Iterator<ColumnName> pks = primaryKey.iterator();
             while (pks.hasNext()) {
-                sb.append(pks.next().getName());
+                sb.append(Utils.toCaseSensitive(pks.next().getName()));
                 if (pks.hasNext()) {
                     sb.append(", ");
                 }
@@ -171,7 +180,7 @@ public class CreateTableStatement {
             sb.append("((");
             Iterator<ColumnName> pks = primaryKey.iterator();
             while (pks.hasNext()) {
-                sb.append(pks.next().getName());
+                sb.append(Utils.toCaseSensitive(pks.next().getName()));
                 if (pks.hasNext()) {
                     sb.append(", ");
                 }
@@ -179,7 +188,7 @@ public class CreateTableStatement {
             sb.append(")");
 
             for (ColumnName key : clusterKey) {
-                sb.append(", ").append(key.getName());
+                sb.append(", ").append(Utils.toCaseSensitive(key.getName()));
             }
             sb.append(")");
 
@@ -199,9 +208,9 @@ public class CreateTableStatement {
         }
 
         if (catalogInc) {
-            sb.append(catalog).append(".");
+            sb.append(Utils.toCaseSensitive(catalog)).append(".");
         }
-        sb.append(tableName);
+        sb.append(Utils.toCaseSensitive(tableName));
 
         if (primaryKeyType == PRIMARY_SINGLE) {
             sb.append(getSinglePKString());
@@ -209,8 +218,14 @@ public class CreateTableStatement {
             Set<ColumnName> keySet = tableColumns.keySet();
             sb.append(" (");
             for (ColumnName key : keySet) {
-                String vp = tableColumns.get(key).getColumnType().toString();
-                sb.append(key.getName()).append(" ").append(vp).append(", ");
+                ColumnType columnType = tableColumns.get(key).getColumnType();
+                String type;
+                if (columnType.getDataType()== DataType.NATIVE){
+                    type=columnType.getDbType();
+                }else {
+                    type = tableColumns.get(key).getColumnType().toString();
+                }
+                sb.append(Utils.toCaseSensitive(key.getName())).append(" ").append(type).append(", ");
             }
             sb.append(getCompositePKString()).append(")");
         }

@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.CatalogName;
@@ -68,6 +69,9 @@ public class CassandraQueryEngine implements IQueryEngine {
     private List<Relation> where = new ArrayList<>();
     private int limit = DEFAULT_LIMIT;
     private Map<String, Session> sessions;
+
+    private boolean luceneIndexExist = false;
+    private StringBuilder luceneIndex = new StringBuilder();
 
     /**
      * Basic constructor.
@@ -146,7 +150,48 @@ public class CassandraQueryEngine implements IQueryEngine {
     @Override
     public void asyncExecute(String queryId, LogicalWorkflow workflow,
             IResultHandler resultHandler) throws ConnectorException {
-        throw new UnsupportedException("Async execute not supported yet.");
+
+        LogicalStep logicalStep = workflow.getInitialSteps().get(0);
+        while (logicalStep != null) {
+            if (logicalStep instanceof TransformationStep) {
+                getTransformationStep(logicalStep);
+            }
+            logicalStep = logicalStep.getNextStep();
+        }
+
+        String query = parseQuery();
+
+        if (session != null) {
+
+            CassandraExecutor.asyncExecute(query, aliasColumns, session, queryId, resultHandler);
+
+        } else {
+            throw new ExecutionException("No session to cluster established");
+        }
+    }
+
+    @Override
+    public void pagedExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler,
+            int pageSize) throws ConnectorException {
+
+        LogicalStep logicalStep = workflow.getInitialSteps().get(0);
+        while (logicalStep != null) {
+            if (logicalStep instanceof TransformationStep) {
+                getTransformationStep(logicalStep);
+            }
+            logicalStep = logicalStep.getNextStep();
+        }
+
+        String query = parseQuery();
+
+        if (session != null) {
+
+            CassandraExecutor.asyncExecutePaging(query, aliasColumns, session, queryId, resultHandler, pageSize);
+
+        } else {
+            throw new ExecutionException("No session to cluster established");
+        }
+
     }
 
     @Override
@@ -192,7 +237,8 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
             count = 1;
             ColumnSelector columnSelector = (ColumnSelector) orderByClause.getSelector();
-            sb.append(columnSelector.getName().getName()).append(" ").append(orderByClause.getDirection().name());
+            sb.append(Utils.toCaseSensitive(columnSelector.getName().getName())).append(" ").append(orderByClause
+                    .getDirection().name());
         }
         return sb.toString();
     }
@@ -211,24 +257,73 @@ public class CassandraQueryEngine implements IQueryEngine {
             case BETWEEN:
                 break;
             case MATCH:
-                String nameIndex = getLuceneIndex();
-                sb.append(nameIndex).append(" = '");
-                sb.append(getLuceneWhereClause(relation));
-                sb.append("'");
+                if (luceneIndexExist) {
+                    luceneIndex.append(",");
+                }
+                luceneIndex.append(getLuceneWhereClause(relation));
+                luceneIndexExist = true;
+
                 break;
             default:
-                String whereWithQualification = relation.toString();
-                String parts[] = whereWithQualification.split(" ");
-                String columnName = parts[0].substring(parts[0].lastIndexOf('.') + 1);
-                sb.append(columnName);
-                for (int i = 1; i < parts.length; i++) {
-                    sb.append(" ").append(parts[i]);
+                //Search if there is a range function that implies a new filter in lucene index.
+                Selector right = relation.getRightTerm();
+                if (right instanceof FunctionSelector) {
+                    FunctionSelector function = (FunctionSelector) right;
+                    if ("range".equals(function.getFunctionName())) {
+                        getStringRangeFunction(function, (ColumnSelector) relation.getLeftTerm());
+                    } else {
+                        ColumnSelector left = (ColumnSelector) relation.getLeftTerm();
+                        String column = Utils.toCaseSensitive(left.getColumnName().getName());
+                        sb.append(column).append(" ").append(relation.getOperator().toString()).append(" ");
+                        sb.append(function.toString());
+                    }
+                } else {
+                    ColumnSelector left = (ColumnSelector) relation.getLeftTerm();
+                    String column = Utils.toCaseSensitive(left.getColumnName().getName());
+                    sb.append(column).append(" ").append(relation.getOperator().toString()).append(" ");
+                    sb.append(right.toString());
                 }
+
                 break;
             }
         }
 
-        return sb.toString();
+        if (luceneIndexExist) {
+            String nameIndex = getLuceneIndex();
+            StringBuilder sbLucene=new StringBuilder();
+            sbLucene.append(Utils.toCaseSensitive(nameIndex)).append("='{filter : {type: \"boolean\", must:[");
+            sbLucene.append(luceneIndex).append(" ]}}'");
+            sb.append(sbLucene);
+        }
+
+        String whereClause=sb.toString();
+
+        while (whereClause.contains("WHERE  AND")){
+            whereClause=whereClause.replace("WHERE  AND", "WHERE");
+        }
+        return whereClause;
+
+    }
+
+    private void getStringRangeFunction(FunctionSelector function, ColumnSelector leftSelector) {
+
+        /*if (!luceneIndexExist) {
+            String nameIndex = getLuceneIndex();
+            luceneIndex.append(Utils.toCaseSensitive(nameIndex)).append(" = '{");
+        }else{
+            luceneIndex.append(",");
+        }*/
+        if (luceneIndexExist){
+            luceneIndex.append(",");
+        }
+        String arg1=function.getFunctionColumns().get(0).getStringValue();
+        String arg2=function.getFunctionColumns().get(1).getStringValue();
+        String column=Utils.toCaseSensitive(leftSelector.getName().getName());
+        luceneIndex.append("{type:\"range\", field:").append(column).append(", " +
+                "lower:\"").append(arg1).append("\", upper:\"").append(arg2).append("\"}");
+
+        luceneIndexExist = true;
+
 
     }
 
@@ -236,9 +331,9 @@ public class CassandraQueryEngine implements IQueryEngine {
         StringBuilder sb = new StringBuilder();
         sb.append(" FROM ");
         if (catalogInc) {
-            sb.append(catalog).append(".");
+            sb.append(Utils.toCaseSensitive(catalog)).append(".");
         }
-        sb.append(tableName.getName());
+        sb.append(Utils.toCaseSensitive(tableName.getName()));
         return sb.toString();
     }
 
@@ -251,7 +346,7 @@ public class CassandraQueryEngine implements IQueryEngine {
             }
             i = 1;
             if (!(entry.getKey() instanceof FunctionSelector)) {
-                sb.append(entry.getKey().getColumnName().getName());
+                sb.append(Utils.toCaseSensitive(entry.getKey().getColumnName().getName()));
             } else if (sb.length() == 0) {
                 i = 0;
 
@@ -287,7 +382,7 @@ public class CassandraQueryEngine implements IQueryEngine {
             for (Selector s : columns) {
                 if (s instanceof ColumnSelector) {
                     ColumnSelector columnSelector = (ColumnSelector) s;
-                    sb.append(columnSelector.getColumnName().getName());
+                    sb.append(Utils.toCaseSensitive(columnSelector.getColumnName().getName()));
                     sb.append(",");
                 } else if (s instanceof FunctionSelector) {
                     FunctionSelector functionSelector = (FunctionSelector) s;
@@ -308,7 +403,9 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String getLuceneIndex() {
         String indexName = "";
         List<ColumnMetadata> columns =
-                session.getCluster().getMetadata().getKeyspace(catalog).getTable(tableName.getName())
+                session.getCluster().getMetadata().getKeyspace(Utils.toCaseSensitive(catalog)).getTable(
+                        Utils.toCaseSensitive(tableName
+                                .getName()))
                         .getColumns();
         for (ColumnMetadata column : columns) {
             if (column.getIndex() != null && column.getIndex().isCustomIndex()) {
@@ -321,7 +418,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     private String getLuceneWhereClause(Relation relation) {
         String result;
 
-        StringBuilder sb = new StringBuilder("{filter:{type:\"boolean\",must:[");
+        StringBuilder sb = new StringBuilder();
 
         String column = relation.getLeftTerm().toString()
                 .substring(relation.getLeftTerm().toString().lastIndexOf('.') + 1);
@@ -337,7 +434,7 @@ public class CassandraQueryEngine implements IQueryEngine {
         sb.append("\"},");
 
         sb.replace(sb.length() - 1, sb.length(), "");
-        sb.append("]}}");
+
 
         result = sb.toString();
 

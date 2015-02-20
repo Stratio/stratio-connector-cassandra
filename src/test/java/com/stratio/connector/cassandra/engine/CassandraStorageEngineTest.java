@@ -39,6 +39,7 @@ import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.metadata.TableMetadata;
@@ -60,9 +61,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         return numberOfRows;
     }
 
-    private void createTable(TableName tableName){
 
-    }
 
     @BeforeClass
     public void setUp() {
@@ -88,22 +87,22 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "age"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
-                        ColumnType.INT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
-                        ColumnType.BOOLEAN));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
         columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "email"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
         TableMetadata table =
@@ -145,22 +144,22 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "age"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
-                        ColumnType.INT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
-                        ColumnType.BOOLEAN));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
         columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "email"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
         TableMetadata table =
@@ -201,22 +200,22 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
         Object[] parameters = { };
         columns.put(new ColumnName(new TableName("demo", "users"), "name"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "age"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
-                        ColumnType.INT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
-                        ColumnType.BOOLEAN));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
         columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
         columns.put(new ColumnName(new TableName("demo", "users"), "email"),
                 new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
-                        ColumnType.TEXT));
+                        new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
         TableMetadata table =

@@ -18,6 +18,8 @@
 
 package com.stratio.connector.cassandra.statements;
 
+import com.stratio.connector.cassandra.utils.Utils;
+
 /**
  * Class that models a {@code CREATE CATALOG} statement from the META language. Catalog
  * information will be stored internally as part of the existing metadata. Catalog creation
@@ -49,7 +51,7 @@ public class AlterCatalogStatement {
     public String toString() {
         StringBuilder sb = new StringBuilder("ALTER KEYSPACE ");
 
-        sb.append(catalog);
+        sb.append(Utils.toCaseSensitive(catalog));
 
         if ((options != null) && (options.length() > 0)) {
             sb.append(" WITH ").append(options);

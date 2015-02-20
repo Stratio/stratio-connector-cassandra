@@ -34,5 +34,14 @@
         <operation>FILTER_INDEXED_MATCH</operation>
         <operation>FILTER_PK_MATCH</operation>
         <operation>IMPORT_METADATA</operation>
+        <operation>PAGINATION</operation>
     </SupportedOperations>
+    <Functions>
+        <Function>
+            <FunctionName>range</FunctionName>
+            <Signature>range(Tuple[Any, Any]):Tuple[Any]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Generates a JSON with the specification of Lucene range</Description>
+        </Function>
+    </Functions>
 </Connector>

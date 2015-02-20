@@ -18,6 +18,7 @@
 
 package com.stratio.connector.cassandra.statements;
 
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 
 /**
@@ -70,9 +71,9 @@ public class DropIndexStatement {
             sb.append("IF EXISTS ");
         }
         if (catalogInc) {
-            sb.append(catalog).append(".\"").append(indexName).append("\"");
+            sb.append(Utils.toCaseSensitive(catalog)).append('.').append(Utils.toCaseSensitive(indexName));
         } else {
-            sb.append("\"").append(indexName).append("\"");
+            sb.append(Utils.toCaseSensitive(indexName));
         }
 
         return sb.toString();

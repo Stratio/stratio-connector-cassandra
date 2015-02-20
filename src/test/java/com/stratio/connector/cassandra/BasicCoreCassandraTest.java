@@ -36,6 +36,7 @@ import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.result.ErrorResult;
 import com.stratio.crossdata.common.result.Result;
 
@@ -110,7 +111,7 @@ public class BasicCoreCassandraTest {
      * @param targetKeyspace The target keyspace.
      */
     public static void dropKeyspaceIfExists(String targetKeyspace) {
-        String query = "USE " + targetKeyspace;
+        String query = "USE " + Utils.toCaseSensitive(targetKeyspace);
         boolean ksExists = true;
         try {
             _session.execute(query);
@@ -119,7 +120,7 @@ public class BasicCoreCassandraTest {
         }
 
         if (ksExists) {
-            String q = "DROP KEYSPACE " + targetKeyspace;
+            String q = "DROP KEYSPACE " + Utils.toCaseSensitive(targetKeyspace);
             try {
                 _session.execute(q);
             } catch (Exception e) {

@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.IdentifierProperty;
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -42,17 +43,17 @@ public class CreateIndexStatement {
     /**
      * Map of lucene types associated with Cassandra data types.
      */
-    private static Map<String, String> luceneTypes = new HashMap<>();
+    private static Map<com.stratio.crossdata.common.metadata.DataType, String> luceneTypes = new HashMap<>();
 
     static {
-        luceneTypes.put("VARCHAR", "{type:\"string\"}");
-        luceneTypes.put("TEXT", "{type:\"string\"}");
-        luceneTypes.put("BOOLEAN", "{type:\"boolean\"}");
-        luceneTypes.put("DOUBLE", "{type:\"double\"}");
-        luceneTypes.put("BIGINT", "{type:\"long\"}");
-        luceneTypes.put("FLOAT", "{type:\"float\"}");
-        luceneTypes.put("INT", "{type:\"integer\"}");
-        luceneTypes.put(DataType.uuid().toString(), "{type:\"uuid\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.VARCHAR, "{type:\"string\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.TEXT, "{type:\"string\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.BOOLEAN, "{type:\"boolean\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.DOUBLE, "{type:\"double\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.BIGINT, "{type:\"long\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.FLOAT, "{type:\"float\"}");
+        luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.INT, "{type:\"integer\"}");
+        //luceneTypes.put(com.stratio.crossdata.common.metadata.DataType.UUID, "{type:\"uuid\"}");
     }
 
     private String columnForIndex;
@@ -113,9 +114,12 @@ public class CreateIndexStatement {
             //Create the new column for the Lucene Index
             try {
                 columnForIndex = getIndexName();
+                String catalog= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName()
+                        .getName());
+                String table=Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
                 session.execute(
-                        "ALTER TABLE " + indexMetadata.getName().getTableName().getQualifiedName() + " ADD "
-                                + columnForIndex + " varchar;");
+                        "ALTER TABLE " + catalog + '.' + table  +  " ADD "
+                                + Utils.toCaseSensitive(columnForIndex) + " varchar;");
             } catch (Exception e) {
                 throw new ExecutionException(
                         "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),
@@ -180,13 +184,13 @@ public class CreateIndexStatement {
         }
 
         if (name != null) {
-            sb.append(getIndexName()).append(" ");
+            sb.append((getIndexName())).append(" ");
         }
         sb.append("ON ");
         if (keyspaceIncluded) {
-            sb.append(keyspace).append(".");
+            sb.append(Utils.toCaseSensitive(keyspace)).append(".");
         }
-        sb.append(tableName);
+        sb.append(Utils.toCaseSensitive(tableName));
         sb.append(" (");
         if (type!=IndexType.FULL_TEXT) {
             int i = 0;
@@ -194,11 +198,11 @@ public class CreateIndexStatement {
                 if (i != 0) {
                     sb.append(",");
                 }
-                sb.append(entry.getValue().getName().getName());
+                sb.append(Utils.toCaseSensitive(entry.getValue().getName().getName()));
                 i = 1;
             }
         } else {
-            sb.append(columnForIndex);
+            sb.append(Utils.toCaseSensitive(columnForIndex));
         }
         sb.append(")");
 
@@ -265,9 +269,9 @@ public class CreateIndexStatement {
 
         // Iterate throught the columns.
         for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
-            sb.append(entry.getValue().getName().getName());
+            sb.append(Utils.toCaseSensitive(entry.getValue().getName().getName()));
             sb.append(":");
-            sb.append(luceneTypes.get(entry.getValue().getColumnType().name()));
+            sb.append(luceneTypes.get(entry.getValue().getColumnType().getDataType()));
             sb.append(",");
         }
 
