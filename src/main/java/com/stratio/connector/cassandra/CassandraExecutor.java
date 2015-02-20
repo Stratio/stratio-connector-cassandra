@@ -177,7 +177,7 @@ public final class CassandraExecutor {
             resultHandler.processException(queryId, new ExecutionException(unSupportException.getMessage(),
                     unSupportException));
         } catch (DriverException dex) {
-            resultHandler.processException(queryId, new ExecutionException(dex.getMessage(), dex));
+            resultHandler.processException(queryId, new ExecutionException(dex.getMessage()));
         } catch (Exception ex) {
             resultHandler.processException(queryId, new ExecutionException(ex.getMessage(), ex));
         }
@@ -214,7 +214,7 @@ public final class CassandraExecutor {
             resultHandler.processException(queryId, new ExecutionException(unSupportException.getMessage(),
                     unSupportException));
         } catch (DriverException dex) {
-            resultHandler.processException(queryId, new ExecutionException(dex.getMessage(), dex));
+            resultHandler.processException(queryId, new ExecutionException(dex.getMessage()));
         } catch (Exception ex) {
             resultHandler.processException(queryId, new ExecutionException(ex.getMessage(), ex));
         }
