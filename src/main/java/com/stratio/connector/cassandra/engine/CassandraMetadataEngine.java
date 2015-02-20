@@ -32,6 +32,7 @@ import com.stratio.connector.cassandra.statements.CreateTableStatement;
 import com.stratio.connector.cassandra.statements.DropCatalogStatement;
 import com.stratio.connector.cassandra.statements.DropIndexStatement;
 import com.stratio.connector.cassandra.statements.DropTableStatement;
+import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
 import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
@@ -227,39 +228,55 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
                 new CreateIndexStatement(indexMetadata, true, session);
-        CassandraExecutor.execute(indexStatement.toString(), session);
+        try {
+            CassandraExecutor.execute(indexStatement.toString(), session);
+        } catch (ConnectorException e) {
+            //remove de column create for the index
+            String tableName= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
+            String catalog= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
+            String remove = "ALTER TABLE " + catalog + "." + tableName  + " DROP " + indexMetadata
+                    .getName().getName();
+            CassandraExecutor.execute(remove,session);
+            throw e;
+        }
     }
 
     /**
      * Drop Index that was created previously.
      *
      * @param targetCluster The target cluster.
-     * @param indexName     The IndexName of the index.
+     * @param indexMetadata     The IndexName of the index.
      * @throws ConnectorException
      */
     @Override
-    public void dropIndex(ClusterName targetCluster, IndexMetadata indexName)
+    public void dropIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
-        DropIndexStatement indexStatement = new DropIndexStatement(indexName, false);
-        CassandraExecutor.execute(indexStatement.toString(), session);
+        DropIndexStatement indexStatement = new DropIndexStatement(indexMetadata, false);
+
+        //remove de column create for the index and automatically delete the index too
+        String tableName= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
+        String catalog= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
+        String remove = "ALTER TABLE " + catalog + "." + tableName  + " DROP " + indexMetadata
+                .getName().getName();
+        CassandraExecutor.execute(remove,session);
     }
 
     @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {
         session = sessions.get(clusterName.getName());
-        return  CassandraExecutor.getKeyspaces(session,clusterName.getName());
+        return CassandraExecutor.getKeyspaces(session, clusterName.getName());
     }
 
     @Override public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)
             throws ConnectorException {
         session = sessions.get(clusterName.getName());
-        return CassandraExecutor.getKeyspacesByName(session,catalogName,clusterName.getName());
+        return CassandraExecutor.getKeyspacesByName(session, catalogName, clusterName.getName());
     }
 
     @Override public TableMetadata provideTableMetadata(ClusterName clusterName, TableName tableName)
             throws ConnectorException {
-        session=sessions.get(clusterName.getName());
-        return CassandraExecutor.getTablesByTableName(session, tableName,clusterName.getName());
+        session = sessions.get(clusterName.getName());
+        return CassandraExecutor.getTablesByTableName(session, tableName, clusterName.getName());
     }
 
     private String getStringOptions(Map<Selector, Selector> options) {
