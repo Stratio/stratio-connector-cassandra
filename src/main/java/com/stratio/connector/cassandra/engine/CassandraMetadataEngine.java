@@ -193,7 +193,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override public void alterTable(ClusterName targetCluster, TableName name, AlterOptions alterOptions)
             throws ConnectorException {
-        AlterTableStatement tableStatement;
+        /*AlterTableStatement tableStatement;
         session = sessions.get(targetCluster.getName());
         switch (alterOptions.getOption()) {
         case ALTER_COLUMN:
@@ -211,7 +211,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             break;
         default:
             break;
-        }
+        }*/
     }
 
     /**
@@ -224,10 +224,10 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
             throws ConnectorException {
-        session = sessions.get(targetCluster.getName());
+        /*session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement =
                 new CreateIndexStatement(indexMetadata, true, session);
-        CassandraExecutor.execute(indexStatement.toString(), session);
+        CassandraExecutor.execute(indexStatement.toString(), session);*/
     }
 
     /**
