@@ -422,6 +422,9 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         String column = relation.getLeftTerm().toString()
                 .substring(relation.getLeftTerm().toString().lastIndexOf('.') + 1);
+
+
+
         String value = relation.getRightTerm().toString();
         // Generate query for column
         String[] processedQuery = processLuceneQueryType(value);

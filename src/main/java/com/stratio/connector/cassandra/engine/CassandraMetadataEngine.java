@@ -257,8 +257,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         //remove de column create for the index and automatically delete the index too
         String tableName= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
         String catalog= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
-        String remove = "ALTER TABLE " + catalog + "." + tableName  + " DROP " + indexMetadata
-                .getName().getName();
+        String remove = "ALTER TABLE " + catalog + "." + tableName  + " DROP " + Utils.toCaseSensitive(indexMetadata
+                .getName().getName());
         CassandraExecutor.execute(remove,session);
     }
 
