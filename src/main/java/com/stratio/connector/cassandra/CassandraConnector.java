@@ -50,6 +50,7 @@ import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.connector.IConnector;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
 import com.stratio.crossdata.common.connector.IQueryEngine;
+import com.stratio.crossdata.common.connector.ISqlEngine;
 import com.stratio.crossdata.common.connector.IStorageEngine;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
@@ -311,6 +312,10 @@ public class CassandraConnector implements IConnector {
     @Override
     public IMetadataEngine getMetadataEngine() throws UnsupportedException {
         return new CassandraMetadataEngine(sessions);
+    }
+
+    @Override public ISqlEngine getSqlEngine() throws UnsupportedException {
+        return null;
     }
 
 }
