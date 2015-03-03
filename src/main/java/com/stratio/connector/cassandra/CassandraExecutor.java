@@ -162,7 +162,6 @@ public final class CassandraExecutor {
                 }
             }
             //Send the last result
-            numPage++;
             QueryResult queryResult = com.stratio.crossdata.common.result
                     .QueryResult
                     .createQueryResult(utils.transformPagingToMetaResultSet(
