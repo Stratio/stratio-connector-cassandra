@@ -134,6 +134,7 @@ public class InsertIntoStatement {
         case "inet":
         case "ascii":
         case "varchar":
+        case "timestamp":
             return "'" + value + "'";
         default:
             return value;

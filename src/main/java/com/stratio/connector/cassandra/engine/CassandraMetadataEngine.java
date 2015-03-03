@@ -43,6 +43,7 @@ import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.metadata.CatalogMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.IndexType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
@@ -232,11 +233,11 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             CassandraExecutor.execute(indexStatement.toString(), session);
         } catch (ConnectorException e) {
             //remove de column create for the index
-            String tableName= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
-            String catalog= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
-            String remove = "ALTER TABLE " + catalog + "." + tableName  + " DROP " + indexMetadata
+            String tableName = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
+            String catalog = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
+            String remove = "ALTER TABLE " + catalog + "." + tableName + " DROP " + indexMetadata
                     .getName().getName();
-            CassandraExecutor.execute(remove,session);
+            CassandraExecutor.execute(remove, session);
             throw e;
         }
     }
@@ -245,21 +246,26 @@ public class CassandraMetadataEngine implements IMetadataEngine {
      * Drop Index that was created previously.
      *
      * @param targetCluster The target cluster.
-     * @param indexMetadata     The IndexName of the index.
+     * @param indexMetadata The IndexName of the index.
      * @throws ConnectorException
      */
     @Override
     public void dropIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
             throws ConnectorException {
+        String remove;
         session = sessions.get(targetCluster.getName());
         DropIndexStatement indexStatement = new DropIndexStatement(indexMetadata, false);
 
         //remove de column create for the index and automatically delete the index too
-        String tableName= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
-        String catalog= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
-        String remove = "ALTER TABLE " + catalog + "." + tableName  + " DROP " + Utils.toCaseSensitive(indexMetadata
-                .getName().getName());
-        CassandraExecutor.execute(remove,session);
+        String tableName = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
+        String catalog = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
+        if (indexMetadata.getType() == IndexType.FULL_TEXT) {
+            remove = "ALTER TABLE " + catalog + "." + tableName + " DROP " + Utils.toCaseSensitive(indexMetadata
+                    .getName().getName());
+        }else{
+            remove = "DROP INDEX " + catalog + "."  + Utils.toCaseSensitive(indexMetadata.getName().getName());
+        }
+        CassandraExecutor.execute(remove, session);
     }
 
     @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {

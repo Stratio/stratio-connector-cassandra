@@ -281,7 +281,7 @@ public class CassandraQueryEngine implements IQueryEngine {
                     ColumnSelector left = (ColumnSelector) relation.getLeftTerm();
                     String column = Utils.toCaseSensitive(left.getColumnName().getName());
                     sb.append(column).append(" ").append(relation.getOperator().toString()).append(" ");
-                    sb.append(right.toString());
+                    sb.append(Utils.getFormatType(left,right,session));
                 }
 
                 break;

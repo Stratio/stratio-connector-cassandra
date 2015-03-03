@@ -30,11 +30,10 @@ import org.apache.log4j.Logger;
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
-import com.datastax.driver.core.TableMetadata;
+import com.datastax.driver.core.Session;
 import com.stratio.crossdata.common.data.Cell;
-import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.ColumnName;
-import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
@@ -112,14 +111,12 @@ public class Utils {
         return new Cell(value);
     }
 
-
-
     /**
      * Transforms a Cassandra {@link com.datastax.driver.core.ResultSet} into a {@link
      * com.stratio.crossdata.common.data.ResultSet}.
      *
      * @param resultSet The input Cassandra result set.
-     * @param alias  The map with the relations between ColumnName and Alias.
+     * @param alias     The map with the relations between ColumnName and Alias.
      * @return An equivalent Meta ResultSet.
      */
     public com.stratio.crossdata.common.data.ResultSet transformToMetaResultSet(
@@ -137,17 +134,16 @@ public class Utils {
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
 
-            ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
+            ColumnName columnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
             ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
-            for (Map.Entry<Selector,String> entry : alias.entrySet())
-            {
-                if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())){
+            for (Map.Entry<Selector, String> entry : alias.entrySet()) {
+                if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())) {
                     columnMetadata = new ColumnMetadata(columnName, null, type);
                     columnMetadata.getName().setAlias(entry.getValue());
                     break;
-                } else{
-                    columnMetadata =  new ColumnMetadata(columnName,null,type);
+                } else {
+                    columnMetadata = new ColumnMetadata(columnName, null, type);
                 }
             }
             columnList.add(columnMetadata);
@@ -163,16 +159,16 @@ public class Utils {
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
                     ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
-                    boolean findIt=false;
-                    for (Map.Entry<Selector,String> entry : alias.entrySet())
-                    {
-                        if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())){
+                    boolean findIt = false;
+                    for (Map.Entry<Selector, String> entry : alias.entrySet()) {
+                        if (entry.getKey().getColumnName().getQualifiedName()
+                                .equals(cassandraColumnName.getQualifiedName())) {
                             metaRow.addCell(entry.getValue(), metaCell);
-                            findIt=true;
+                            findIt = true;
                             break;
                         }
                     }
-                    if (!findIt){
+                    if (!findIt) {
                         metaRow.addCell(def.getName(), metaCell);
                     }
                 }
@@ -185,13 +181,11 @@ public class Utils {
         return crs;
     }
 
-
     /**
      * Transforms a Cassandra {@link com.datastax.driver.core.ResultSet} into a {@link
      * com.stratio.crossdata.common.data.ResultSet}.
      *
-     *
-     * @param alias  The map with the relations between ColumnName and Alias.
+     * @param alias The map with the relations between ColumnName and Alias.
      * @return An equivalent Meta ResultSet.
      */
     public com.stratio.crossdata.common.data.ResultSet transformPagingToMetaResultSet(
@@ -200,24 +194,22 @@ public class Utils {
 
         CassandraMetadataHelper helper = new CassandraMetadataHelper();
 
-
         List<ColumnMetadata> columnList = new ArrayList<>();
         ColumnMetadata columnMetadata = null;
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
 
-            ColumnName columnName = new ColumnName(def.getKeyspace() , def.getTable(), def.getName());
+            ColumnName columnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
             ColumnType type = helper.toColumnType(def.getType().getName().toString());
             ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
-            for (Map.Entry<Selector,String> entry : alias.entrySet())
-            {
-                if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())){
+            for (Map.Entry<Selector, String> entry : alias.entrySet()) {
+                if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())) {
                     columnMetadata = new ColumnMetadata(columnName, null, type);
                     columnMetadata.getName().setAlias(entry.getValue());
                     break;
-                } else{
-                    columnMetadata =  new ColumnMetadata(columnName,null,type);
+                } else {
+                    columnMetadata = new ColumnMetadata(columnName, null, type);
                 }
             }
             columnList.add(columnMetadata);
@@ -233,16 +225,16 @@ public class Utils {
                     }
                     Cell metaCell = getCell(def.getType(), row, def.getName());
                     ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
-                    boolean findIt=false;
-                    for (Map.Entry<Selector,String> entry : alias.entrySet())
-                    {
-                        if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())){
+                    boolean findIt = false;
+                    for (Map.Entry<Selector, String> entry : alias.entrySet()) {
+                        if (entry.getKey().getColumnName().getQualifiedName()
+                                .equals(cassandraColumnName.getQualifiedName())) {
                             metaRow.addCell(entry.getValue(), metaCell);
-                            findIt=true;
+                            findIt = true;
                             break;
                         }
                     }
-                    if (!findIt){
+                    if (!findIt) {
                         metaRow.addCell(def.getName(), metaCell);
                     }
                 }
@@ -255,17 +247,15 @@ public class Utils {
         return crs;
     }
 
-
-
-
     /**
      * Get the Crossdata ColumnType from Cassandra DataType
+     *
      * @param type The {@link com.datastax.driver.core.DataType} of the column.
      * @return A {@link com.stratio.crossdata.common.metadata.ColumnType}
      */
     public ColumnType getCrossdataColumn(DataType type) {
         ColumnType columnType;
-        switch(type.getName()){
+        switch (type.getName()) {
         case ASCII:
         case BLOB:
         case COUNTER:
@@ -276,48 +266,80 @@ public class Utils {
         case UDT:
         case TUPLE:
         case CUSTOM:
-            columnType= new ColumnType(com.stratio.crossdata.common.metadata.DataType.NATIVE);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.NATIVE);
             break;
         case BIGINT:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.BIGINT);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.BIGINT);
             break;
         case BOOLEAN:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.BOOLEAN);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.BOOLEAN);
             break;
         case DECIMAL:
         case FLOAT:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.FLOAT);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.FLOAT);
             break;
         case DOUBLE:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.DOUBLE);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.DOUBLE);
             break;
         case INT:
         case VARINT:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.INT);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.INT);
             break;
         case TEXT:
         case VARCHAR:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
             break;
         case LIST:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.LIST);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.LIST);
             break;
         case SET:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.SET);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.SET);
             break;
         case MAP:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.MAP);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.MAP);
             break;
         default:
-            columnType =  new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
+            columnType = new ColumnType(com.stratio.crossdata.common.metadata.DataType.TEXT);
         }
         columnType.setDbType(type.getName().toString());
         return columnType;
     }
 
-
-    public static String toCaseSensitive(String s){
+    public static String toCaseSensitive(String s) {
         return "\"" + s + "\"";
     }
 
+    public static String getFormatType(ColumnSelector left, Selector right, Session session) {
+        switch (session.getCluster().getMetadata().getKeyspace(left.getColumnName().getTableName().getCatalogName()
+                .getName()).getTable(left.getColumnName().getTableName().getName()).getColumn(left.getColumnName()
+                .getName())
+                .getType().getName()) {
+
+        case ASCII:
+        case BIGINT:
+        case BLOB:
+        case BOOLEAN:
+        case COUNTER:
+        case DECIMAL:
+        case DOUBLE:
+        case FLOAT:
+        case INET:
+        case INT:
+        case TEXT:
+        case TIMESTAMP:
+        case UUID:
+        case VARCHAR:
+        case VARINT:
+        case LIST:
+        case SET:
+        case MAP:
+        case UDT:
+        case TUPLE:
+        case CUSTOM:
+            return right.toString();
+        case TIMEUUID:
+            return right.getStringValue();
+        }
+        return null;
+    }
 }
