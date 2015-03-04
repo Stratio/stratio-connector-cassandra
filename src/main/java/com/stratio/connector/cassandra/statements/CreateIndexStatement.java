@@ -113,7 +113,7 @@ public class CreateIndexStatement {
 
             //Create the new column for the Lucene Index
             try {
-                columnForIndex = getIndexName();
+                columnForIndex = indexMetadata.getName().getName();
                 String catalog= Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName()
                         .getName());
                 String table=Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
@@ -160,7 +160,7 @@ public class CreateIndexStatement {
         } else {
             result = name;
             if (IndexType.FULL_TEXT.equals(type)) {
-                result = name;
+                result = keyspace + "_" + tableName + "_" + name;
             }
         }
         return result;

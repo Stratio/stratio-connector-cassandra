@@ -37,6 +37,7 @@ import com.datastax.driver.core.exceptions.DriverException;
 import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.CatalogName;
+import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.IndexName;
@@ -48,12 +49,14 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.CatalogMetadata;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.IndexType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
+import com.stratio.crossdata.common.utils.StringUtils;
 
 /**
  * CassandraExecutor allows to interact with the Cassandra Datastax Driver and execute the queries.
@@ -330,18 +333,26 @@ public final class CassandraExecutor {
                     cassandraTableMetadata.getName(), cassandraColumn.getName());
             ColumnType columnType = utils.getCrossdataColumn(cassandraColumn.getType());
             ColumnMetadata columnMetadata = new ColumnMetadata(columnName, null, columnType);
-            columns.put(columnName, columnMetadata);
+            if (cassandraColumn.getIndex()==null || !cassandraColumn.getIndex().isCustomIndex()) {
+                columns.put(columnName, columnMetadata);
+            }
 
             //Indexes
             com.datastax.driver.core.ColumnMetadata.IndexMetadata cassandraIndex = cassandraColumn.getIndex();
             if (cassandraIndex != null) {
                 IndexName indexName = new IndexName(cassandraTableMetadata.getKeyspace().getName(),
                         cassandraTableMetadata.getName(), cassandraIndex.getName());
-                Map<ColumnName, ColumnMetadata> columnIndex = new HashMap<>();
+                Map<ColumnName, ColumnMetadata> columnIndex=new HashMap<>();
 
-                columnIndex.put(columnName, columnMetadata);
-                IndexMetadata indexMetadata = new IndexMetadata(indexName, columnIndex,
-                        cassandraIndex.isCustomIndex() ? IndexType.CUSTOM : IndexType.DEFAULT, null);
+
+                IndexMetadata indexMetadata;
+                if (cassandraIndex.isCustomIndex()){
+                    columnIndex=getLuceneIndex(session, indexName,cassandraIndex);
+                    indexMetadata = new IndexMetadata(indexName, columnIndex, IndexType.FULL_TEXT , null);
+                }else {
+                    columnIndex.put(columnName, columnMetadata);
+                    indexMetadata = new IndexMetadata(indexName, columnIndex, IndexType.DEFAULT, null);
+                }
                 indexes.put(indexName, indexMetadata);
             }
         }
@@ -371,5 +382,45 @@ public final class CassandraExecutor {
 
         return new TableMetadata(tableName, null, columns, indexes, clusterRef, partitionKey, clusterKey);
     }
+
+    private static Map<ColumnName, ColumnMetadata> getLuceneIndex(Session session, IndexName indexName,
+            com.datastax.driver.core.ColumnMetadata.IndexMetadata cassandraIndex) {
+
+        Map<ColumnName, ColumnMetadata> columnMap=new HashMap<>();
+
+        String table=cassandraIndex.getIndexedColumn().getTable().getName();
+        String keyspace=cassandraIndex.getIndexedColumn().getTable().getKeyspace().getName();
+        String sqlIndex="SELECT index_options from system.schema_columns where keyspace_name='"+ keyspace +
+                "' and columnfamily_name ='" + table + "'";
+
+        ResultSet result=session.execute(sqlIndex);
+        QueryResult queryResult=com.stratio.crossdata.common.result
+                .QueryResult.createQueryResult(utils.transformToMetaResultSet(result, new HashMap<Selector,
+                String>()), 0, true);
+
+        for (com.stratio.crossdata.common.data.Row row:queryResult.getResultSet().getRows()){
+            Map<String,Cell> rowCell=row.getCells();
+            if(!rowCell.get("index_options").getValue().equals("null")){
+                Map<Selector,Selector> map=StringUtils.convertJsonToOptions(new TableName(keyspace,table),
+                        rowCell.get("index_options").getValue().toString());
+
+                String schema=map.get(new StringSelector("schema")).getStringValue();
+                String fieldsString=schema.substring(schema.indexOf("fields:{")+9);
+                String[] fields=fieldsString.split(",");
+                for(String field:fields){
+                    String[] fieldParts=field.split(":");
+                    String fieldName=fieldParts[0].replace("\"","");
+                    String fieldType=fieldParts[2].replace("}","").replace("\"","");
+                    ColumnName columnName=new ColumnName(keyspace,table,fieldName);
+                    ColumnType columnType=new ColumnType(Utils.getDataTypeFromString(fieldType));
+                    columnType.setDbType(fieldType);
+                    ColumnMetadata columnMetadata=new ColumnMetadata(columnName,null,columnType);
+                    columnMap.put(columnName,columnMetadata);
+                }
+            }
+        }return columnMap;
+    }
+
+
 
 }
