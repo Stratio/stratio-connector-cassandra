@@ -4,18 +4,18 @@ set -e
 
 GROUP='stratio'
 USER='stratio'
-DIR_INSTALL='/opt/sds/stratio-connector-cassandra'
-DIR_CONF='/etc/sds/stratio-connector-cassandra'
-DIR_LOG='/var/log/sds/stratio-connector-cassandra'
+DIR_INSTALL='/opt/sds/connectors/cassandra'
+DIR_CONF='/etc/sds/connectors/cassandra'
+DIR_LOG='/var/log/sds/connectors/cassandra'
 
-cp /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra-* /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra
-cp /opt/sds/stratio-connector-cassandra/template/CassandraConnector /etc/init.d/stratio-connector-cassandra
+cp /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra-* /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
+cp /opt/sds/connectors/cassandra/template/CassandraConnector /etc/init.d/stratio-connector-cassandra
 chmod 755 /etc/init.d/stratio-connector-cassandra
-chmod 755 /opt/sds/stratio-connector-cassandra/bin
-chmod +x /opt/sds/stratio-connector-cassandra/bin/stratio-connector-cassandra
+chmod 755 /opt/sds/connectors/cassandra/bin
+chmod +x /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 chmod +x /etc/default/stratio-connector-cassandra
-export CASSANDRA_CONNECTOR_LIB=/opt/sds/stratio-connector-cassandra
-export CASSANDRA_CONNECTOR_CONF="/etc/sds/stratio-connector-cassandra"
+export CASSANDRA_CONNECTOR_LIB=/opt/sds/connectors/cassandra
+export CASSANDRA_CONNECTOR_CONF="/etc/sds/connectors/cassandra"
 
 case "$1" in
   configure)
