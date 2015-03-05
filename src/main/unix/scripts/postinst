@@ -47,7 +47,8 @@ case "$1" in
   update-rc.d stratio-connector-cassandra defaults
 
   ;;
-esac    
+esac
+ln -s /opt/sds/connectors/cassandra/logs /var/log/sds/connectors/cassandra/stratio-connector-cassandra.log
 
 
 exit 0

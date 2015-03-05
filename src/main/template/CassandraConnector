@@ -20,7 +20,7 @@ start() {
   fi
   cd /opt/sds/connectors/cassandra/
 
-  bin/stratio-connector-cassandra start >> $LOGFILE
+  bin/stratio-connector-cassandra start
   echo 'Cassandra Connector started'
 }
 
@@ -33,7 +33,7 @@ stop() {
 #  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
 #  echo 'Service stopped' >&2
     cd /opt/sds/connectors/cassandra/
-    bin/stratio-connector-cassandra stop >> $LOGFILE
+    bin/stratio-connector-cassandra stop
     echo 'Cassandra Connector stopped'
 }
 
