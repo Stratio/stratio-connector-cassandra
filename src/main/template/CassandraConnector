@@ -18,11 +18,10 @@ start() {
     echo 'Service already running' >&2
     return 1
   fi
-  echo 'Starting service…' >&2
   cd /opt/sds/connectors/cassandra/
 
-    nohup bin/stratio-connector-cassandra start > $LOGFILE & echo $! $RUNAS > $PIDFILE
-  echo 'Service started'
+  bin/stratio-connector-cassandra start >> $LOGFILE
+  echo 'Cassandra Connector started'
 }
 
 stop() {
@@ -34,8 +33,8 @@ stop() {
 #  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
 #  echo 'Service stopped' >&2
     cd /opt/sds/connectors/cassandra/
-    nohup bin/stratio-connector-cassandra stop > $LOGFILE
-    echo 'Service stopped'
+    bin/stratio-connector-cassandra stop >> $LOGFILE
+    echo 'Cassandra Connector stopped'
 }
 
 uninstall() {
