@@ -12,14 +12,14 @@
 RUNAS=root
 
 PIDFILE=/var/run/sds/stratio-connector-cassandra.pid
-LOGFILE=/var/log/sds/stratio-connector-cassandra/stratio-connector-cassandra.log
+LOGFILE=/var/log/sds/connectors/cassandra/stratio-connector-cassandra.log
 start() {
   if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
     echo 'Service already running' >&2
     return 1
   fi
   echo 'Starting service…' >&2
-  cd /opt/sds/stratio-connector-cassandra/
+  cd /opt/sds/connectors/cassandra/
 
     nohup bin/stratio-connector-cassandra start > $LOGFILE & echo $! $RUNAS > $PIDFILE
   echo 'Service started'
