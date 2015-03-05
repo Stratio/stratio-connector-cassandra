@@ -152,7 +152,7 @@
                     <assembly>
                         <mkdirs>
                             <paths>
-                                <path>etc/sds/stratio-connector-cassandra</path>
+                                <path>etc/sds/connectors/cassandra</path>
                                 <path>etc/default</path>
                                 <path>var/run/sds</path>
                             </paths>
