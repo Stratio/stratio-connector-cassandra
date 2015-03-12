@@ -43,5 +43,11 @@
             <FunctionType>simple</FunctionType>
             <Description>Generates a JSON with the specification of Lucene range</Description>
         </Function>
+        <Function>
+            <FunctionName>should</FunctionName>
+            <Signature>range(Tuple[Any, Any]):Tuple[Any]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Generates a JSON with Lucene OR query </Description>
+        </Function>
     </Functions>
 </Connector>
