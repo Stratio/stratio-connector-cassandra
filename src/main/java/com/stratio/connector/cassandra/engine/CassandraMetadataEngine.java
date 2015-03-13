@@ -227,8 +227,13 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
             throws ConnectorException {
         session = sessions.get(targetCluster.getName());
-        CreateIndexStatement indexStatement =
-                new CreateIndexStatement(indexMetadata, true, session);
+        CreateIndexStatement indexStatement;
+        try {
+            indexStatement = new CreateIndexStatement(indexMetadata, true, session);
+        }catch(Exception e){
+            throw e;
+        }
+
         try {
             CassandraExecutor.execute(indexStatement.toString(), session);
         } catch (ConnectorException e) {
@@ -262,10 +267,17 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         if (indexMetadata.getType() == IndexType.FULL_TEXT) {
             remove = "ALTER TABLE " + catalog + "." + tableName + " DROP " + Utils.toCaseSensitive(indexMetadata
                     .getName().getName());
+            CassandraExecutor.execute(remove, session);
         }else{
             remove = "DROP INDEX " + catalog + "."  + Utils.toCaseSensitive(indexMetadata.getName().getName());
+           /* String removeColumn = "ALTER TABLE " + catalog + "." + tableName + " DROP " + Utils.toCaseSensitive
+                    (indexMetadata
+                    .getName().getName());*/
+            CassandraExecutor.execute(remove, session);
+            //CassandraExecutor.execute(removeColumn, session);
         }
-        CassandraExecutor.execute(remove, session);
+
+
     }
 
     @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {

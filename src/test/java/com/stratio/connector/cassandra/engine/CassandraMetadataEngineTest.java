@@ -27,12 +27,14 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.AlterOperation;
 import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
+import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.IndexName;
@@ -47,8 +49,10 @@ import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.IndexType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
+import com.stratio.crossdata.common.utils.StringUtils;
 
 public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
@@ -693,7 +697,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        Assert.assertEquals(assertIndex("IndiceLucene", "demoMetadata9", "users1"), "IndiceLucene");
+
     }
 
 
@@ -859,6 +863,40 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
     }
+
+    @Test
+    public void getIndexLuceneTest(){
+
+        Session session = sessions.get("cluster");
+        String sqlIndex="select index_name,index_options from system.schema_columns where keyspace_name = " +
+                "'nebula' and columnfamily_name ='main'";
+
+        Utils utils = new Utils();
+        ResultSet result=session.execute(sqlIndex);
+        QueryResult queryResult=com.stratio.crossdata.common.result
+                .QueryResult.createQueryResult(utils.transformToMetaResultSet(result, new HashMap<Selector,
+                        String>()), 0, true);
+
+
+        for (com.stratio.crossdata.common.data.Row row:queryResult.getResultSet().getRows()){
+            Map<String,Cell> rowCell=row.getCells();
+            if(!rowCell.get("index_options").getValue().equals("null")){
+                Map<Selector,Selector> map= StringUtils.convertJsonToOptions(new TableName("catalogTest", "tableFecha"),
+                        rowCell.get("index_options").getValue().toString());
+
+                String schema=map.get(new StringSelector("schema")).getStringValue();
+                String fieldsString=schema.substring(schema.indexOf("fields:{")+9);
+                String[] fields=fieldsString.split(",");
+                for(String field:fields){
+                    String[] fieldParts=field.split(":");
+                    String fieldName=fieldParts[0];
+                    String fieldType=fieldParts[2].replace("}","");
+                }
+            }
+        }
+    }
+
+
 
     @AfterClass
     public void restore() {

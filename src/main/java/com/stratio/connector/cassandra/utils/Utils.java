@@ -310,10 +310,11 @@ public class Utils {
     }
 
     public static String getFormatType(ColumnSelector left, Selector right, Session session) {
-        switch (session.getCluster().getMetadata().getKeyspace(left.getColumnName().getTableName().getCatalogName()
-                .getName()).getTable(left.getColumnName().getTableName().getName()).getColumn(left.getColumnName()
-                .getName())
-                .getType().getName()) {
+
+        switch (session.getCluster().getMetadata().getKeyspace(Utils.toCaseSensitive(left.getColumnName().getTableName()
+                .getCatalogName().getName())).getTable(
+                Utils.toCaseSensitive(left.getColumnName().getTableName().getName())).getColumn
+                (Utils.toCaseSensitive(left.getColumnName().getName())).getType().getName()) {
 
         case ASCII:
         case BIGINT:
@@ -341,5 +342,32 @@ public class Utils {
             return right.getStringValue();
         }
         return null;
+    }
+
+    public static com.stratio.crossdata.common.metadata.DataType getDataTypeFromString(String fieldType) {
+        switch (fieldType.toUpperCase()) {
+        case "ASCII":
+            return com.stratio.crossdata.common.metadata.DataType.TEXT;
+        case "BIGINT":
+            return com.stratio.crossdata.common.metadata.DataType.BIGINT;
+        case "BOOLEAN":
+            return com.stratio.crossdata.common.metadata.DataType.BOOLEAN;
+        case "DOUBLE":
+            return com.stratio.crossdata.common.metadata.DataType.DOUBLE;
+        case "FLOAT":
+            return com.stratio.crossdata.common.metadata.DataType.FLOAT;
+        case "INT":
+            return com.stratio.crossdata.common.metadata.DataType.INT;
+        case "TEXT":
+        case "STRING":
+            return com.stratio.crossdata.common.metadata.DataType.TEXT;
+        case "VARCHAR":
+            return com.stratio.crossdata.common.metadata.DataType.VARCHAR;
+        case "VARINT":
+            return com.stratio.crossdata.common.metadata.DataType.INT;
+        default:
+            return com.stratio.crossdata.common.metadata.DataType.NATIVE;
+        }
+
     }
 }

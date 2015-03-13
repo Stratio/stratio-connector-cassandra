@@ -35,6 +35,7 @@ import org.testng.annotations.Test;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.BasicCoreCassandraTest;
 import com.stratio.connector.cassandra.ResultHandler;
+import com.stratio.connector.cassandra.statements.SelectStatement;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ClusterName;
@@ -136,7 +137,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
         assertEquals(value, "name_5", "The value not match with the expected value");
 
-        assertEquals(cqe.parseQuery(),
+        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
@@ -205,7 +207,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        assertEquals(cqe.parseQuery(),
+        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' ORDER BY \"email\" ASC LIMIT 100",
                 "The select statement not match with the expected value");
 
@@ -277,7 +280,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
         assertEquals(value, "name_5", "The value not match with the expected value");
 
-        assertEquals(cqe.parseQuery(),
+        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 50",
                 "The select statement query obtained not match with the expected query");
 
@@ -350,7 +354,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             }
             assertEquals(value, "name_5", "The value not match with the expected value");
 
-            assertEquals(cqe.parseQuery(),
+            SelectStatement ss=new SelectStatement(workflow,100,sessions);
+            assertEquals(ss.parseQuery(),
                     "SELECT \"name\",\"gender\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                     "The select query obtained not match with the expected query");
         } catch (Exception ex) {
@@ -421,7 +426,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        assertEquals(cqe.parseQuery(),
+        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        assertEquals(ss.parseQuery(),
                 "SELECT Count(*) FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
@@ -489,7 +495,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        assertEquals(cqe.parseQuery(),
+        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        assertEquals(ss.parseQuery(),
                 "SELECT now() FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
@@ -557,7 +564,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        assertEquals(cqe.parseQuery(),
+        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        assertEquals(ss.parseQuery(),
                 "SELECT ttl(\"phrase\") FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
@@ -628,42 +636,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
     }
 
 
-
-
-    @Test
-    public void processLuceneQueryType() {
-
-        Map<String, Session> sessions = new HashMap<>();
-        sessions.put("cluster", this._session);
-
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
-        String[][] queries = {
-                //Input    Type       parsed
-                { "?", "wildcard", "?" },
-                { "*", "wildcard", "*" },
-                { "\\?", "match", "?" },
-                { "\\*", "match", "*" },
-                { "\\?sf", "match", "?sf" },
-                { "af\\?", "match", "af?" },
-                { "s\\?f", "match", "s?f" },
-                { "sdf", "match", "sdf" },
-                { "*asd*", "wildcard", "*asd*" },
-                { "?as?", "wildcard", "?as?" },
-                { "?as*", "wildcard", "?as*" },
-                { "[asd", "regex", "[asd" },
-                { "fa]", "regex", "fa]" },
-                { "]*sf", "regex", "]*sf" },
-                { "~as", "match", "~as" },
-                { "as~2", "fuzzy", "as~2" } };
-
-        for (String[] query : queries) {
-            String[] result = cqe.processLuceneQueryType(query[0]);
-            assertEquals(result[0], query[1], "Query type does not match");
-            assertEquals(result[1], query[2], "Parsed does not match");
-        }
-
-    }
-
     @Test
     public void basicSelectAsyncTest() {
 
@@ -725,7 +697,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
 
-        assertEquals(cqe.parseQuery(),
+        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
@@ -752,21 +725,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
     }
 
-    @Test
-    public void sessionTest() {
-
-        Map<String, Session> sessions = new HashMap<>();
-        sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
-
-        try {
-            cqe.getSession();
-            Assert.assertTrue(true);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
-
-    }
 
     @AfterClass
     public void restore() {

@@ -122,6 +122,14 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/config</directory>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -152,7 +160,7 @@
                     <assembly>
                         <mkdirs>
                             <paths>
-                                <path>etc/sds/stratio-connector-cassandra</path>
+                                <path>etc/sds/connectors/cassandra</path>
                                 <path>etc/default</path>
                                 <path>var/run/sds</path>
                             </paths>
@@ -164,23 +172,23 @@
                         </mkdirs>
                         <copyDirectory>
                             <from>target/stratio-connector-cassandra-${project.version}/bin</from>
-                            <to>opt/sds/stratio-connector-cassandra/bin</to>
+                            <to>opt/sds/connectors/cassandra/bin</to>
                         </copyDirectory>
                         <copyDirectory>
                             <from>target/stratio-connector-cassandra-${project.version}/lib</from>
-                            <to>opt/sds/stratio-connector-cassandra/lib</to>
+                            <to>opt/sds/connectors/cassandra/lib</to>
                         </copyDirectory>
                         <copyDirectory>
                             <from>target/stratio-connector-cassandra-${project.version}/conf</from>
-                            <to>opt/sds/stratio-connector-cassandra/conf</to>
+                            <to>opt/sds/connectors/cassandra/conf</to>
                         </copyDirectory>
                         <copyDirectory>
                             <from>src/main/template</from>
-                            <to>opt/sds/stratio-connector-cassandra/template</to>
+                            <to>opt/sds/connectors/cassandra/template</to>
                         </copyDirectory>
                         <copyDirectory>
                             <from>src/main/config</from>
-                            <to>etc/sds/stratio-connector-cassandra</to>
+                            <to>etc/sds/connectors/cassandra</to>
                         </copyDirectory>
                         <copyDirectory>
                             <from>src/main/unix/files_and_dirs/etc/default</from>
@@ -188,11 +196,11 @@
                         </copyDirectory>
                         <copyFile>
                             <path>src/main/include/LICENSE</path>
-                            <toFile>opt/sds/stratio-connector-cassandra/LICENSE</toFile>
+                            <toFile>opt/sds/connectors/cassandra/LICENSE</toFile>
                         </copyFile>
                         <copyFile>
                             <path>src/main/include/NOTICE</path>
-                            <toFile>opt/sds/stratio-connector-cassandra/NOTICE</toFile>
+                            <toFile>opt/sds/connectors/cassandra/NOTICE</toFile>
                         </copyFile>
                     </assembly>
                 </configuration>

@@ -84,6 +84,13 @@ public class CassandraConnector implements IConnector {
     private int defaultLimit;
 
     /**
+     * Engines
+     */
+    private CassandraStorageEngine storageEngine;
+    private CassandraQueryEngine queryEngine;
+    private CassandraMetadataEngine metadataEngine;
+
+    /**
      * Constructor.
      */
     public CassandraConnector() {
@@ -289,7 +296,11 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IStorageEngine getStorageEngine() throws UnsupportedException {
-        return new CassandraStorageEngine(sessions);
+        if(storageEngine!=null){
+            return storageEngine;
+        }else {
+            return new CassandraStorageEngine(sessions);
+        }
     }
 
     /**
@@ -300,7 +311,12 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IQueryEngine getQueryEngine() throws UnsupportedException {
-        return new CassandraQueryEngine(sessions, defaultLimit);
+        if(queryEngine!=null){
+            return queryEngine;
+        }else{
+            return new CassandraQueryEngine(sessions, defaultLimit);
+        }
+
     }
 
     /**
@@ -311,7 +327,11 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IMetadataEngine getMetadataEngine() throws UnsupportedException {
-        return new CassandraMetadataEngine(sessions);
+        if (metadataEngine!=null){
+            return metadataEngine;
+        }else {
+            return new CassandraMetadataEngine(sessions);
+        }
     }
 
     @Override public ISqlEngine getSqlEngine() throws UnsupportedException {
