@@ -1,3 +1,0 @@
-export CASSANDRA_CONNECTOR_CONF="/etc/sds/connectors/cassandra"
-export CASSANDRA_CONNECTOR_HOME="/opt/sds/connectors/cassandra"
-export CASSANDRA_CONNECTOR_LOGS="/var/logs/sds/connectors/cassandra"
