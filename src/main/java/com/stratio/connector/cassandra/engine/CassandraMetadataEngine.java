@@ -195,7 +195,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     @Override public void alterTable(ClusterName targetCluster, TableName name, AlterOptions alterOptions)
             throws ConnectorException {
-        /*AlterTableStatement tableStatement;
+        AlterTableStatement tableStatement;
         session = sessions.get(targetCluster.getName());
         switch (alterOptions.getOption()) {
         case ALTER_COLUMN:
@@ -213,7 +213,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             break;
         default:
             break;
-        }*/
+        }
     }
 
     /**
