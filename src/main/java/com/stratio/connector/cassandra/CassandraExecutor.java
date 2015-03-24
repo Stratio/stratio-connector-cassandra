@@ -404,21 +404,26 @@ public final class CassandraExecutor {
                 Map<Selector,Selector> map=StringUtils.convertJsonToOptions(new TableName(keyspace,table),
                         rowCell.get("index_options").getValue().toString());
 
-                String schema=map.get(new StringSelector("schema")).getStringValue();
-                String fieldsString=schema.substring(schema.indexOf("fields:{")+9);
-                String[] fields=fieldsString.split(",");
-                for(String field:fields){
-                    String[] fieldParts=field.split(":");
-                    String fieldName=fieldParts[0].replace("\"","");
-                    String fieldType=fieldParts[2].replace("}","").replace("\"","");
-                    ColumnName columnName=new ColumnName(keyspace,table,fieldName);
-                    ColumnType columnType=new ColumnType(Utils.getDataTypeFromString(fieldType));
-                    columnType.setDbType(fieldType);
-                    ColumnMetadata columnMetadata=new ColumnMetadata(columnName,null,columnType);
-                    columnMap.put(columnName,columnMetadata);
+                if (!map.isEmpty()) {
+                    String schema = map.get(new StringSelector("schema")).getStringValue();
+                    String fieldsString = schema.substring(schema.indexOf("fields:{") + 8);
+                    String[] fields = fieldsString.split(",");
+                    for (String field : fields) {
+                        String[] fieldParts = field.split(":");
+                        if (fieldParts.length==3) {
+                            String fieldName = fieldParts[0].replace("\"", "");
+                            String fieldType = fieldParts[2].replace("}", "").replace("\"", "");
+                            ColumnName columnName = new ColumnName(keyspace, table, fieldName);
+                            ColumnType columnType = new ColumnType(Utils.getDataTypeFromString(fieldType));
+                            columnType.setDbType(fieldType);
+                            ColumnMetadata columnMetadata = new ColumnMetadata(columnName, null, columnType);
+                            columnMap.put(columnName, columnMetadata);
+                        }
+                    }
                 }
             }
-        }return columnMap;
+        }
+        return columnMap;
     }
 
 
