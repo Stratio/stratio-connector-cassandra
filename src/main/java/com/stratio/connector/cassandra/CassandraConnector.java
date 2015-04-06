@@ -50,7 +50,6 @@ import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.connector.IConnector;
 import com.stratio.crossdata.common.connector.IMetadataEngine;
 import com.stratio.crossdata.common.connector.IQueryEngine;
-import com.stratio.crossdata.common.connector.ISqlEngine;
 import com.stratio.crossdata.common.connector.IStorageEngine;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
@@ -96,18 +95,18 @@ public class CassandraConnector implements IConnector {
     public CassandraConnector() {
         sessions = new HashMap<>();
         XPathFactory xFactory = XPathFactory.newInstance();
-        Document d=null;
+        Document d = null;
         try {
             InputStream inputStream = getClass()
                     .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
             d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
 
         } catch (SAXException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration",e);
+            LOG.trace("Impossible to read Manifest with the connector configuration", e);
         } catch (IOException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration",e);
+            LOG.trace("Impossible to read Manifest with the connector configuration", e);
         } catch (ParserConfigurationException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration",e);
+            LOG.trace("Impossible to read Manifest with the connector configuration", e);
         }
         // create an XPath object
         XPath xpath = xFactory.newXPath();
@@ -118,7 +117,7 @@ public class CassandraConnector implements IConnector {
             result = expr.evaluate(d, XPathConstants.NODESET);
             this.connectorName = ((NodeList) result).item(0).getNodeValue();
         } catch (XPathExpressionException e) {
-            LOG.trace("Impossible to read Manifest with the connector name",e);
+            LOG.trace("Impossible to read Manifest with the connector name", e);
             this.connectorName = "UNKNOWN";
         }
 
@@ -131,7 +130,7 @@ public class CassandraConnector implements IConnector {
 
             }
         } catch (XPathExpressionException e) {
-            LOG.trace("Impossible to read Manifest with the Datastore name ",e);
+            LOG.trace("Impossible to read Manifest with the Datastore name ", e);
             datastoreName = new String[1];
             this.datastoreName[0] = "UNKNOWN";
         }
@@ -296,9 +295,9 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IStorageEngine getStorageEngine() throws UnsupportedException {
-        if(storageEngine!=null){
+        if (storageEngine != null) {
             return storageEngine;
-        }else {
+        } else {
             return new CassandraStorageEngine(sessions);
         }
     }
@@ -311,9 +310,9 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IQueryEngine getQueryEngine() throws UnsupportedException {
-        if(queryEngine!=null){
+        if (queryEngine != null) {
             return queryEngine;
-        }else{
+        } else {
             return new CassandraQueryEngine(sessions, defaultLimit);
         }
 
@@ -327,15 +326,11 @@ public class CassandraConnector implements IConnector {
      */
     @Override
     public IMetadataEngine getMetadataEngine() throws UnsupportedException {
-        if (metadataEngine!=null){
+        if (metadataEngine != null) {
             return metadataEngine;
-        }else {
+        } else {
             return new CassandraMetadataEngine(sessions);
         }
-    }
-
-    @Override public ISqlEngine getSqlEngine() throws UnsupportedException {
-        return null;
     }
 
 }

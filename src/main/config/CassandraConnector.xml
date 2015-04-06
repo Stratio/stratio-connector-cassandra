@@ -33,6 +33,7 @@
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
         <operation>FILTER_PK_MATCH</operation>
+        <operation>FILTER_INDEXED_LIKE</operation>
         <operation>IMPORT_METADATA</operation>
         <operation>PAGINATION</operation>
     </SupportedOperations>

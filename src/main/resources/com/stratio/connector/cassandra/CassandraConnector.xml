@@ -2,7 +2,7 @@
 <Connector>
     <ConnectorName>CassandraConnector</ConnectorName>
     <DataStores>
-        <DataStoreName>cassandra</DataStoreName>
+        <DataStoreName>Cassandra</DataStoreName>
     </DataStores>
     <Version>0.2.0</Version>
     <RequiredProperties>
@@ -33,6 +33,7 @@
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
         <operation>FILTER_PK_MATCH</operation>
+        <operation>FILTER_INDEXED_LIKE</operation>
         <operation>IMPORT_METADATA</operation>
         <operation>PAGINATION</operation>
     </SupportedOperations>

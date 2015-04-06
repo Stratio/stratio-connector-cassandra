@@ -174,6 +174,7 @@ public class SelectStatement {
             case IN:
             case BETWEEN:
                 break;
+            case LIKE:
             case MATCH:
                 if (luceneIndexExist) {
                     luceneIndex.append(",");
