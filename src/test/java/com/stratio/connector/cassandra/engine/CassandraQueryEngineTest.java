@@ -23,9 +23,11 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -88,7 +90,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -96,11 +100,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_LIMIT);
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
-        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
@@ -109,7 +115,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
         typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
         typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
-        Select select = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
@@ -158,26 +164,30 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_ORDER_BY);
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_ORDER_BY, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
-        Filter filter2 = new Filter(Operations.SELECT_ORDER_BY, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
 
         List<OrderByClause> listOrderBy=new ArrayList<>();
         Selector columnSelector=new ColumnSelector(new ColumnName("demo","users","email"));
         OrderByClause orderByClause=new OrderByClause(OrderDirection.ASC,columnSelector);
         listOrderBy.add(orderByClause);
-        OrderBy orderBy=new OrderBy(Operations.SELECT_ORDER_BY,listOrderBy);
+        OrderBy orderBy=new OrderBy(operationsSet2,listOrderBy);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
@@ -186,7 +196,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
         typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
         typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
-        Select select = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
@@ -228,7 +238,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -236,13 +248,15 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_LIMIT);
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
-        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
-        Limit limit = new Limit(Operations.SELECT_LIMIT, 50);
+        Limit limit = new Limit(operationsSet2, 50);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
@@ -251,7 +265,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
         typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
         typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
-        Select select = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
@@ -303,7 +317,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName2);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -311,11 +327,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.FILTER_INDEXED_EQ);
         Relation relation2 = new Relation(selector2, Operator.EQ, rightTerm2);
-        Filter filter2 = new Filter(Operations.FILTER_INDEXED_EQ, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
         Relation relation = new Relation(selector, Operator.EQ, rightTerm);
-        Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "nameAlias");
@@ -327,7 +345,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         typeMap.put("demo.users.gender", new ColumnType(DataType.VARCHAR));
         typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
         typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "gender")), new ColumnType(DataType.VARCHAR));
-        Select aliasSelect = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
+        Set<Operations> operationsSet3=new HashSet<>();
+        operationsSet3.add(Operations.SELECT_LIMIT);
+        Select aliasSelect = new Select(operationsSet3, aliasColumns, typeMap, typeMapFromColumnName);
 
         //Compound workflow
         filter2.setNextStep(aliasSelect);
@@ -375,7 +395,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
 
 
@@ -385,11 +407,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_LIMIT);
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
-        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         //Function count
         List<Selector> functionColumns=new ArrayList<Selector>();
@@ -405,7 +429,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         typeMapFromColumnName.put(functionSelector, new ColumnType(DataType.VARCHAR));
 
-        Select select = new Select(Operations.SELECT_FUNCTIONS, aliasColumns, typeMap, typeMapFromColumnName);
+
+        operationsSet2.add(Operations.SELECT_FUNCTIONS);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
@@ -446,7 +472,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -454,11 +482,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_LIMIT);
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
-        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         //Function count
         List<Selector> functionColumns=new ArrayList<Selector>();
@@ -473,8 +503,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
 
         typeMapFromColumnName.put(functionSelector, new ColumnType(DataType.VARCHAR));
-
-        Select select = new Select(Operations.SELECT_FUNCTIONS, aliasColumns, typeMap, typeMapFromColumnName);
+        operationsSet2.add(Operations.SELECT_FUNCTIONS);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
@@ -515,7 +545,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -523,11 +555,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_LIMIT);
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
-        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         //Function count
         List<Selector> functionColumns=new ArrayList<Selector>();
@@ -543,7 +577,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         typeMapFromColumnName.put(functionSelector, new ColumnType(DataType.VARCHAR));
 
-        Select select = new Select(Operations.SELECT_FUNCTIONS, aliasColumns, typeMap, typeMapFromColumnName);
+        operationsSet2.add(Operations.SELECT_FUNCTIONS);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
@@ -586,13 +621,17 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "phrase"));
         Selector rightTerm = new StringSelector("*");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_LIMIT);
         Relation relation = new Relation(selector, Operator.MATCH, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
@@ -602,7 +641,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
         typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")),
                 new ColumnType(DataType.VARCHAR));
-        Select select = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
@@ -629,10 +668,6 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
 
         assertNotEquals(value, null, "The value cannot be null");
-
-
-        //assertEquals(cqe.parseQuery(), "SELECT name FROM demo.users WHERE name = 'name_5' AND gender = 'female'");
-
     }
 
 
@@ -650,7 +685,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         columnList.add(columnName);
 
         //Generation of Data
-        Project project = new Project(Operations.PROJECT, tableName, targetCluster, columnList);
+        Set<Operations> operationsSet=new HashSet<>();
+        operationsSet.add(Operations.PROJECT);
+        Project project = new Project(operationsSet, tableName, targetCluster, columnList);
+
 
         Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
@@ -658,11 +696,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
+        Set<Operations> operationsSet2=new HashSet<>();
+        operationsSet2.add(Operations.SELECT_LIMIT);
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
-        Filter filter2 = new Filter(Operations.SELECT_LIMIT, relation2);
+        Filter filter2 = new Filter(operationsSet2, relation2);
 
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
-        Filter filter = new Filter(Operations.SELECT_LIMIT, relation);
+        Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
@@ -671,7 +711,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
         typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
         typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
-        Select select = new Select(Operations.SELECT_LIMIT, aliasColumns, typeMap, typeMapFromColumnName);
+        Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
         //Compound workflow
