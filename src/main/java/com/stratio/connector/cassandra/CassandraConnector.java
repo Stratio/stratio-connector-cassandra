@@ -204,6 +204,12 @@ public class CassandraConnector implements IConnector {
     public void connect(ICredentials credentials, ConnectorClusterConfig config)
             throws ConnectionException {
         ClusterName clusterName = config.getName();
+
+        //Check if the cluster is attached with other connector
+        if (sessions.containsKey(clusterName.getName())){
+            throw new ConnectionException("The cluster " + clusterName.getName() + " is already attached." );
+        }
+
         Map<String, String> clusterOptions = config.getClusterOptions();
         Map<String, String> connectorOptions = config.getConnectorOptions();
 
