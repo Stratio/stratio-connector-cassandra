@@ -129,15 +129,17 @@ public class InsertIntoStatement {
     }
 
     public String getNativeValueColumn(ColumnType type, String value) {
-        //Check if the value is a function
-        if (value.contains("(") && value.contains(")")){
-            return value;
-        }
+
         switch(type.getDbType().toLowerCase()){
         case "inet":
         case "ascii":
         case "varchar":
+            return "'" + value + "'";
         case "timestamp":
+            //Check if the value is a function
+            if (value.contains("(") && value.contains(")")){
+                return value;
+            }
             return "'" + value + "'";
         default:
             return value;
