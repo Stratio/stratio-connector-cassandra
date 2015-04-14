@@ -18,7 +18,10 @@
 
 package com.stratio.connector.cassandra.engine;
 
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
@@ -39,23 +42,24 @@ public class CassandraQueryEngine implements IQueryEngine {
     private static final int DEFAULT_LIMIT = 10000;
     private int limit = DEFAULT_LIMIT;
     private Map<String, Session> sessions;
+    Map<String,List<Pair<String,String>>> clusterProperties;
 
     /**
      * Basic constructor.
      *
      * @param sessions     Map of sessions.
-     * @param limitDefault Default limit for a query.
+     * @param properties Default limit for a query.
      */
-    public CassandraQueryEngine(Map<String, Session> sessions, int limitDefault) {
+    public CassandraQueryEngine(Map<String, Session> sessions, Map<String,List<Pair<String,String>>> properties) {
         this.sessions = sessions;
-        this.limit = limitDefault;
+        this.clusterProperties=properties;
     }
 
     @Override
     public com.stratio.crossdata.common.result.QueryResult execute(LogicalWorkflow workflow)
             throws ConnectorException {
 
-        SelectStatement ss = new SelectStatement(workflow, limit, sessions);
+        SelectStatement ss = new SelectStatement(workflow, limit, sessions, clusterProperties);
         String query = ss.parseQuery();
 
         Result result;
@@ -74,7 +78,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     public void asyncExecute(String queryId, LogicalWorkflow workflow,
             IResultHandler resultHandler) throws ConnectorException {
 
-        SelectStatement ss = new SelectStatement(workflow, limit, sessions);
+        SelectStatement ss = new SelectStatement(workflow, limit, sessions, clusterProperties);
         String query = ss.parseQuery();
 
         if (ss.getSession() != null) {
@@ -90,7 +94,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     public void pagedExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler,
             int pageSize) throws ConnectorException {
 
-        SelectStatement ss = new SelectStatement(workflow, limit, sessions);
+        SelectStatement ss = new SelectStatement(workflow, limit, sessions, clusterProperties);
         String query = ss.parseQuery();
 
         if (ss.getSession() != null) {
