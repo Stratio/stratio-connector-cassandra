@@ -33,6 +33,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -59,6 +60,8 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.security.ICredentials;
 import com.stratio.crossdata.connectors.ConnectorApp;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 /**
  * Cassandra Connector class. This class contain a main that starts the connector.
  */
@@ -78,9 +81,14 @@ public class CassandraConnector implements IConnector {
      * The sessions of the connector.
      */
     private Map<String, Session> sessions;
+
+    /**
+     * Map of the clusterName with a list with the properties and values of the connector.
+     */
+    private Map<String,List<Pair<String,String>>> connectorOptionsPerCluster;
     private String connectorName;
     private String[] datastoreName;
-    private int defaultLimit;
+
 
     /**
      * Engines
@@ -94,6 +102,8 @@ public class CassandraConnector implements IConnector {
      */
     public CassandraConnector() {
         sessions = new HashMap<>();
+        connectorOptionsPerCluster = new HashMap<>();
+
         XPathFactory xFactory = XPathFactory.newInstance();
         Document d = null;
         try {
@@ -221,11 +231,15 @@ public class CassandraConnector implements IConnector {
         engineConfig.setCassandraPort(Integer.parseInt(clusterOptions.get("Port")));
         engineConfig.setCredentials(credentials);
 
+        Pair<String,String> connectorPropertiesValues;
+        List<Pair<String,String>> connectorPropertiesList= new ArrayList<>();
         if (connectorOptions.get("DefaultLimit") == null) {
-            defaultLimit = DEFAULT_LIMIT;
+            connectorPropertiesValues=new ImmutablePair<>("DefaultLimit", Integer.toString(DEFAULT_LIMIT));
         } else {
-            defaultLimit = Integer.parseInt(connectorOptions.get("DefaultLimit"));
+            connectorPropertiesValues=new ImmutablePair<>("DefaultLimit",connectorOptions.get("DefaultLimit"));
         }
+        connectorPropertiesList.add(connectorPropertiesValues);
+        connectorOptionsPerCluster.put(clusterName.getName(),connectorPropertiesList);
 
         Engine engine = new Engine(engineConfig);
 
@@ -319,7 +333,7 @@ public class CassandraConnector implements IConnector {
         if (queryEngine != null) {
             return queryEngine;
         } else {
-            return new CassandraQueryEngine(sessions, defaultLimit);
+            return new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
         }
 
     }

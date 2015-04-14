@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.datastax.driver.core.ColumnMetadata;
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.utils.Utils;
@@ -61,23 +63,31 @@ public class SelectStatement {
     private Session session = null;
 
 
-    public SelectStatement(LogicalWorkflow workflow, int limit, Map<String, Session> sessions){
+    public SelectStatement(LogicalWorkflow workflow, int limit, Map<String, Session> sessions, Map<String,List<Pair<String,String>>> clusterProperties){
         this.limit = limit;
         LogicalStep logicalStep = workflow.getInitialSteps().get(0);
         while (logicalStep != null) {
             if (logicalStep instanceof TransformationStep) {
-                getTransformationStep(logicalStep,sessions);
+                getTransformationStep(logicalStep,sessions, clusterProperties);
             }
             logicalStep = logicalStep.getNextStep();
         }
     }
 
 
-    private void getTransformationStep(LogicalStep logicalStep, Map<String, Session> sessions) {
+    private void getTransformationStep(LogicalStep logicalStep, Map<String, Session> sessions, Map<String,List<Pair<String,String>>> clusterProperties) {
         TransformationStep transformation = (TransformationStep) logicalStep;
         if (transformation instanceof Project) {
             Project project = (Project) transformation;
             session = sessions.get(project.getClusterName().getName());
+
+            //Get the limit from the properties of the cluster defined by the connector.
+            List<Pair<String,String>> propertiesList=clusterProperties.get(project.getClusterName().getName());
+            for(Pair<String,String> props:propertiesList){
+                if (props.getLeft().equals("DefaultLimit")){
+                    limit=Integer.parseInt(props.getRight());
+                }
+            }
 
             tableName = project.getTableName();
 

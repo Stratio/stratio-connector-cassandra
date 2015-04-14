@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -127,7 +129,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
         QueryResult qr = null;
         try {
@@ -143,7 +150,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
         assertEquals(value, "name_5", "The value not match with the expected value");
 
-        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        SelectStatement ss=new SelectStatement(workflow,100,sessions, connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
@@ -209,15 +216,21 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
+        QueryResult qr = null;
         try {
-            cqe.execute(workflow);
+            qr = cqe.execute(workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
 
-        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' ORDER BY \"email\" ASC LIMIT 100",
                 "The select statement not match with the expected value");
@@ -278,7 +291,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
         QueryResult qr = null;
         try {
@@ -287,6 +305,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
+
         String value = "";
         for (Row row : qr.getResultSet()) {
             Cell cell = row.getCell("name");
@@ -294,7 +313,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         }
         assertEquals(value, "name_5", "The value not match with the expected value");
 
-        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 50",
                 "The select statement query obtained not match with the expected query");
@@ -358,7 +377,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
         QueryResult qr = null;
         try {
@@ -366,6 +390,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
+
+
         String value = "";
         try {
             for (Row row : qr.getResultSet()) {
@@ -374,7 +400,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             }
             assertEquals(value, "name_5", "The value not match with the expected value");
 
-            SelectStatement ss=new SelectStatement(workflow,100,sessions);
+            SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
             assertEquals(ss.parseQuery(),
                     "SELECT \"name\",\"gender\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                     "The select query obtained not match with the expected query");
@@ -443,7 +469,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
         QueryResult qr = null;
         try {
@@ -452,7 +483,8 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+
+        SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
                 "SELECT Count(*) FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
@@ -516,7 +548,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
         QueryResult qr = null;
         try {
@@ -525,7 +562,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
                 "SELECT now() FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
@@ -590,7 +627,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
         QueryResult qr = null;
         try {
@@ -599,7 +641,9 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
             Assert.fail(e.getMessage());
         }
 
-        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+
+
+        SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
                 "SELECT ttl(\"phrase\") FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
@@ -652,7 +696,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
         QueryResult qr = null;
         try {
@@ -723,9 +772,14 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
 
-       
+
         try {
             String queryId="1234";
             IResultHandler resultHandler=new ResultHandler();
@@ -737,7 +791,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
 
-        SelectStatement ss=new SelectStatement(workflow,100,sessions);
+        SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
                 "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
@@ -750,7 +804,13 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         Map<String, Session> sessions = new HashMap<>();
         sessions.put("cluster", this._session);
-        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, 100);
+        List<Pair<String,String>> propertiesList = new ArrayList<>();
+        Pair<String,String> property= new ImmutablePair<>("DefaultLimit", "100");
+        propertiesList.add(property);
+        Map<String,List<Pair<String,String>>> connectorOptionsPerCluster=new HashMap<>();
+        connectorOptionsPerCluster.put("cluster", propertiesList);
+        CassandraQueryEngine cqe = new CassandraQueryEngine(sessions, connectorOptionsPerCluster);
+
 
         try {
             cqe.stop("QueryID");

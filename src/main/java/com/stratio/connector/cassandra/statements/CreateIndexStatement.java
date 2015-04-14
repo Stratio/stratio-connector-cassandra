@@ -272,7 +272,7 @@ public class CreateIndexStatement {
             sb.append(Utils.toCaseSensitive(entry.getValue().getName().getName()));
             sb.append(":");
             if (entry.getValue().getColumnType().getDataType()==com.stratio.crossdata.common.metadata.DataType.NATIVE){
-                if (entry.getValue().getColumnType().getDbType().equals("timestamp")){
+                if (entry.getValue().getColumnType().getDbType().equalsIgnoreCase("timestamp")){
                     sb.append("{type:\"date\", pattern:\"yyyy-MM-dd HH:mm:ss\"}");
                 }else {
                     sb.append("{type:\"").append(entry.getValue().getColumnType().getDbType()).append("\"}");
