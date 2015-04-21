@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-cassandra</artifactId>
-    <version>0.3.0-FP</version>
+    <version>0.3.2-FP</version>
     <name>Stratio Connector Cassandra</name>
     <description>Native Cassandra Connector</description>
     <url>https://github.com/Stratio/stratio-connector-cassandra</url>
