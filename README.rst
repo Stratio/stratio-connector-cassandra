@@ -80,40 +80,40 @@ How to use Cassandra Connector
 2. Start Cassandra Connector as it is explained before
 3. In crossdata-shell ...
     
--   Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be
+ Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be
 found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraDataStore.xml ::
 
     xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
     
     
--   Attach cluster on that data store. The data store name must be the same as the defined in the data store manifest ::
+ Attach cluster on that data store. The data store name must be the same as the defined in the data store manifest ::
 
     xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1, ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
     
     
--   Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in 
-target/stratio-connector-cassandra-0.2.0/conf/CassandraConnector.xml ::
+ Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in
+ cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraConnector.xml ::
 
-   xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
+    xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
     
     
--   Attach the connector to the previously defined cluster. The connector name must match the one defined in the 
+ Attach the connector to the previously defined cluster. The connector name must match the one defined in the
 Connector Manifest, and the cluster name must match with the previously defined in the ATTACH CLUSTER command ::
 
-   xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {'DefaultLimit': '1000'};
+    xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {'DefaultLimit': '1000'};
     
     
--   At this point, we can start to send queries, that Crossdata execute with the connector specified  ::
+ At this point, we can start to send queries, that Crossdata execute with the connector specified  ::
 
-   xdsh:user> CREATE CATALOG catalogTest;
+    xdsh:user> CREATE CATALOG catalogTest;
     
-   xdsh:user> USE catalogTest;
+    xdsh:user> USE catalogTest;
     
-   xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text);
+    xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text);
     
-   xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
+    xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
     
-   xdsh:user> SELECT * FROM tableTest;
+    xdsh:user> SELECT * FROM tableTest;
 
 
 License
