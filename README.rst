@@ -76,27 +76,25 @@ Now to start/stop the connector::
 
 How to use Cassandra Connector
 ===============================
-1. Start `crossdata-server and then crossdata-shell <https://github.com/Stratio/crossdata>`_.  
+1. Start `crossdata-server and then crossdata-shell <https://github.com/Stratio/crossdata>`_.
 2. Start Cassandra Connector as it is explained before
 3. In crossdata-shell ...
-    
- Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be
-found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraDataStore.xml ::
+
+ Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraDataStore.xml ::
 
     xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
-    
-    
+
+
  Attach cluster on that data store. The data store name must be the same as the defined in the data store manifest ::
 
     xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1, ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
-    
-    
- Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in
- cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraConnector.xml ::
+
+
+ Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraConnector.xml ::
 
     xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
-    
-    
+
+
  Attach the connector to the previously defined cluster. The connector name must match the one defined in the
 Connector Manifest, and the cluster name must match with the previously defined in the ATTACH CLUSTER command ::
 
@@ -120,7 +118,7 @@ License
 ========
 Stratio Crossdata is licensed as `Apache2 <http://www.apache.org/licenses/LICENSE-2.0.txt>`_
 
-Licensed to STRATIO (C) under one or more contributor license agreements.  
+Licensed to STRATIO (C) under one or more contributor license agreements.
 See the NOTICE file distributed with this work for additional information 
 regarding copyright ownership.  The STRATIO (C) licenses this file
 to you under the Apache License, Version 2.0 (the
