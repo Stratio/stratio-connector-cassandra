@@ -18,59 +18,20 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.stratio.connector</groupId>
-    <artifactId>stratio-connector-cassandra</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <parent>
+        <groupId>com.stratio.connector</groupId>
+        <artifactId>stratio-connector-cassandra</artifactId>
+        <version>0.3.0-SNAPSHOT</version>
+    </parent>
 
-    <name>Stratio Connector Cassandra Parent</name>
+
+    <groupId>com.stratio.connector</groupId>
+    <artifactId>cassandra-connector</artifactId>
+    <name>Stratio Connector Cassandra</name>
     <description>Native Cassandra Connector</description>
     <url>https://github.com/Stratio/stratio-connector-cassandra</url>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <developers>
-        <developer>
-            <id>jjlopez</id>
-            <name>Juanjo Lopez</name>
-            <email>jjlopez at stratio dot com</email>
-        </developer>
-        <developer>
-            <id>aagea</id>
-            <name>Alvaro Agea</name>
-            <email>alvaro at stratio dot com</email>
-        </developer>
-        <developer>
-            <id>miguel0afd</id>
-            <name>Miguel Angel Fernandez Diaz</name>
-            <email>mafernandez at stratio dot com</email>
-        </developer>
-    </developers>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0t</url>
-        </license>
-    </licenses>
-
-    <modules>
-        <module>cassandra-connector</module>
-        <module>doc</module>
-    </modules>
-
-    <scm>
-        <url>scm:git:git@github.com:Stratio/stratio-connector-cassandra.git</url>
-        <connection>https://github.com/Stratio/stratio-connector-cassandra/</connection>
-    </scm>
-
-
-    <properties>
-        <cassandra.driver>2.0.6</cassandra.driver>
-        <scala.version>2.10.4</scala.version>
-        <deep.version>0.3.2</deep.version>
-        <infinispan.version>6.0.2.Final</infinispan.version>
-        <scala.dep.version>2.10</scala.dep.version>
-        <slf4j.version>1.7.7</slf4j.version>
-        <coverage.data.dir>${project.build.outputDirectory}</coverage.data.dir>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.stratio.crossdata</groupId>
@@ -128,7 +89,14 @@
     </dependencies>
 
     <build>
-
+        <resources>
+            <resource>
+                <directory>src/main/config</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -139,6 +107,73 @@
             </plugins>
         </pluginManagement>
         <plugins>
+
+            <!--RPM and deb packages  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+            <plugin>
+                <groupId>com.stratio.mojo.unix</groupId>
+                <artifactId>unix-maven-plugin</artifactId>
+                <version>1.0-alpha-9</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <contact><![CDATA[Stratio <jjlopez@stratio.com>]]></contact>
+                    <contactEmail>jjlopez@stratio.com</contactEmail>
+                    <size>2048</size>
+                    <deb>
+                        <section>devel</section>
+                    </deb>
+                    <rpm>
+                        <group>stratio</group>
+                    </rpm>
+                    <assembly>
+                        <mkdirs>
+                            <paths>
+                                <path>etc/sds/connectors/cassandra</path>
+                                <path>etc/default</path>
+                                <path>var/run/sds</path>
+                            </paths>
+                            <attributes>
+                                <user>stratio</user>
+                                <group>stratio</group>
+                                <mode>644</mode>
+                            </attributes>
+                        </mkdirs>
+                        <copyDirectory>
+                            <from>target/cassandra-connector-${project.version}/bin</from>
+                            <to>opt/sds/connectors/cassandra/bin</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>target/cassandra-connector-${project.version}/lib</from>
+                            <to>opt/sds/connectors/cassandra/lib</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>target/cassandra-connector-${project.version}/conf</from>
+                            <to>opt/sds/connectors/cassandra/conf</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/template</from>
+                            <to>opt/sds/connectors/cassandra/template</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/config</from>
+                            <to>etc/sds/connectors/cassandra</to>
+                        </copyDirectory>
+                        <copyDirectory>
+                            <from>src/main/unix/files_and_dirs/etc/default</from>
+                            <to>etc/default</to>
+                        </copyDirectory>
+                        <copyFile>
+                            <path>src/main/include/LICENSE</path>
+                            <toFile>opt/sds/connectors/cassandra/LICENSE</toFile>
+                        </copyFile>
+                        <copyFile>
+                            <path>src/main/include/NOTICE</path>
+                            <toFile>opt/sds/connectors/cassandra/NOTICE</toFile>
+                        </copyFile>
+                    </assembly>
+                </configuration>
+            </plugin>
+
+            <!--*****************************************************************************************************-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -178,62 +213,14 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
+                <artifactId>crossdata-connector-maven-plugin</artifactId>
+                <groupId>com.stratio.crossdata</groupId>
+                <version>0.3.0-RC2-SNAPSHOT</version>
                 <configuration>
-                    <skipTests>${skipITs}</skipTests>
-                    <argLine>${jacoco-IT-argline}</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
-                <configuration>
-                    <skipTests>${skipUTs}</skipTests>
-                    <argLine>${jacoco-UT-argline}</argLine>
+                    <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
+                    <jmxPort>7192</jmxPort>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.1.201405082137</version>
-                <executions>
-                    <execution>
-                        <id>UT</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${project.build.directory}/jacocoUT.exec</destFile>
-                            <propertyName>jacoco-UT-argline</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>IT</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${project.build.directory}/jacocoIT.exec</destFile>
-                            <propertyName>jacoco-IT-argline</propertyName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 </project>

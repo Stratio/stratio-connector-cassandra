@@ -6,7 +6,8 @@ Native connector for Cassandra using Crossdata.
 Requirements
 =============
 `Stratio Cassandra <https://github.com/Stratio/stratio-cassandra>`_ version 2.1 must be installed and started.
-`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.2.0-001 is needed to interact with this connector.
+`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.3.0-RC2-SNAPSHOT is needed to interact with this
+connector.
 
 Compiling Stratio Connector Cassandra
 ======================================
@@ -20,7 +21,7 @@ Running the Stratio Connector Cassandra
 ========================================
 ::
 
-    > mvn exec:java -Dexec.mainClass="com.stratio.connector.cassandra.CassandraConnector"
+    > mvn exec:java -pl cassandra-connector -Dexec.mainClass="com.stratio.connector.cassandra.CassandraConnector"
 
 
 
@@ -28,20 +29,20 @@ Build an executable Connector Cassandra
 ========================================
 To generate the executable execute the following command::
 
-
+    > cd cassandra-connector
     > mvn crossdata-connector:install
 
 
 To run Connector Cassandra execute::
 
 
-    > target/stratio-connector-cassandra-0.2.0T/bin/stratio-connector-cassandra-0.2.0-001 start
+    > target/cassandra-connector-0.3.0-SNAPSHOT/bin/cassandra-connector-0.3.0-SNAPSHOT start
 
 
 To stop the connector execute::
 
 
-    > target/stratio-connector-cassandra-0.2.0/bin/stratio-connector-cassandra-0.2.0-001 stop
+    > target/cassandra-connector-0.3.0-SNAPSHOT/bin/cassandra-connector-0.3.0-SNAPSHOT stop
 
 
 Build a redistributable package
@@ -50,21 +51,23 @@ It is possible too, to create a RPM or DEB redistributable package.
 
 RPM Package::
 
+    > cd cassandra-connector
     > mvn unix:package-rpm -N
 
 DEB Package::
 
+    > cd cassandra-connector
     > mvn unix:package-deb -N
 
 Once the package it's created, execute this commands to install:
 
 RPM Package::
 
-    > rpm -i target/stratio-connector-cassandra-0.3.0-SNAPSHOT.rpm
+    > rpm -i cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT.rpm
 
 DEB Package::
 
-    > dpkg -i target/stratio-connector-cassandra-0.3.0-SNAPSHOT.deb
+    > dpkg -i cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT.deb
 
 Now to start/stop the connector::
 

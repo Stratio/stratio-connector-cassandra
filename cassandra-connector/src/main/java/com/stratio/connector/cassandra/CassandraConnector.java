@@ -18,6 +18,8 @@
 
 package com.stratio.connector.cassandra;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -106,9 +108,14 @@ public class CassandraConnector implements IConnector {
 
         XPathFactory xFactory = XPathFactory.newInstance();
         Document d = null;
+        InputStream inputStream;
         try {
-            InputStream inputStream = getClass()
-                    .getResourceAsStream("/com/stratio/connector/cassandra/CassandraConnector.xml");
+            inputStream = getClass()
+                    .getResourceAsStream("CassandraConnector.xml");
+            if(inputStream == null){
+                File file = new File("../conf/CassandraConnector.xml");
+                inputStream = new FileInputStream(file);
+            }
             d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
 
         } catch (SAXException e) {
