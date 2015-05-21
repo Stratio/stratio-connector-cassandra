@@ -107,131 +107,6 @@
             </plugins>
         </pluginManagement>
         <plugins>
-
-            <!--RPM and deb packages  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-            <plugin>
-                <groupId>com.stratio.mojo.unix</groupId>
-                <artifactId>unix-maven-plugin</artifactId>
-                <version>1.1.3</version>
-                <extensions>true</extensions>
-                <inherited>false</inherited>
-
-
-                <configuration>
-                    <!--The name and email address of the contact person for the package. -->
-                    <contact><![CDATA[Stratio <jjlopez@stratio.com>]]></contact>
-                    <contactEmail>jjlopez@stratio.com</contactEmail>
-
-                    <!-- Optional, final package name -->
-                    <outputFileName>cassandra-connector</outputFileName>
-
-                    <!-- RPM specific properties -->
-                    <rpm>
-                        <!-- defines how the packaged software should be grouped with other packages -->
-                        <group>stratio</group>
-                        <!-- package dependencies, coma separated -->
-                        <requires>apache-commons-daemon-jsvc</requires>
-                    </rpm>
-
-                    <!-- DEB specific properties -->
-                    <deb>
-                        <!-- package dependencies, coma separated -->
-                        <depends>jsvc</depends>
-
-                        <!-- defines how the packaged software should be grouped with other packages -->
-                        <section>devel</section>
-
-                        <!-- see https://www.debian.org/doc/debian-policy/ch-archive.html#s-priorities -->
-                        <priority>extra</priority>
-                    </deb>
-
-                    <!--  Default values for files and directories. -->
-                    <defaults>
-                        <directoryAttributes>
-                            <user>stratio</user>
-                            <group>stratio</group>
-                            <mode>0744</mode>
-                        </directoryAttributes>
-                        <fileAttributes>
-                            <user>stratio</user>
-                            <group>stratio</group>
-                            <mode>0644</mode>
-                        </fileAttributes>
-                    </defaults>
-
-                    <assembly>
-                        <mkdirs>
-                            <paths>
-                                <path>etc/sds/connectors/cassandra</path>
-                                <path>etc/default</path>
-                                <path>var/run/sds</path>
-                            </paths>
-                            <attributes>
-                                <user>stratio</user>
-                                <group>stratio</group>
-                                <mode>644</mode>
-                            </attributes>
-                        </mkdirs>
-                        <copyDirectory>
-                            <from>target/cassandra-connector-${project.version}/bin</from>
-                            <to>opt/sds/connectors/cassandra/bin</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>target/cassandra-connector-${project.version}/lib</from>
-                            <to>opt/sds/connectors/cassandra/lib</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>target/cassandra-connector-${project.version}/conf</from>
-                            <to>opt/sds/connectors/cassandra/conf</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/template</from>
-                            <to>opt/sds/connectors/cassandra/template</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/config</from>
-                            <to>etc/sds/connectors/cassandra</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/unix/files_and_dirs/etc/default</from>
-                            <to>etc/default</to>
-                        </copyDirectory>
-                        <copyFile>
-                            <path>src/main/include/LICENSE</path>
-                            <toFile>opt/sds/connectors/cassandra/LICENSE</toFile>
-                        </copyFile>
-                        <copyFile>
-                            <path>src/main/include/NOTICE</path>
-                            <toFile>opt/sds/connectors/cassandra/NOTICE</toFile>
-                        </copyFile>
-                    </assembly>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>create-rpm</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>package-rpm</goal>
-                        </goals>
-                        <configuration>
-                            <!-- The architecture the package is valid for. -->
-                            <architecture>noarch</architecture>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>create-deb</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>package-deb</goal>
-                        </goals>
-                        <configuration>
-                            <!-- The architecture the package is valid for. -->
-                            <architecture>all</architecture>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!--*****************************************************************************************************-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -282,4 +157,139 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>package</id>
+            <build>
+                <plugins>
+                    <!--RPM and deb packages  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+                    <plugin>
+                        <groupId>com.stratio.mojo.unix</groupId>
+                        <artifactId>unix-maven-plugin</artifactId>
+                        <version>1.1.3</version>
+                        <extensions>true</extensions>
+                        <inherited>false</inherited>
+
+
+                        <configuration>
+                            <!--The name and email address of the contact person for the package. -->
+                            <contact><![CDATA[Stratio <jjlopez@stratio.com>]]></contact>
+                            <contactEmail>jjlopez@stratio.com</contactEmail>
+
+                            <!-- Optional, final package name -->
+                            <outputFileName>cassandra-connector</outputFileName>
+
+                            <!-- RPM specific properties -->
+                            <rpm>
+                                <!-- defines how the packaged software should be grouped with other packages -->
+                                <group>stratio</group>
+                                <!-- package dependencies, coma separated -->
+                                <requires>apache-commons-daemon-jsvc</requires>
+                            </rpm>
+
+                            <!-- DEB specific properties -->
+                            <deb>
+                                <!-- package dependencies, coma separated -->
+                                <depends>jsvc</depends>
+
+                                <!-- defines how the packaged software should be grouped with other packages -->
+                                <section>devel</section>
+
+                                <!-- see https://www.debian.org/doc/debian-policy/ch-archive.html#s-priorities -->
+                                <priority>extra</priority>
+                            </deb>
+
+                            <!--  Default values for files and directories. -->
+                            <defaults>
+                                <directoryAttributes>
+                                    <user>stratio</user>
+                                    <group>stratio</group>
+                                    <mode>0744</mode>
+                                </directoryAttributes>
+                                <fileAttributes>
+                                    <user>stratio</user>
+                                    <group>stratio</group>
+                                    <mode>0644</mode>
+                                </fileAttributes>
+                            </defaults>
+
+                            <assembly>
+                                <mkdirs>
+                                    <paths>
+                                        <path>etc/sds/connectors/cassandra</path>
+                                        <path>etc/default</path>
+                                        <path>var/run/sds</path>
+                                    </paths>
+                                    <attributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                        <mode>644</mode>
+                                    </attributes>
+                                </mkdirs>
+                                <copyDirectory>
+                                    <from>target/cassandra-connector-${project.version}/bin</from>
+                                    <to>opt/sds/connectors/cassandra/bin</to>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>target/cassandra-connector-${project.version}/lib</from>
+                                    <to>opt/sds/connectors/cassandra/lib</to>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>target/cassandra-connector-${project.version}/conf</from>
+                                    <to>opt/sds/connectors/cassandra/conf</to>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>src/main/template</from>
+                                    <to>opt/sds/connectors/cassandra/template</to>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>src/main/config</from>
+                                    <to>etc/sds/connectors/cassandra</to>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>src/main/unix/files_and_dirs/etc/default</from>
+                                    <to>etc/default</to>
+                                </copyDirectory>
+                                <copyFile>
+                                    <path>src/main/include/LICENSE</path>
+                                    <toFile>opt/sds/connectors/cassandra/LICENSE</toFile>
+                                </copyFile>
+                                <copyFile>
+                                    <path>src/main/include/NOTICE</path>
+                                    <toFile>opt/sds/connectors/cassandra/NOTICE</toFile>
+                                </copyFile>
+                            </assembly>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>create-rpm</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package-rpm</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- The architecture the package is valid for. -->
+                                    <architecture>noarch</architecture>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>create-deb</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package-deb</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- The architecture the package is valid for. -->
+                                    <architecture>all</architecture>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
+    </profiles>
 </project>
