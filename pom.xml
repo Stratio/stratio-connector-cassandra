@@ -70,12 +70,13 @@
         <scala.dep.version>2.10</scala.dep.version>
         <slf4j.version>1.7.7</slf4j.version>
         <coverage.data.dir>${project.build.outputDirectory}</coverage.data.dir>
+        <crossdata.version>0.3.0-RC2</crossdata.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.stratio.crossdata</groupId>
             <artifactId>crossdata-connector</artifactId>
-            <version>0.3.0-RC2-SNAPSHOT</version>
+            <version>${crossdata.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -105,7 +106,7 @@
         <dependency>
             <groupId>com.stratio.crossdata</groupId>
             <artifactId>crossdata-common</artifactId>
-            <version>0.3.0-RC2-SNAPSHOT</version>
+            <version>${crossdata.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.stratio.connector</groupId>

@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.stratio.crossdata</groupId>
             <artifactId>crossdata-connector</artifactId>
-            <version>0.3.0-RC2-SNAPSHOT</version>
+            <version>${crossdata.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>com.stratio.crossdata</groupId>
             <artifactId>crossdata-common</artifactId>
-            <version>0.3.0-RC2-SNAPSHOT</version>
+            <version>${crossdata.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.stratio.connector</groupId>
@@ -274,7 +274,7 @@
             <plugin>
                 <artifactId>crossdata-connector-maven-plugin</artifactId>
                 <groupId>com.stratio.crossdata</groupId>
-                <version>0.3.0-RC2-SNAPSHOT</version>
+                <version>${crossdata.version}</version>
                 <configuration>
                     <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
                     <jmxPort>7192</jmxPort>
