@@ -91,6 +91,16 @@ public class CassandraConnector implements IConnector {
     private String connectorName;
     private String[] datastoreName;
 
+    /**
+     * Stream that contains the connector manifest.
+     */
+    private InputStream connectorStream;
+
+    /**
+     * Stream that contains the datastore manifest.
+     */
+    private InputStream datastoreStream;
+
 
     /**
      * Engines
@@ -108,15 +118,16 @@ public class CassandraConnector implements IConnector {
 
         XPathFactory xFactory = XPathFactory.newInstance();
         Document d = null;
-        InputStream inputStream;
         try {
-            inputStream = getClass()
+            connectorStream = getClass()
                     .getResourceAsStream("CassandraConnector.xml");
-            if(inputStream == null){
+            datastoreStream = getClass()
+                    .getResourceAsStream("CassandraDataStore.xml");
+            if(connectorStream == null){
                 File file = new File("../conf/CassandraConnector.xml");
-                inputStream = new FileInputStream(file);
+                connectorStream = new FileInputStream(file);
             }
-            d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+            d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connectorStream);
 
         } catch (SAXException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration", e);
@@ -360,4 +371,13 @@ public class CassandraConnector implements IConnector {
         }
     }
 
+    @Override
+    public InputStream getConnectorManifest() {
+        return connectorStream;
+    }
+
+    @Override
+    public InputStream getDatastoreManifest() {
+        return datastoreStream;
+    }
 }
