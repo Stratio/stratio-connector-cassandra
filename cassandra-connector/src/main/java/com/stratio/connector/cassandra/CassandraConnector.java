@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -62,8 +65,6 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.security.ICredentials;
 import com.stratio.crossdata.connectors.ConnectorApp;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 /**
  * Cassandra Connector class. This class contain a main that starts the connector.
  */
@@ -87,20 +88,19 @@ public class CassandraConnector implements IConnector {
     /**
      * Map of the clusterName with a list with the properties and values of the connector.
      */
-    private Map<String,List<Pair<String,String>>> connectorOptionsPerCluster;
+    private Map<String, List<Pair<String, String>>> connectorOptionsPerCluster;
     private String connectorName;
     private String[] datastoreName;
 
     /**
-     * Stream that contains the connector manifest.
+     * String  that contains the connector manifest.
      */
-    private InputStream connectorStream;
+    private String connectorString;
 
     /**
-     * Stream that contains the datastore manifest.
+     * String that contains the datastore manifest.
      */
-    private InputStream datastoreStream;
-
+    private String datastoreString;
 
     /**
      * Engines
@@ -119,15 +119,26 @@ public class CassandraConnector implements IConnector {
         XPathFactory xFactory = XPathFactory.newInstance();
         Document d = null;
         try {
-            connectorStream = getClass()
+            InputStream connectorStream = getClass()
                     .getResourceAsStream("CassandraConnector.xml");
-            datastoreStream = getClass()
+           
+            InputStream datastoreStream = getClass()
                     .getResourceAsStream("CassandraDataStore.xml");
-            if(connectorStream == null){
+            datastoreString = stream2String(datastoreStream);
+            if (connectorStream == null) {
                 File file = new File("../conf/CassandraConnector.xml");
                 connectorStream = new FileInputStream(file);
             }
-            d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connectorStream);
+            connectorString = stream2String(connectorStream);
+
+            InputStream connectorStream2 = getClass()
+                    .getResourceAsStream("CassandraConnector.xml");
+
+            if (connectorStream == null) {
+                File file = new File("../conf/CassandraConnector.xml");
+                connectorStream2 = new FileInputStream(file);
+            }
+            d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connectorStream2);
 
         } catch (SAXException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration", e);
@@ -136,6 +147,7 @@ public class CassandraConnector implements IConnector {
         } catch (ParserConfigurationException e) {
             LOG.trace("Impossible to read Manifest with the connector configuration", e);
         }
+
         // create an XPath object
         XPath xpath = xFactory.newXPath();
         Object result;
@@ -234,8 +246,8 @@ public class CassandraConnector implements IConnector {
         ClusterName clusterName = config.getName();
 
         //Check if the cluster is attached with other connector
-        if (sessions.containsKey(clusterName.getName())){
-            throw new ConnectionException("The connection to " + clusterName.getName() + " already exists." );
+        if (sessions.containsKey(clusterName.getName())) {
+            throw new ConnectionException("The connection to " + clusterName.getName() + " already exists.");
         }
 
         Map<String, String> clusterOptions = config.getClusterOptions();
@@ -249,15 +261,15 @@ public class CassandraConnector implements IConnector {
         engineConfig.setCassandraPort(Integer.parseInt(clusterOptions.get("Port")));
         engineConfig.setCredentials(credentials);
 
-        Pair<String,String> connectorPropertiesValues;
-        List<Pair<String,String>> connectorPropertiesList= new ArrayList<>();
+        Pair<String, String> connectorPropertiesValues;
+        List<Pair<String, String>> connectorPropertiesList = new ArrayList<>();
         if (connectorOptions.get("DefaultLimit") == null) {
-            connectorPropertiesValues=new ImmutablePair<>("DefaultLimit", Integer.toString(DEFAULT_LIMIT));
+            connectorPropertiesValues = new ImmutablePair<>("DefaultLimit", Integer.toString(DEFAULT_LIMIT));
         } else {
-            connectorPropertiesValues=new ImmutablePair<>("DefaultLimit",connectorOptions.get("DefaultLimit"));
+            connectorPropertiesValues = new ImmutablePair<>("DefaultLimit", connectorOptions.get("DefaultLimit"));
         }
         connectorPropertiesList.add(connectorPropertiesValues);
-        connectorOptionsPerCluster.put(clusterName.getName(),connectorPropertiesList);
+        connectorOptionsPerCluster.put(clusterName.getName(), connectorPropertiesList);
 
         Engine engine = new Engine(engineConfig);
 
@@ -372,12 +384,21 @@ public class CassandraConnector implements IConnector {
     }
 
     @Override
-    public InputStream getConnectorManifest() {
-        return connectorStream;
+    public String getConnectorManifest(){
+        return connectorString;
+
     }
 
     @Override
-    public InputStream getDatastoreManifest() {
-        return datastoreStream;
+    public String getDatastoreManifest(){
+        return datastoreString;
+    }
+
+    private String stream2String(InputStream stream) throws IOException {
+        StringWriter writer = new StringWriter();
+
+        IOUtils.copy(stream, writer);
+
+        return writer.toString();
     }
 }
