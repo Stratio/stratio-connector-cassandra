@@ -39,8 +39,8 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
     @Test
     public void connectorTest() {
         CassandraConnector cassandraConnector = new CassandraConnector();
-        if (cassandraConnector.getConnectorName() == null) {
-            Assert.fail("Connector Name is empty");
+        if (cassandraConnector.getConnectorManifestPath() == null) {
+            Assert.fail("Connector Manifest is empty");
         } else {
             Assert.assertTrue(true);
         }
@@ -50,8 +50,8 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
     public void connectorDataStoreTest() {
         CassandraConnector cassandraConnector = new CassandraConnector();
 
-        if (cassandraConnector.getDatastoreName() == null) {
-            Assert.fail("DataStore Name is empty");
+        if (cassandraConnector.getDatastoreManifestPath() == null) {
+            Assert.fail("DataStore Manifest is empty");
         } else {
             Assert.assertTrue(true);
         }
@@ -293,28 +293,5 @@ public class CassandraConnectorTest extends BasicCoreCassandraTest {
         }
     }
 
-    @Test
-    public void getDataStoreNameTest() {
-        CassandraConnector cassandraConnector = new CassandraConnector();
-
-        try {
-            cassandraConnector.getDatastoreName();
-            Assert.assertTrue(true);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void getConnectorNameTest() {
-        CassandraConnector cassandraConnector = new CassandraConnector();
-
-        try {
-            cassandraConnector.getConnectorName();
-            Assert.assertTrue(true);
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
-    }
 
 }

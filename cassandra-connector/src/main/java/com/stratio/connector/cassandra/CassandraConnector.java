@@ -18,31 +18,14 @@
 
 package com.stratio.connector.cassandra;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.datastax.driver.core.CloseFuture;
 import com.datastax.driver.core.Session;
@@ -89,18 +72,17 @@ public class CassandraConnector implements IConnector {
      * Map of the clusterName with a list with the properties and values of the connector.
      */
     private Map<String, List<Pair<String, String>>> connectorOptionsPerCluster;
-    private String connectorName;
-    private String[] datastoreName;
+
 
     /**
-     * String  that contains the connector manifest.
+     * String  that contains the path to connector manifest.
      */
-    private String connectorString;
+    private String connectorManifestPath;
 
     /**
-     * String that contains the datastore manifest.
+     * String that contains the path to datastore manifest.
      */
-    private String datastoreString;
+    private String[] datastoreManifestPath=new String[1];
 
     /**
      * Engines
@@ -115,66 +97,8 @@ public class CassandraConnector implements IConnector {
     public CassandraConnector() {
         sessions = new HashMap<>();
         connectorOptionsPerCluster = new HashMap<>();
-
-        XPathFactory xFactory = XPathFactory.newInstance();
-        Document d = null;
-        try {
-            InputStream connectorStream = getClass()
-                    .getResourceAsStream("CassandraConnector.xml");
-           
-            InputStream datastoreStream = getClass()
-                    .getResourceAsStream("CassandraDataStore.xml");
-            datastoreString = stream2String(datastoreStream);
-            if (connectorStream == null) {
-                File file = new File("../conf/CassandraConnector.xml");
-                connectorStream = new FileInputStream(file);
-            }
-            connectorString = stream2String(connectorStream);
-
-            InputStream connectorStream2 = getClass()
-                    .getResourceAsStream("CassandraConnector.xml");
-
-            if (connectorStream == null) {
-                File file = new File("../conf/CassandraConnector.xml");
-                connectorStream2 = new FileInputStream(file);
-            }
-            d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connectorStream2);
-
-        } catch (SAXException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration", e);
-        } catch (IOException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration", e);
-        } catch (ParserConfigurationException e) {
-            LOG.trace("Impossible to read Manifest with the connector configuration", e);
-        }
-
-        // create an XPath object
-        XPath xpath = xFactory.newXPath();
-        Object result;
-        XPathExpression expr;
-        try {
-            expr = xpath.compile("//ConnectorName/text()");
-            result = expr.evaluate(d, XPathConstants.NODESET);
-            this.connectorName = ((NodeList) result).item(0).getNodeValue();
-        } catch (XPathExpressionException e) {
-            LOG.trace("Impossible to read Manifest with the connector name", e);
-            this.connectorName = "UNKNOWN";
-        }
-
-        try {
-            expr = xpath.compile("//DataStores/DataStoreName/text()");
-            result = expr.evaluate(d, XPathConstants.NODESET);
-            datastoreName = new String[((NodeList) result).getLength()];
-            for (int i = 0; i < ((NodeList) result).getLength(); i++) {
-                this.datastoreName[i] = ((NodeList) result).item(i).getNodeValue();
-
-            }
-        } catch (XPathExpressionException e) {
-            LOG.trace("Impossible to read Manifest with the Datastore name ", e);
-            datastoreName = new String[1];
-            this.datastoreName[0] = "UNKNOWN";
-        }
-
+        connectorManifestPath=getClass().getResource("CassandraConnector.xml").getPath();
+        datastoreManifestPath[0]=getClass().getResource("CassandraDataStore.xml").getPath();
     }
 
     /**
@@ -200,26 +124,6 @@ public class CassandraConnector implements IConnector {
             }
         });
 
-    }
-
-    /**
-     * Get the name of the connector.
-     *
-     * @return The name.
-     */
-    @Override
-    public String getConnectorName() {
-        return connectorName;
-    }
-
-    /**
-     * Get the name of the datastores required by the connector.
-     *
-     * @return The names.
-     */
-    @Override
-    public String[] getDatastoreName() {
-        return datastoreName.clone();
     }
 
     /**
@@ -384,21 +288,14 @@ public class CassandraConnector implements IConnector {
     }
 
     @Override
-    public String getConnectorManifest(){
-        return connectorString;
+    public String getConnectorManifestPath() {
+        return connectorManifestPath;
 
     }
 
     @Override
-    public String getDatastoreManifest(){
-        return datastoreString;
+    public String[] getDatastoreManifestPath() {
+        return datastoreManifestPath;
     }
 
-    private String stream2String(InputStream stream) throws IOException {
-        StringWriter writer = new StringWriter();
-
-        IOUtils.copy(stream, writer);
-
-        return writer.toString();
-    }
 }
