@@ -161,6 +161,7 @@ public final class CassandraExecutor {
                     numPage++;
                     rows = new ArrayList<>();
                     rows.add(row);
+                    i++;
                 }
             }
             //Send the last result
