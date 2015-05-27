@@ -56,7 +56,7 @@ public class CassandraQueryEngine implements IQueryEngine {
     }
 
     @Override
-    public com.stratio.crossdata.common.result.QueryResult execute(LogicalWorkflow workflow)
+    public com.stratio.crossdata.common.result.QueryResult execute(String queryId,LogicalWorkflow workflow)
             throws ConnectorException {
 
         SelectStatement ss = new SelectStatement(workflow, limit, sessions, clusterProperties);

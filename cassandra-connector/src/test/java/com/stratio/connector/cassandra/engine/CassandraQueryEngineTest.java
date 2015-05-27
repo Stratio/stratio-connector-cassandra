@@ -138,7 +138,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -225,7 +225,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -300,7 +300,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -386,7 +386,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -478,7 +478,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -557,7 +557,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -636,7 +636,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
@@ -705,7 +705,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         QueryResult qr = null;
         try {
-            qr = cqe.execute(workflow);
+            qr = cqe.execute("queryid",workflow);
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
