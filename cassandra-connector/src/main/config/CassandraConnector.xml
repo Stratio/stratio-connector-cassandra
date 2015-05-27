@@ -4,13 +4,24 @@
     <DataStores>
         <DataStoreName>Cassandra</DataStoreName>
     </DataStores>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
+    <Native>true</Native>
     <RequiredProperties>
         <Property>
             <PropertyName>DefaultLimit</PropertyName>
             <Description>It is necessary to indicate de default limit for the queries</Description>
         </Property>
     </RequiredProperties>
+    <OptionalProperties>
+        <Property>
+            <PropertyName>rpcPort</PropertyName>
+            <Description>The Cassandra RPC Port.</Description>
+        </Property>
+        <Property>
+            <PropertyName>cluster</PropertyName>
+            <Description>Cassandra cluster name</Description>
+        </Property>
+    </OptionalProperties>
     <SupportedOperations>
         <operation>CREATE_CATALOG</operation>
         <operation>DROP_CATALOG</operation>
