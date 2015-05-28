@@ -25,7 +25,10 @@ import java.util.List;
 import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.ListSelector;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.RelationSelector;
 
 /**
  * Class that models an {@code UPDATE} statement from the META language.
@@ -78,8 +81,29 @@ public class UpdateTableStatement {
         sb.append(" ").append("SET ");
         for (Relation relation : assignations) {
             String leftTerm = getLeftTerm(relation);
-            sb.append(Utils.toCaseSensitive(leftTerm)).append(relation.getOperator().toString()).append
-                    (relation.getRightTerm().toString()).append(", ");
+            if (ListSelector.class.isInstance(relation.getRightTerm())) {
+                sb.append(Utils.toCaseSensitive(leftTerm)).append(relation.getOperator().toString()).append
+                        (relation.getRightTerm().toString().replaceAll("\\(", "[").replaceAll("\\)", "]")).append(", ");
+            }else if(RelationSelector.class.isInstance(relation.getRightTerm())){
+                RelationSelector newRel=(RelationSelector)relation.getRightTerm();
+                String newLeft=((ColumnSelector)newRel.getRelation().getLeftTerm()).getColumnName().getName();
+                String newOp=newRel.getRelation().getOperator().toString();
+                String newRight;
+                if (ListSelector.class.isInstance(newRel.getRelation().getRightTerm())){
+                    newRight=newRel.getRelation().getRightTerm().toString().replaceAll("\\(", "[").replaceAll("\\)",
+                            "]");
+                }else{
+                    newRight=newRel.getRelation().getRightTerm().toString();
+                }
+
+                String newRelation=newLeft + " " + newOp + " " + newRight;
+
+                sb.append(Utils.toCaseSensitive(leftTerm)).append(relation.getOperator().toString()).append
+                        (newRelation).append(", ");
+            }else {
+                sb.append(Utils.toCaseSensitive(leftTerm)).append(relation.getOperator().toString()).append
+                        (relation.getRightTerm().toString()).append(", ");
+            }
         }
 
         sb.delete(sb.lastIndexOf(", "), sb.length());

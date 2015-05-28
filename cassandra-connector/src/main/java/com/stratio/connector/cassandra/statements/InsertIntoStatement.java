@@ -111,6 +111,9 @@ public class InsertIntoStatement {
             case VARCHAR:
                 sb.append("'" + value + "'");
                 break;
+            case LIST:
+                sb.append(value.replaceAll("\\(","[").replaceAll("\\)","]"));
+                break;
             case NATIVE:
                 sb.append(getNativeValueColumn(type, value));
                 break;
