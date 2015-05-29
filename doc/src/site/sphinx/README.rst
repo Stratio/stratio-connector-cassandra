@@ -6,7 +6,7 @@ Native connector for Cassandra using Crossdata.
 Requirements
 =============
 `Stratio Cassandra <https://github.com/Stratio/stratio-cassandra>`_ version 2.1 must be installed and started.
-`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.3.0-RC2-SNAPSHOT is needed to interact with this
+`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.3.0 is needed to interact with this
 connector.
 
 Compiling Stratio Connector Cassandra
@@ -36,13 +36,13 @@ To generate the executable execute the following command::
 To run Connector Cassandra execute::
 
 
-    > target/cassandra-connector-0.3.0-SNAPSHOT/bin/cassandra-connector-0.3.0-SNAPSHOT start
+    > target/cassandra-connector-0.3.0/bin/cassandra-connector-0.3.0 start
 
 
 To stop the connector execute::
 
 
-    > target/cassandra-connector-0.3.0-SNAPSHOT/bin/cassandra-connector-0.3.0-SNAPSHOT stop
+    > target/cassandra-connector-0.3.0/bin/cassandra-connector-0.3.0 stop
 
 
 Build a redistributable package
@@ -63,11 +63,11 @@ Once the package it's created, execute this commands to install:
 
 RPM Package::
 
-    > rpm -i cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT.rpm
+    > rpm -i cassandra-connector/target/cassandra-connector-0.3.0.rpm
 
 DEB Package::
 
-    > dpkg -i cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT.deb
+    > dpkg -i cassandra-connector/target/cassandra-connector-0.3.0.deb
 
 Now to start/stop the connector::
 

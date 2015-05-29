@@ -7,7 +7,7 @@ Requirements
 =============
 `Stratio Cassandra <https://github.com/Stratio/stratio-cassandra>`_ version 2.1 must be installed and started.
 
-`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.3.0-RC2-SNAPSHOT is needed to interact with this connector.
+`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.3.0 is needed to interact with this connector.
 
 Compiling Stratio Connector Cassandra
 ======================================
@@ -36,13 +36,13 @@ To generate the executable execute the following command::
 To run Connector Cassandra execute::
 
 
-    > target/cassandra-connector-0.3.0-SNAPSHOT/bin/cassandra-connector-0.3.0-SNAPSHOT start
+    > target/cassandra-connector-0.3.0/bin/cassandra-connector-0.3.0 start
 
 
 To stop the connector execute::
 
 
-    > target/cassandra-connector-0.3.0-SNAPSHOT/bin/cassandra-connector-0.3.0-SNAPSHOT stop
+    > target/cassandra-connector-0.3.0/bin/cassandra-connector-0.3.0 stop
 
 
 Build a redistributable package
@@ -63,11 +63,11 @@ Once the package it's created, execute this commands to install:
 
 RPM Package::
 
-    > rpm -i cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT.rpm
+    > rpm -i cassandra-connector/target/cassandra-connector-0.3.0.rpm
 
 DEB Package::
 
-    > dpkg -i cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT.deb
+    > dpkg -i cassandra-connector/target/cassandra-connector-0.3.0.deb
 
 Now to start/stop the connector::
 
@@ -80,7 +80,7 @@ How to use Cassandra Connector
 2. Start Cassandra Connector as it is explained before
 3. In crossdata-shell ...
 
-Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraDataStore.xml ::
+Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0/conf/CassandraDataStore.xml ::
 
     xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
 
@@ -90,7 +90,7 @@ Attach cluster on that data store. The data store name must be the same as the d
     xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1, ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
 
 
-Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0-SNAPSHOT/conf/CassandraConnector.xml ::
+Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.3.0/conf/CassandraConnector.xml ::
 
     xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
 
