@@ -96,6 +96,7 @@ public class CassandraMetadataHelper {
         dbType.put(com.stratio.crossdata.common.metadata.DataType.INT, "INT");
         dbType.put(com.stratio.crossdata.common.metadata.DataType.TEXT, "TEXT");
         dbType.put(com.stratio.crossdata.common.metadata.DataType.VARCHAR, "VARCHAR");
+        dbType.put(com.stratio.crossdata.common.metadata.DataType.LIST, "LIST");
 
         nativeODBCType.put(DataType.Name.COUNTER, "SQL_INTEGER");
 
@@ -138,5 +139,31 @@ public class CassandraMetadataHelper {
         }
         return result;
     }
+
+    /**
+     * Transform a Cassandra type to Crossdata type.
+     * @param dbTypeName The Cassandra column type.
+     * @return The Crossdata ColumnType.
+     */
+    public ColumnType toColumnType(String dbTypeName, String innerType) {
+        ColumnType result;
+        if (typeMapping.get(dbTypeName.toUpperCase())!=null) {
+            result = new ColumnType(typeMapping.get(dbTypeName.toUpperCase()));
+            result.setDBCollectionType(toColumnType(innerType));
+            result.setDBMapping(dbType.get(result), dbClass.get(result));
+        }else{
+            try {
+                DataType.Name cassandraType = DataType.Name.valueOf(dbTypeName.toUpperCase());
+                result = new ColumnType(com.stratio.crossdata.common.metadata.DataType.NATIVE);
+                result.setDBMapping(cassandraType.name(), cassandraType.asJavaClass());
+                result.setODBCType(nativeODBCType.get(cassandraType));
+            } catch (IllegalArgumentException iae) {
+                LOG.error("Invalid database type: " + dbTypeName, iae);
+                result = null;
+            }
+        }
+        return result;
+    }
+
 
 }

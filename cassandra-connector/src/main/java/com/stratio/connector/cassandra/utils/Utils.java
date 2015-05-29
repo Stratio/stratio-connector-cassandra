@@ -89,6 +89,7 @@ public class Utils {
                     .put(DataType.timeuuid().toString(), Row.class.getMethod("getUUID", String.class));
             transformations
                     .put(DataType.varint().toString(), Row.class.getMethod("getVarint", String.class));
+
         } catch (NoSuchMethodException e) {
             LOG.error("Cannot create transformation map", e);
         }
@@ -133,9 +134,15 @@ public class Utils {
         //Obtain the metadata associated with the columns.
         for (ColumnDefinitions.Definition def : definitions) {
             //Insert the alias if exists
-
             ColumnName columnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
-            ColumnType type = helper.toColumnType(def.getType().getName().toString());
+            ColumnType type;
+            if (def.getType().getName().toString().equalsIgnoreCase("list")){
+                String innerType=def.getType().getTypeArguments().get(0).getName().toString();
+                type = helper.toColumnType(def.getType().getName().toString(), innerType);
+            }else{
+                type = helper.toColumnType(def.getType().getName().toString());
+            }
+
             ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
             for (Map.Entry<Selector, String> entry : alias.entrySet()) {
                 if (entry.getKey().getColumnName().getQualifiedName().equals(cassandraColumnName.getQualifiedName())) {
@@ -157,7 +164,14 @@ public class Utils {
                     if (def.getName().toLowerCase().startsWith("stratio")) {
                         continue;
                     }
-                    Cell metaCell = getCell(def.getType(), row, def.getName());
+                    Cell metaCell;
+                    if (def.getType().getName().toString().equalsIgnoreCase("list")){
+                        metaCell=new Cell(row.getList(def.getName(),def.getType().getTypeArguments().get(0)
+                                .asJavaClass())
+                                .toString());
+                    }else{
+                        metaCell = getCell(def.getType(), row, def.getName());
+                    }
                     ColumnName cassandraColumnName = new ColumnName(def.getKeyspace(), def.getTable(), def.getName());
                     boolean findIt = false;
                     for (Map.Entry<Selector, String> entry : alias.entrySet()) {
