@@ -112,6 +112,34 @@ At this point, we can start to send queries, that Crossdata execute with the con
     
     xdsh:user> SELECT * FROM tableTest;
 
+Functions
+=========
+Stratio Connector Cassandra implements the following Cassandra functions:
+-   count(*)
+-   now()
+-   ttl(column)
+-   writetime(column)
+-   dateOf(column)
+
+With this functions you can execute queries like that::
+
+    xdsh:user> SELECT dateOf(now()) from tableTest;
+
+Stratio Connector Cassandra implement another functions that allow to use Lucene secondary index features:
+-   MATCH: Find in an Lucene index some text::
+
+    xdsh:user> SELECT * from tableTest where indexColumn MATCH '*word?';
+
+-   should: Allow to make OR searches in a Lucene index column::
+
+    xdsh:user> SELECT * from tableTest where indexColumn=should('*word?','another','more*');
+
+-   range: Allow to make range searches in a Lucene index column (timestamp indexed columns follow the pattern yyyy-MM-dd HH:mm:ss)::
+
+    xdsh:user> SELECT * from tableTest where indexColumn=range('date1','dateN');
+
+
+
 
 License
 ========
