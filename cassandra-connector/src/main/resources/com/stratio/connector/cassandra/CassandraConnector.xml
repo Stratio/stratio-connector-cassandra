@@ -53,13 +53,13 @@
             <FunctionName>range</FunctionName>
             <Signature>range(Tuple[Any, Any]):Tuple[Any]</Signature>
             <FunctionType>simple</FunctionType>
-            <Description>Generates a JSON with the specification of Lucene range</Description>
+            <Description>Generates a JSON with the specification of Lucene range searches.</Description>
         </Function>
         <Function>
             <FunctionName>should</FunctionName>
             <Signature>should(Tuple[Any, Any]):Tuple[Any]</Signature>
             <FunctionType>simple</FunctionType>
-            <Description>Generates a JSON with Lucene OR query</Description>
+            <Description>Generates a JSON with Lucene OR query.</Description>
         </Function>
     </Functions>
 </Connector>
