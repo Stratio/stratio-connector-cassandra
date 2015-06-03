@@ -11,16 +11,6 @@
             <Description>It is necessary to indicate de default limit for the queries</Description>
         </Property>
     </RequiredProperties>
-    <OptionalProperties>
-        <Property>
-            <PropertyName>rpcPort</PropertyName>
-            <Description>The Cassandra RPC Port.</Description>
-        </Property>
-        <Property>
-            <PropertyName>cluster</PropertyName>
-            <Description>Cassandra cluster name</Description>
-        </Property>
-    </OptionalProperties>
     <SupportedOperations>
         <operation>CREATE_CATALOG</operation>
         <operation>DROP_CATALOG</operation>
