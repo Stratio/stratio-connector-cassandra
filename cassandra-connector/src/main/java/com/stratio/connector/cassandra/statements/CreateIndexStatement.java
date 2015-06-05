@@ -119,7 +119,7 @@ public class CreateIndexStatement {
                 String table=Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
                 session.execute(
                         "ALTER TABLE " + catalog + '.' + table  +  " ADD "
-                                + Utils.toCaseSensitive(columnForIndex) + " varchar;");
+                                + Utils.toCaseSensitive(columnForIndex) + " text;");
             } catch (Exception e) {
                 throw new ExecutionException(
                         "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),
@@ -218,6 +218,7 @@ public class CreateIndexStatement {
     }
 
     private String getOptionsString() {
+
         StringBuilder sb = new StringBuilder();
 
         sb.append(" WITH OPTIONS = {");
@@ -278,7 +279,7 @@ public class CreateIndexStatement {
                     sb.append("{type:\"").append(entry.getValue().getColumnType().getDbType()).append("\"}");
                 }
             }else if(entry.getValue().getColumnType().getDataType() == DataType.LIST){
-                sb.append("{type:\"").append(entry.getValue().getColumnType().getDbType()).append("\"}");
+                sb.append(luceneTypes.get(entry.getValue().getColumnType().getDbInnerType().getDataType()));
             }else {
                 sb.append(luceneTypes.get(entry.getValue().getColumnType().getDataType()));
             }
