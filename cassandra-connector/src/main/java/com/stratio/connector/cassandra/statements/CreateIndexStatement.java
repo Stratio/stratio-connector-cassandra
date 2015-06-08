@@ -31,6 +31,7 @@ import com.stratio.connector.cassandra.utils.ValueProperty;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.IndexType;
 
@@ -118,7 +119,7 @@ public class CreateIndexStatement {
                 String table=Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
                 session.execute(
                         "ALTER TABLE " + catalog + '.' + table  +  " ADD "
-                                + Utils.toCaseSensitive(columnForIndex) + " varchar;");
+                                + Utils.toCaseSensitive(columnForIndex) + " text;");
             } catch (Exception e) {
                 throw new ExecutionException(
                         "Cannot generate a new Column to insert the Lucene Index. " + e.getMessage(),
@@ -217,6 +218,7 @@ public class CreateIndexStatement {
     }
 
     private String getOptionsString() {
+
         StringBuilder sb = new StringBuilder();
 
         sb.append(" WITH OPTIONS = {");
@@ -270,12 +272,14 @@ public class CreateIndexStatement {
         for (Map.Entry<ColumnName, ColumnMetadata> entry : targetColumns.entrySet()) {
             sb.append(Utils.toCaseSensitive(entry.getValue().getName().getName()));
             sb.append(":");
-            if (entry.getValue().getColumnType().getDataType()==com.stratio.crossdata.common.metadata.DataType.NATIVE){
-                if (entry.getValue().getColumnType().getDbType().equalsIgnoreCase("timestamp")){
+            if (entry.getValue().getColumnType().getDataType() == DataType.NATIVE) {
+                if (entry.getValue().getColumnType().getDbType().equalsIgnoreCase("timestamp")) {
                     sb.append("{type:\"date\", pattern:\"yyyy-MM-dd HH:mm:ss\"}");
-                }else {
+                } else {
                     sb.append("{type:\"").append(entry.getValue().getColumnType().getDbType()).append("\"}");
                 }
+            }else if(entry.getValue().getColumnType().getDataType() == DataType.LIST){
+                sb.append(luceneTypes.get(entry.getValue().getColumnType().getDbInnerType().getDataType()));
             }else {
                 sb.append(luceneTypes.get(entry.getValue().getColumnType().getDataType()));
             }
