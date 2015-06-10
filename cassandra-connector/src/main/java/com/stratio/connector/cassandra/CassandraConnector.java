@@ -209,6 +209,14 @@ public class CassandraConnector implements IConnector {
         sessions = new HashMap<>();
     }
 
+    @Override public void restart() throws ExecutionException {
+        CassandraConnector cassandraConnector = new CassandraConnector();
+
+        ConnectorApp connectorApp = new ConnectorApp();
+        connectorApp.startup(cassandraConnector);
+        cassandraConnector.attachShutDownHook();
+    }
+
     /**
      * Close at the moment all the sessions of the connector.
      */
