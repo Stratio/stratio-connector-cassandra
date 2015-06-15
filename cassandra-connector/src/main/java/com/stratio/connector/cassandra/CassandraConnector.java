@@ -210,11 +210,7 @@ public class CassandraConnector implements IConnector {
     }
 
     @Override public void restart() throws ExecutionException {
-        CassandraConnector cassandraConnector = new CassandraConnector();
 
-        ConnectorApp connectorApp = new ConnectorApp();
-        connectorApp.startup(cassandraConnector);
-        cassandraConnector.attachShutDownHook();
     }
 
     /**
