@@ -1,4 +1,4 @@
-CREATE KEYSPACE demo WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 1};
+CREATE KEYSPACE IF NOT EXISTS demo  WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 1};
 
 USE demo;
 

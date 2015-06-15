@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.connector.cassandra.BasicCoreCassandraIT;
 import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.AlterOperation;
 import com.stratio.crossdata.common.data.AlterOptions;
@@ -54,7 +54,7 @@ import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 import com.stratio.crossdata.common.utils.StringUtils;
 
-public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
+public class CassandraMetadataEngineIT extends BasicCoreCassandraIT {
 
     private Map<String, Session> sessions;
 
@@ -234,8 +234,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @BeforeClass
     public void setUp() {
-        BasicCoreCassandraTest.setUpBeforeClass();
-        BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
+        BasicCoreCassandraIT.setUpBeforeClass();
+        BasicCoreCassandraIT.loadTestData("demo", "demoKeyspace.cql");
         sessions = new HashMap<>();
         sessions.put("cluster", _session);
         createCatalog();
@@ -900,18 +900,18 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @AfterClass
     public void restore() {
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demoMetadata");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("demoMetadata");
         for(int i=1; i<15; i++){
-            BasicCoreCassandraTest.dropKeyspaceIfExists("demoMetadata" + i);
+            BasicCoreCassandraIT.dropKeyspaceIfExists("demoMetadata" + i);
         }
-        BasicCoreCassandraTest.dropKeyspaceIfExists("testAlterCatalog");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog1");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog11");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog111");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog2");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog22");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog222");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog3");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("testAlterCatalog");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("importCatalog1");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("importCatalog11");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("importCatalog111");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("importCatalog2");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("importCatalog22");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("importCatalog222");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("importCatalog3");
 
     }
 

@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.connector.cassandra.BasicCoreCassandraIT;
 import com.stratio.connector.cassandra.ResultHandler;
 import com.stratio.connector.cassandra.statements.SelectStatement;
 import com.stratio.crossdata.common.connector.IResultHandler;
@@ -70,12 +70,12 @@ import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
-public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
+public class CassandraQueryEngineIT extends BasicCoreCassandraIT {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        BasicCoreCassandraTest.setUpBeforeClass();
-        BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
+        BasicCoreCassandraIT.setUpBeforeClass();
+        BasicCoreCassandraIT.loadTestData("demo", "demoKeyspace.cql");
     }
 
     @Test
@@ -828,7 +828,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
     @AfterClass
     public void restore() {
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("demo");
     }
 
 }

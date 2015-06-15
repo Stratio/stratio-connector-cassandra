@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.connector.cassandra.BasicCoreCassandraIT;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
@@ -50,7 +50,7 @@ import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
-public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
+public class CassandraStorageEngineIT extends BasicCoreCassandraIT {
 
     private Map<String, Session> sessions;
 
@@ -65,8 +65,8 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
     @BeforeClass
     public void setUp() {
-        BasicCoreCassandraTest.setUpBeforeClass();
-        BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
+        BasicCoreCassandraIT.setUpBeforeClass();
+        BasicCoreCassandraIT.loadTestData("demo", "demoKeyspace.cql");
         sessions = new HashMap<>();
         sessions.put("cluster", _session);
     }
@@ -346,7 +346,7 @@ public class CassandraStorageEngineTest extends BasicCoreCassandraTest {
 
     @AfterClass
     public void restore() {
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
+        BasicCoreCassandraIT.dropKeyspaceIfExists("demo");
     }
 
 }
