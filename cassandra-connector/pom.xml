@@ -163,6 +163,38 @@
             <id>package</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>appassembler-maven-plugin</artifactId>
+                        <version>1.10</version>
+                        <executions>
+                            <execution>
+                                <id>appassembler</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>assemble</goal>
+                                </goals>
+                                <configuration>
+                                    <configurationSourceDirectory>src/main/config</configurationSourceDirectory>
+                                    <configurationDirectory>conf</configurationDirectory>
+                                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                                    <assembleDirectory>${project.build.directory}/stratio-connector-cassandra-${project.version}
+                                    </assembleDirectory>
+                                    <filterConfigurationDirectory>true</filterConfigurationDirectory>
+                                    <platforms>
+                                        <platform>unix</platform>
+                                    </platforms>
+                                    <programs>
+                                        <program>
+                                            <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
+                                            <id>stratio-connector-cassandra-${project.version}</id>
+                                        </program>
+                                    </programs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <!--RPM and deb packages  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
                     <plugin>
                         <groupId>com.stratio.mojo.unix</groupId>
@@ -220,6 +252,7 @@
                                         <path>etc/sds/connectors/cassandra</path>
                                         <path>etc/default</path>
                                         <path>var/run/sds</path>
+                                        <path>var/log/sds/connectors/cassandra</path>
                                     </paths>
                                     <attributes>
                                         <user>stratio</user>
@@ -228,15 +261,15 @@
                                     </attributes>
                                 </mkdirs>
                                 <copyDirectory>
-                                    <from>target/cassandra-connector-${project.version}/bin</from>
+                                    <from>target/stratio-connector-cassandra-${project.version}/bin</from>
                                     <to>opt/sds/connectors/cassandra/bin</to>
                                 </copyDirectory>
                                 <copyDirectory>
-                                    <from>target/cassandra-connector-${project.version}/lib</from>
+                                    <from>target/stratio-connector-cassandra-${project.version}/repo</from>
                                     <to>opt/sds/connectors/cassandra/lib</to>
                                 </copyDirectory>
                                 <copyDirectory>
-                                    <from>target/cassandra-connector-${project.version}/conf</from>
+                                    <from>target/stratio-connector-cassandra-${project.version}/conf</from>
                                     <to>opt/sds/connectors/cassandra/conf</to>
                                 </copyDirectory>
                                 <copyDirectory>
@@ -288,8 +321,6 @@
                     </plugin>
                 </plugins>
             </build>
-
         </profile>
-
     </profiles>
 </project>
