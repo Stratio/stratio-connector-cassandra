@@ -34,7 +34,7 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.security.ICredentials;
 import com.stratio.crossdata.common.data.ClusterName;
 
-public class CassandraConnectorIT extends BasicCoreCassandraIT {
+public class CassandraConnectorIT extends BasicCoreCassandra {
 
     @Test
     public void connectorTest() {
