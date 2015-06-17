@@ -5,7 +5,7 @@ USE cassandra_connector_demo;
 CREATE TABLE cassandra_connector_demo.users ( name varchar, gender varchar, email varchar, age int, bool boolean,phrase varchar, stratio_lucene_index_1 varchar, PRIMARY KEY ((name, gender), email, age)) WITH comment='Users table';
 
 #Create lucene index
-CREATE CUSTOM INDEX stratio_lucene_index_1 ON cassandra_connector_demo.users (stratio_lucene_index_1) USING 'com.stratio.cassandra.index.RowIndex' WITH OPTIONS = {'refresh_seconds':'1', 'schema':'{default_analyzer:"org.apache.lucene.analysis.standard.StandardAnalyzer",fields:{name:{type:"string"}, gender:{type:"string"}, email:{type:"string"}, age:{type:"integer"}, bool:{type:"boolean"}, phrase:{type:"text", analyzer:"org.apache.lucene.analysis.en.EnglishAnalyzer"}}}'};
+CREATE CUSTOM INDEX stratio_lucene_index_1 ON cassandra_connector_demo.users (stratio_lucene_index_1) USING 'com.stratio.cassandra.lucene.Index' WITH OPTIONS = {'refresh_seconds':'1', 'schema':'{default_analyzer:"org.apache.lucene.analysis.standard.StandardAnalyzer",fields:{name:{type:"string"}, gender:{type:"string"}, email:{type:"string"}, age:{type:"integer"}, bool:{type:"boolean"}, phrase:{type:"text", analyzer:"org.apache.lucene.analysis.en.EnglishAnalyzer"}}}'};
 
 #Create Cassandra indexes
 CREATE INDEX users_gender_idx ON users (gender);

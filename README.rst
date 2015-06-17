@@ -5,7 +5,9 @@ Native connector for Cassandra using Crossdata.
 
 Requirements
 =============
-`Stratio Cassandra <https://github.com/Stratio/stratio-cassandra>`_ version 2.1 must be installed and started.
+Get `Cassandra Lucene Index plugin <https://github.com/Stratio/cassandra-lucene-index/tree/2.1.6.0>`_ version 2.1.6 and put the jar generated into cassandra lib directory
+
+`Cassandra <http://cassandra.apache.org/download/>`_ version 2.1.6 must be installed and started.
 
 `Crossdata <https://github.com/Stratio/crossdata>`_ version 0.4.0-SNAPSHOT is needed to interact with this
 connector.

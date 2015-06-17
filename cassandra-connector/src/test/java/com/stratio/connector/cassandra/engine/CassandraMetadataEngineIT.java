@@ -583,7 +583,7 @@ public class CassandraMetadataEngineIT extends BasicCoreCassandra {
                 new ColumnMetadata(new ColumnName(new TableName("demoMetadata12", "users14"), "age"),
                         parameters, new ColumnType(DataType.TEXT)));
         IndexMetadata index =
-                new IndexMetadata(new IndexName("demoMetadata12", "users14", "Indice3"), columns,
+                new IndexMetadata(new IndexName("demoMetadata12", "users14", "indice3"), columns,
                         IndexType.DEFAULT, null);
         try {
             cme.dropIndex(new ClusterName("cluster"), index);
@@ -629,7 +629,7 @@ public class CassandraMetadataEngineIT extends BasicCoreCassandra {
                         parameters, new ColumnType(DataType.TEXT)));
 
         IndexMetadata indexMetadata =
-                new IndexMetadata(new IndexName("demoMetadata10", "users1", "Indice"), columns,
+                new IndexMetadata(new IndexName("demoMetadata10", "users1", "indice"), columns,
                         IndexType.DEFAULT, null);
 
         try {
@@ -637,7 +637,7 @@ public class CassandraMetadataEngineIT extends BasicCoreCassandra {
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-        Assert.assertEquals(assertIndex("email", "demoMetadata10", "users1"), "Indice");
+        Assert.assertEquals(assertIndex("email", "demoMetadata10", "users1"), "indice");
     }
 
     @Test
