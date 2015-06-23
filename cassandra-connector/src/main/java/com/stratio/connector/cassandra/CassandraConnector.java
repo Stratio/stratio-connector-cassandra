@@ -18,6 +18,10 @@
 
 package com.stratio.connector.cassandra;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +77,6 @@ public class CassandraConnector implements IConnector {
      */
     private Map<String, List<Pair<String, String>>> connectorOptionsPerCluster;
 
-
     /**
      * String  that contains the path to connector manifest.
      */
@@ -82,7 +85,7 @@ public class CassandraConnector implements IConnector {
     /**
      * String that contains the path to datastore manifest.
      */
-    private String[] datastoreManifestPath=new String[1];
+    private String[] datastoreManifestPath = new String[1];
 
     /**
      * Engines
@@ -97,8 +100,22 @@ public class CassandraConnector implements IConnector {
     public CassandraConnector() {
         sessions = new HashMap<>();
         connectorOptionsPerCluster = new HashMap<>();
-        connectorManifestPath=getClass().getResource("CassandraConnector.xml").getPath();
-        datastoreManifestPath[0]=getClass().getResource("CassandraDataStore.xml").getPath();
+        File file = new File("../conf/CassandraConnector.xml");
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            connectorManifestPath = getClass().getResource("CassandraConnector.xml").getPath();
+            datastoreManifestPath[0] = getClass().getResource("CassandraDataStore.xml").getPath();
+        }
+        if (inputStream == null) {
+            connectorManifestPath = getClass().getResource("CassandraConnector.xml").getPath();
+            datastoreManifestPath[0] = getClass().getResource("CassandraDataStore.xml").getPath();
+        } else {
+            connectorManifestPath = "../conf/CassandraConnector.xml";
+            datastoreManifestPath[0] = "../conf/CassandraDataStore.xml";
+
+        }
     }
 
     /**
@@ -107,9 +124,10 @@ public class CassandraConnector implements IConnector {
      * @param args
      */
     public static void main(String[] args) {
+        CassandraConnector cassandraConnector;
 
-        CassandraConnector cassandraConnector = new CassandraConnector();
-
+        cassandraConnector = new CassandraConnector();
+      
         ConnectorApp connectorApp = new ConnectorApp();
         connectorApp.startup(cassandraConnector);
         cassandraConnector.attachShutDownHook();

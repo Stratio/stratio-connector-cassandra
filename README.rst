@@ -33,44 +33,40 @@ Build an executable Connector Cassandra
 To generate the executable execute the following command::
 
     > cd cassandra-connector
-    > mvn crossdata-connector:install
+    > mvn package -Ppackage
 
 
 To run Connector Cassandra execute::
 
 
-    > target/cassandra-connector-0.4.0-SNAPSHOT/bin/cassandra-connector-0.4.0-SNAPSHOT start
+    > target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/cassandra-connector-0.4.0-SNAPSHOT start
 
 
 To stop the connector execute::
 
 
-    > target/cassandra-connector-0.4.0-SNAPSHOT/bin/cassandra-connector-0.4.0-SNAPSHOT stop
+    > target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/cassandra-connector-0.4.0-SNAPSHOT stop
 
 
 Build a redistributable package
 ================================
 It is possible too, to create a RPM or DEB redistributable package.
 
-RPM Package::
+RPM and DEB Package::
 
     > cd cassandra-connector
-    > mvn unix:package-rpm -N
+    > mvn package -Ppackage
 
-DEB Package::
-
-    > cd cassandra-connector
-    > mvn unix:package-deb -N
 
 Once the package it's created, execute this commands to install:
 
 RPM Package::
 
-    > rpm -i cassandra-connector/target/cassandra-connector-0.4.0-SNAPSHOT.rpm
+    > rpm -i cassandra-connector/target/cassandra-connector-0.4.0_SNAPSHOT.noarch.rpm
 
 DEB Package::
 
-    > dpkg -i cassandra-connector/target/cassandra-connector-0.4.0-SNAPSHOT.deb
+    > dpkg -i cassandra-connector/target/cassandra-connector-0.4.0-SNAPSHOT.all.deb
 
 Now to start/stop the connector::
 
