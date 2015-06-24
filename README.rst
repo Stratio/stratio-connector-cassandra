@@ -38,14 +38,15 @@ To generate the executable execute the following command::
 
 To run Connector Cassandra execute::
 
-
-    > target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/cassandra-connector-0.4.0-SNAPSHOT start
+    > cd target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/
+    > ./cassandra-connector-0.4.0-SNAPSHOT start
 
 
 To stop the connector execute::
 
 
-    > target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/cassandra-connector-0.4.0-SNAPSHOT stop
+    > cd target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/
+    > ./cassandra-connector-0.4.0-SNAPSHOT stop
 
 
 Build a redistributable package
@@ -79,19 +80,9 @@ How to use Cassandra Connector
 2. Start Cassandra Connector as it is explained before
 3. In crossdata-shell ...
 
-Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.4.0-SNAPSHOT/conf/CassandraDataStore.xml ::
-
-    xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
-
-
-Attach cluster on that data store. The data store name must be the same as the defined in the data store manifest ::
+Attach cluster on a data store. The data store name must be the same as the defined in the data store manifest ::
 
     xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1, ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
-
-
-Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in cassandra-connector/target/cassandra-connector-0.4.0-SNAPSHOT/conf/CassandraConnector.xml ::
-
-    xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>
 
 
 Attach the connector to the previously defined cluster. The connector name must match the one defined in the  Connector Manifest, and the cluster name must match with the previously defined in the ATTACH CLUSTER command ::
