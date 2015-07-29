@@ -210,7 +210,7 @@
                             <contactEmail>jjlopez@stratio.com</contactEmail>
 
                             <!-- Optional, final package name -->
-                            <outputFileName>cassandra-connector</outputFileName>
+                            <outputFileName>stratio-connector-cassandra</outputFileName>
 
                             <!-- RPM specific properties -->
                             <rpm>
