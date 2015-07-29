@@ -181,7 +181,6 @@ public class SelectStatement {
             }
             count = 1;
             switch (relation.getOperator()) {
-            case IN:
             case BETWEEN:
                 break;
             case LIKE:
