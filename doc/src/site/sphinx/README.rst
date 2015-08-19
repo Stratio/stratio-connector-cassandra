@@ -9,7 +9,7 @@ Get `Cassandra Lucene Index plugin <https://github.com/Stratio/cassandra-lucene-
 
 `Cassandra <http://cassandra.apache.org/download/>`_ version 2.1.6 must be installed and started.
 
-`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.4.0-SNAPSHOT is needed to interact with this
+`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.4.0 is needed to interact with this
 connector.
 
 Compiling Stratio Connector Cassandra
@@ -38,15 +38,15 @@ To generate the executable execute the following command::
 
 To run Connector Cassandra execute::
 
-    > cd target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/
-    > ./cassandra-connector-0.4.0-SNAPSHOT start
+    > cd target/stratio-connector-cassandra-0.4.0/bin/
+    > ./cassandra-connector-0.4.0 start
 
 
 To stop the connector execute::
 
 
-    > cd target/stratio-connector-cassandra-0.4.0-SNAPSHOT/bin/
-    > ./cassandra-connector-0.4.0-SNAPSHOT stop
+    > cd target/stratio-connector-cassandra-0.4.0/bin/
+    > ./cassandra-connector-0.4.0 stop
 
 
 Build a redistributable package
@@ -63,11 +63,11 @@ Once the package it's created, execute this commands to install:
 
 RPM Package::
 
-    > rpm -i cassandra-connector/target/cassandra-connector-0.4.0_SNAPSHOT.noarch.rpm
+    > rpm -i cassandra-connector/target/cassandra-connector-0.4.0.noarch.rpm
 
 DEB Package::
 
-    > dpkg -i cassandra-connector/target/cassandra-connector-0.4.0-SNAPSHOT.all.deb
+    > dpkg -i cassandra-connector/target/cassandra-connector-0.4.0.all.deb
 
 Now to start/stop the connector::
 
