@@ -72,12 +72,12 @@
     <properties>
         <cassandra.driver>2.0.6</cassandra.driver>
         <scala.version>2.10.4</scala.version>
-        <deep.version>0.3.2</deep.version>
         <infinispan.version>6.0.2.Final</infinispan.version>
         <scala.dep.version>2.10</scala.dep.version>
         <slf4j.version>1.7.7</slf4j.version>
         <coverage.data.dir>${project.build.outputDirectory}</coverage.data.dir>
-        <crossdata.version>0.4.0-RC2-SNAPSHOT</crossdata.version>
+        <crossdata.version>0.4.0</crossdata.version>
+        <cassandra.driver.version>2.1.7.1</cassandra.driver.version>
     </properties>
     <dependencies>
         <dependency>
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>2.1.1</version>
+            <version>${cassandra.driver.version}</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
