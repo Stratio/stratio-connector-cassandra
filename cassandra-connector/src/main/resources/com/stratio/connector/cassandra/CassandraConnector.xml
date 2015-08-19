@@ -41,6 +41,8 @@
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_LIMIT</operation>
         <operation>FILTER_PK_EQ</operation>
+        <operation>FILTER_PK_IN</operation>
+        <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
         <operation>FILTER_PK_MATCH</operation>

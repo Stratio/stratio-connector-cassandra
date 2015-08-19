@@ -40,7 +40,7 @@ import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.result.ErrorResult;
 import com.stratio.crossdata.common.result.Result;
 
-public class BasicCoreCassandraTest {
+public class BasicCoreCassandra {
 
     /**
      * Default Cassandra HOST using 127.0.0.1.
@@ -55,18 +55,18 @@ public class BasicCoreCassandraTest {
     /**
      * Class logger.
      */
-    private static final Logger logger = Logger.getLogger(BasicCoreCassandraTest.class);
+    private static final Logger logger = Logger.getLogger(BasicCoreCassandra.class);
 
     @BeforeClass
     public static void setUpBeforeClass() {
         CCMHandler.startCCM();
         initCassandraConnection();
-        dropKeyspaceIfExists("testKS");
+        dropKeyspaceIfExists("cassandra_connector_demo");
     }
 
     @AfterClass
     public static void tearDownAfterClass() {
-        dropKeyspaceIfExists("testKs");
+        dropKeyspaceIfExists("cassandra_connector_demo");
         closeCassandraConnection();
     }
 
@@ -163,7 +163,7 @@ public class BasicCoreCassandraTest {
         List<String> result = new ArrayList<>();
         logger.info("Getting url from path: " + path);
         //URL url = BasicCoreCassandraTest.class.getClassLoader().getS   getResource(path);
-        URL url = BasicCoreCassandraTest.class.getResource(path);
+        URL url = BasicCoreCassandra.class.getResource(path);
         logger.info("Loading script from: " + url);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
             String line;

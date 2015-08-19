@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.connector.cassandra.BasicCoreCassandra;
 import com.stratio.connector.cassandra.ResultHandler;
 import com.stratio.connector.cassandra.statements.SelectStatement;
 import com.stratio.crossdata.common.connector.IResultHandler;
@@ -70,12 +70,12 @@ import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
-public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
+public class CassandraQueryEngineIT extends BasicCoreCassandra {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        BasicCoreCassandraTest.setUpBeforeClass();
-        BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
+        BasicCoreCassandra.setUpBeforeClass();
+        BasicCoreCassandra.loadTestData("cassandra_connector_demo", "demoKeyspace.cql");
     }
 
     @Test
@@ -85,7 +85,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
         ColumnName columnName = new ColumnName(tableName, "name");
@@ -96,10 +96,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         operationsSet.add(Operations.PROJECT);
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -111,12 +111,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
-        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
+        aliasColumns.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), "name");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
-        typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
-        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
+        typeMap.put("cassandra_connector_demo.users.name", new ColumnType(DataType.VARCHAR));
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), new ColumnType(DataType.VARCHAR));
         Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
@@ -152,7 +152,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         SelectStatement ss=new SelectStatement(workflow,100,sessions, connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
-                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
+                "SELECT \"name\" FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -164,7 +164,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
         ColumnName columnName = new ColumnName(tableName, "name");
@@ -175,7 +175,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         operationsSet.add(Operations.PROJECT);
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -183,7 +183,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Relation relation = new Relation(selector, Operator.ASSIGN, rightTerm);
         Filter filter = new Filter(operationsSet2, relation);
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Relation relation2 = new Relation(selector2, Operator.ASSIGN, rightTerm2);
@@ -191,18 +191,18 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
         List<OrderByClause> listOrderBy=new ArrayList<>();
-        Selector columnSelector=new ColumnSelector(new ColumnName("demo","users","email"));
+        Selector columnSelector=new ColumnSelector(new ColumnName("cassandra_connector_demo","users","email"));
         OrderByClause orderByClause=new OrderByClause(OrderDirection.ASC,columnSelector);
         listOrderBy.add(orderByClause);
         OrderBy orderBy=new OrderBy(operationsSet2,listOrderBy);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
-        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
+        aliasColumns.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), "name");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
-        typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
-        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
+        typeMap.put("cassandra_connector_demo.users.name", new ColumnType(DataType.VARCHAR));
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), new ColumnType(DataType.VARCHAR));
         Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
@@ -232,7 +232,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
-                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' ORDER BY \"email\" ASC LIMIT 100",
+                "SELECT \"name\" FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' ORDER BY \"email\" ASC LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -244,7 +244,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
         ColumnName columnName = new ColumnName(tableName, "name");
@@ -255,10 +255,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         operationsSet.add(Operations.PROJECT);
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -272,12 +272,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Limit limit = new Limit(operationsSet2, 50);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
-        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
+        aliasColumns.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), "name");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
-        typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
-        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
+        typeMap.put("cassandra_connector_demo.users.name", new ColumnType(DataType.VARCHAR));
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), new ColumnType(DataType.VARCHAR));
         Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
@@ -315,7 +315,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
-                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 50",
+                "SELECT \"name\" FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 50",
                 "The select statement query obtained not match with the expected query");
 
     }
@@ -327,7 +327,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
         ColumnName columnName = new ColumnName(tableName, "name");
@@ -340,10 +340,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         operationsSet.add(Operations.PROJECT);
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -355,15 +355,15 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
-        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "nameAlias");
-        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "gender")), "gender");
+        aliasColumns.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), "nameAlias");
+        aliasColumns.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender")), "gender");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
-        typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
-        typeMap.put("demo.users.gender", new ColumnType(DataType.VARCHAR));
-        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
-        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "gender")), new ColumnType(DataType.VARCHAR));
+        typeMap.put("cassandra_connector_demo.users.name", new ColumnType(DataType.VARCHAR));
+        typeMap.put("cassandra_connector_demo.users.gender", new ColumnType(DataType.VARCHAR));
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), new ColumnType(DataType.VARCHAR));
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender")), new ColumnType(DataType.VARCHAR));
         Set<Operations> operationsSet3=new HashSet<>();
         operationsSet3.add(Operations.SELECT_LIMIT);
         Select aliasSelect = new Select(operationsSet3, aliasColumns, typeMap, typeMapFromColumnName);
@@ -402,7 +402,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
             SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
             assertEquals(ss.parseQuery(),
-                    "SELECT \"name\",\"gender\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
+                    "SELECT \"name\",\"gender\" FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                     "The select query obtained not match with the expected query");
         } catch (Exception ex) {
             Assert.fail("No alias found");
@@ -415,7 +415,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
 
@@ -427,10 +427,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
 
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -486,7 +486,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
-                "SELECT Count(*) FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
+                "SELECT Count(*) FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -498,7 +498,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
 
@@ -508,10 +508,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         operationsSet.add(Operations.PROJECT);
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -564,7 +564,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
-                "SELECT now() FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
+                "SELECT now() FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -576,7 +576,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
 
@@ -586,10 +586,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         operationsSet.add(Operations.PROJECT);
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -602,7 +602,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         //Function count
         List<Selector> functionColumns=new ArrayList<Selector>();
-        Selector columnSelector=new ColumnSelector(new ColumnName("demo","users","phrase"));
+        Selector columnSelector=new ColumnSelector(new ColumnName("cassandra_connector_demo","users","phrase"));
         functionColumns.add(columnSelector);
 
         Selector functionSelector=new FunctionSelector("ttl", functionColumns);
@@ -645,7 +645,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
-                "SELECT ttl(\"phrase\") FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
+                "SELECT ttl(\"phrase\") FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -658,7 +658,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
         ColumnName columnName = new ColumnName(tableName, "name");
@@ -669,7 +669,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         operationsSet.add(Operations.PROJECT);
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "phrase"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "phrase"));
         Selector rightTerm = new StringSelector("*");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -678,12 +678,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
-        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
+        aliasColumns.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), "name");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
-        typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
-        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")),
+        typeMap.put("cassandra_connector_demo.users.name", new ColumnType(DataType.VARCHAR));
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")),
                 new ColumnType(DataType.VARCHAR));
         Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
@@ -727,7 +727,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         List<LogicalStep> logicalSteps = new ArrayList<>();
 
-        TableName tableName = new TableName("demo", "users");
+        TableName tableName = new TableName("cassandra_connector_demo", "users");
 
         List<ColumnName> columnList = new ArrayList<>();
         ColumnName columnName = new ColumnName(tableName, "name");
@@ -739,10 +739,10 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Project project = new Project(operationsSet, tableName, targetCluster, columnList);
 
 
-        Selector selector = new ColumnSelector(new ColumnName("demo", "users", "name"));
+        Selector selector = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name"));
         Selector rightTerm = new StringSelector("name_5");
 
-        Selector selector2 = new ColumnSelector(new ColumnName("demo", "users", "gender"));
+        Selector selector2 = new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "gender"));
         Selector rightTerm2 = new StringSelector("female");
 
         Set<Operations> operationsSet2=new HashSet<>();
@@ -754,12 +754,12 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
         Filter filter = new Filter(operationsSet2, relation);
 
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
-        aliasColumns.put(new ColumnSelector(new ColumnName("demo", "users", "name")), "name");
+        aliasColumns.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), "name");
 
         Map<String, ColumnType> typeMap = new HashMap<>();
         Map<Selector, ColumnType> typeMapFromColumnName = new HashMap<>();
-        typeMap.put("demo.users.name", new ColumnType(DataType.VARCHAR));
-        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("demo", "users", "name")), new ColumnType(DataType.VARCHAR));
+        typeMap.put("cassandra_connector_demo.users.name", new ColumnType(DataType.VARCHAR));
+        typeMapFromColumnName.put(new ColumnSelector(new ColumnName("cassandra_connector_demo", "users", "name")), new ColumnType(DataType.VARCHAR));
         Select select = new Select(operationsSet2, aliasColumns, typeMap, typeMapFromColumnName);
 
 
@@ -793,7 +793,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
         SelectStatement ss=new SelectStatement(workflow,100,sessions,connectorOptionsPerCluster);
         assertEquals(ss.parseQuery(),
-                "SELECT \"name\" FROM \"demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
+                "SELECT \"name\" FROM \"cassandra_connector_demo\".\"users\" WHERE \"name\" = 'name_5' AND \"gender\" = 'female' LIMIT 100",
                 "The select statement not match with the expected value");
 
     }
@@ -828,7 +828,7 @@ public class CassandraQueryEngineTest extends BasicCoreCassandraTest {
 
     @AfterClass
     public void restore() {
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demo");
+        BasicCoreCassandra.dropKeyspaceIfExists("cassandra_connector_demo");
     }
 
 }

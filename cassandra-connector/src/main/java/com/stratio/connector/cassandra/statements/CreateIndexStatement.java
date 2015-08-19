@@ -109,7 +109,7 @@ public class CreateIndexStatement {
         this.name = indexMetadata.getName().getName();
 
         if (type == IndexType.FULL_TEXT) {
-            usingClass = "'com.stratio.cassandra.index.RowIndex'";
+            usingClass = "'com.stratio.cassandra.lucene.Index'";
 
             //Create the new column for the Lucene Index
             try {

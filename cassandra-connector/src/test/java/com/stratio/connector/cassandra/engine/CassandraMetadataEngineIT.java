@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.stratio.connector.cassandra.BasicCoreCassandraTest;
+import com.stratio.connector.cassandra.BasicCoreCassandra;
 import com.stratio.connector.cassandra.utils.Utils;
 import com.stratio.crossdata.common.data.AlterOperation;
 import com.stratio.crossdata.common.data.AlterOptions;
@@ -54,7 +54,7 @@ import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 import com.stratio.crossdata.common.utils.StringUtils;
 
-public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
+public class CassandraMetadataEngineIT extends BasicCoreCassandra {
 
     private Map<String, Session> sessions;
 
@@ -101,23 +101,23 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
 
@@ -149,23 +149,23 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
 
@@ -234,8 +234,8 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @BeforeClass
     public void setUp() {
-        BasicCoreCassandraTest.setUpBeforeClass();
-        BasicCoreCassandraTest.loadTestData("demo", "demoKeyspace.cql");
+        BasicCoreCassandra.setUpBeforeClass();
+        BasicCoreCassandra.loadTestData("cassandra_connector_demo", "demoKeyspace.cql");
         sessions = new HashMap<>();
         sessions.put("cluster", _session);
         createCatalog();
@@ -361,23 +361,23 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
 
@@ -418,23 +418,23 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         clusterKey.add(clusterColumn1);
 
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
 
@@ -472,23 +472,23 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
         Map<IndexName, IndexMetadata> indexes = new HashMap<>();
@@ -534,23 +534,23 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
         LinkedList<ColumnName> clusterKey = new LinkedList<>();
         Object[] parameters = { };
-        columns.put(new ColumnName(new TableName("demo", "users"), "name"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "name"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "name"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "gender"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "gender"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "gender"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "age"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "age"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "age"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.INT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "bool"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "bool"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "bool"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.BOOLEAN)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "phrase"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "phrase"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "phrase"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
-        columns.put(new ColumnName(new TableName("demo", "users"), "email"),
-                new ColumnMetadata(new ColumnName(new TableName("demo", "users"), "email"), parameters,
+        columns.put(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"),
+                new ColumnMetadata(new ColumnName(new TableName("cassandra_connector_demo", "users"), "email"), parameters,
                         new com.stratio.crossdata.common.metadata.ColumnType(DataType.TEXT)));
 
 
@@ -583,7 +583,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
                 new ColumnMetadata(new ColumnName(new TableName("demoMetadata12", "users14"), "age"),
                         parameters, new ColumnType(DataType.TEXT)));
         IndexMetadata index =
-                new IndexMetadata(new IndexName("demoMetadata12", "users14", "Indice3"), columns,
+                new IndexMetadata(new IndexName("demoMetadata12", "users14", "indice3"), columns,
                         IndexType.DEFAULT, null);
         try {
             cme.dropIndex(new ClusterName("cluster"), index);
@@ -629,7 +629,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
                         parameters, new ColumnType(DataType.TEXT)));
 
         IndexMetadata indexMetadata =
-                new IndexMetadata(new IndexName("demoMetadata10", "users1", "Indice"), columns,
+                new IndexMetadata(new IndexName("demoMetadata10", "users1", "indice"), columns,
                         IndexType.DEFAULT, null);
 
         try {
@@ -637,7 +637,7 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
         } catch (ConnectorException e) {
             Assert.fail(e.getMessage());
         }
-        Assert.assertEquals(assertIndex("email", "demoMetadata10", "users1"), "Indice");
+        Assert.assertEquals(assertIndex("email", "demoMetadata10", "users1"), "indice");
     }
 
     @Test
@@ -900,18 +900,18 @@ public class CassandraMetadataEngineTest extends BasicCoreCassandraTest {
 
     @AfterClass
     public void restore() {
-        BasicCoreCassandraTest.dropKeyspaceIfExists("demoMetadata");
+        BasicCoreCassandra.dropKeyspaceIfExists("demoMetadata");
         for(int i=1; i<15; i++){
-            BasicCoreCassandraTest.dropKeyspaceIfExists("demoMetadata" + i);
+            BasicCoreCassandra.dropKeyspaceIfExists("demoMetadata" + i);
         }
-        BasicCoreCassandraTest.dropKeyspaceIfExists("testAlterCatalog");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog1");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog11");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog111");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog2");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog22");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog222");
-        BasicCoreCassandraTest.dropKeyspaceIfExists("importCatalog3");
+        BasicCoreCassandra.dropKeyspaceIfExists("testAlterCatalog");
+        BasicCoreCassandra.dropKeyspaceIfExists("importCatalog1");
+        BasicCoreCassandra.dropKeyspaceIfExists("importCatalog11");
+        BasicCoreCassandra.dropKeyspaceIfExists("importCatalog111");
+        BasicCoreCassandra.dropKeyspaceIfExists("importCatalog2");
+        BasicCoreCassandra.dropKeyspaceIfExists("importCatalog22");
+        BasicCoreCassandra.dropKeyspaceIfExists("importCatalog222");
+        BasicCoreCassandra.dropKeyspaceIfExists("importCatalog3");
 
     }
 
