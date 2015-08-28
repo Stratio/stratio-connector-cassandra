@@ -2,21 +2,23 @@
 
 set -e
 
+#DEB
+
 GROUP='stratio'
 USER='stratio'
 DIR_INSTALL='/opt/sds/connectors/cassandra'
 DIR_CONF='/etc/sds/connectors/cassandra'
+DIR_CONF='/etc/sds/connectors/cassandra'
 DIR_LOG='/var/log/sds/connectors/cassandra'
 
 
-cp /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra-* /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
-cp /opt/sds/connectors/cassandra/template/CassandraConnector /etc/init.d/stratio-connector-cassandra
-chmod 755 /etc/init.d/stratio-connector-cassandra
+chmod 755 /etc/init.d/connector_cassandra
 chmod 755 /opt/sds/connectors/cassandra/bin
-chmod +x /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
-chmod +x /etc/default/stratio-connector-cassandra
+chmod +x /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra*
+chmod +x /etc/default/cassandra_connector
 export CASSANDRA_CONNECTOR_LIB=/opt/sds/connectors/cassandra
 export CASSANDRA_CONNECTOR_CONF="/etc/sds/connectors/cassandra"
+
 
 case "$1" in
   configure)
@@ -34,23 +36,23 @@ case "$1" in
     usermod -G $GROUP $USER
   fi
 
-  chown -R ${USER}:${GROUP} /opt/sds /etc/sds
+  if [ ! -d "$DIR_LOG" ]; then
+    mkdir $DIR_LOG
+  fi
 
-  chown root:root /etc/init.d/stratio-connector-cassandra
+  chown root:root /etc/init.d/connector_cassandra
  
   chown -R ${USER}:${GROUP} $DIR_INSTALL
   chown -R ${USER}:${GROUP} $DIR_CONF
   chown -R ${USER}:${GROUP} $DIR_LOG
-  chmod 775 $DIR_INSTALL
-  chmod 775 $DIR_CONF
+  chmod -R 775 $DIR_INSTALL
   chmod 775 $DIR_LOG
-  
-  update-rc.d stratio-connector-cassandra defaults
 
+  sed -i 's!"$BASEDIR"/conf!/etc/sds/connectors/cassandra!g' /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra*
+
+  update-rc.d connector_cassandra defaults
   ;;
-esac
-ln -s /opt/sds/connectors/cassandra/logs /var/log/sds/connectors/cassandra/stratio-connector-cassandra.log
+esac    
 
 
 exit 0
-

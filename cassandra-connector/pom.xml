@@ -237,7 +237,7 @@
                                 <directoryAttributes>
                                     <user>stratio</user>
                                     <group>stratio</group>
-                                    <mode>0744</mode>
+                                    <mode>0755</mode>
                                 </directoryAttributes>
                                 <fileAttributes>
                                     <user>stratio</user>
@@ -266,23 +266,15 @@
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>target/stratio-connector-cassandra-${project.version}/repo</from>
-                                    <to>opt/sds/connectors/cassandra/lib</to>
+                                    <to>opt/sds/connectors/cassandra/repo</to>
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>target/stratio-connector-cassandra-${project.version}/conf</from>
-                                    <to>opt/sds/connectors/cassandra/conf</to>
+                                    <to>etc/sds/connectors/cassandra</to>
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>src/main/template</from>
                                     <to>opt/sds/connectors/cassandra/template</to>
-                                </copyDirectory>
-                                <copyDirectory>
-                                    <from>src/main/config</from>
-                                    <to>etc/sds/connectors/cassandra</to>
-                                </copyDirectory>
-                                <copyDirectory>
-                                    <from>src/main/unix/files_and_dirs/etc/default</from>
-                                    <to>etc/default</to>
                                 </copyDirectory>
                                 <copyFile>
                                     <path>src/main/include/LICENSE</path>
@@ -291,6 +283,24 @@
                                 <copyFile>
                                     <path>src/main/include/NOTICE</path>
                                     <toFile>opt/sds/connectors/cassandra/NOTICE</toFile>
+                                </copyFile>
+                                <copyFile>
+                                    <path>src/main/unix/files_and_dirs/etc/init.d/connector_cassandra</path>
+                                    <toFile>/etc/init.d/connector_cassandra</toFile>
+                                    <attributes>
+                                        <user>root</user>
+                                        <group>root</group>
+                                        <mode>755</mode>
+                                    </attributes>
+                                </copyFile>
+                                <copyFile>
+                                    <path>src/main/unix/files_and_dirs/etc/default/cassandra_connector</path>
+                                    <toFile>/etc/default/cassandra_connector</toFile>
+                                    <attributes>
+                                        <user>root</user>
+                                        <group>root</group>
+                                        <mode>755</mode>
+                                    </attributes>
                                 </copyFile>
                             </assembly>
                         </configuration>
