@@ -5,15 +5,16 @@ Native connector for Cassandra using Crossdata.
 
 Requirements
 =============
-Get `Cassandra Lucene Index plugin <https://github.com/Stratio/cassandra-lucene-index/tree/2.1.6.0>`_ version 2.1.6 and put the jar generated into cassandra lib directory
+Get `Cassandra Lucene Index plugin <https://github.com/Stratio/cassandra-lucene-index/tree/2.1.8.4>`_ version 2.1.8 and put the jar generated into cassandra lib directory
 
-`Cassandra <http://cassandra.apache.org/download/>`_ version 2.1.6 must be installed and started.
+`Cassandra <http://cassandra.apache.org/download/>`_ version 2.1.8 must be installed and started.
 
-`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.4.0 is needed to interact with this
+`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.4.1 is needed to interact with this
 connector.
 
 Compiling Stratio Connector Cassandra
 ======================================
+Cassandra must be running in order to execute ITs. Otherwise, use -DskipITs
 To automatically build execute the following command::
 
 
@@ -38,15 +39,13 @@ To generate the executable execute the following command::
 
 To run Connector Cassandra execute::
 
-    > cd target/stratio-connector-cassandra-0.4.0/bin/
-    > ./cassandra-connector-0.4.0 start
+    > target/stratio-connector-cassandra-0.4.0/bin/stratio-connector-cassandra-0.4.0 start
 
 
 To stop the connector execute::
 
 
-    > cd target/stratio-connector-cassandra-0.4.0/bin/
-    > ./cassandra-connector-0.4.0 stop
+    > target/stratio-connector-cassandra-0.4.0/bin/stratio-connector-cassandra-0.4.0 stop
 
 
 Build a redistributable package
@@ -71,8 +70,8 @@ DEB Package::
 
 Now to start/stop the connector::
 
-    > service stratio-connector-cassandra start
-    > service stratio-connector-cassandra stop
+    > service connector_cassandra start
+    > service connector_cassandra stop
 
 How to use Cassandra Connector
 ===============================
