@@ -145,15 +145,37 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
-                <artifactId>crossdata-connector-maven-plugin</artifactId>
-                <groupId>com.stratio.crossdata</groupId>
-                <version>${crossdata.version}</version>
-                <configuration>
-                    <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
-                    <jmxPort>7192</jmxPort>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>appassembler</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                        <configuration>
+                            <configurationSourceDirectory>src/main/config</configurationSourceDirectory>
+                            <configurationDirectory>conf</configurationDirectory>
+                            <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                            <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                            <assembleDirectory>${project.build.directory}/stratio-connector-cassandra-${project.version}</assembleDirectory>
+                            <extraJvmArguments>$CONNECTOR_CASSANDRA_OPTS -Djava.net.preferIPv4Stack=true -Dcom.sun.management.jmxremote.port=${jmx.port} -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false</extraJvmArguments>
+                            <filterConfigurationDirectory>true</filterConfigurationDirectory>
+                            <platforms>
+                                <platform>unix</platform>
+                            </platforms>
+                            <programs>
+                                <program>
+                                    <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
+                                    <id>stratio-connector-cassandra-${project.version}</id>
+                                </program>
+                            </programs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -163,38 +185,6 @@
             <id>package</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>appassembler-maven-plugin</artifactId>
-                        <version>1.10</version>
-                        <executions>
-                            <execution>
-                                <id>appassembler</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>assemble</goal>
-                                </goals>
-                                <configuration>
-                                    <configurationSourceDirectory>src/main/config</configurationSourceDirectory>
-                                    <configurationDirectory>conf</configurationDirectory>
-                                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
-                                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
-                                    <assembleDirectory>${project.build.directory}/stratio-connector-cassandra-${project.version}
-                                    </assembleDirectory>
-                                    <filterConfigurationDirectory>true</filterConfigurationDirectory>
-                                    <platforms>
-                                        <platform>unix</platform>
-                                    </platforms>
-                                    <programs>
-                                        <program>
-                                            <mainClass>com.stratio.connector.cassandra.CassandraConnector</mainClass>
-                                            <id>stratio-connector-cassandra-${project.version}</id>
-                                        </program>
-                                    </programs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!--RPM and deb packages  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
                     <plugin>
                         <groupId>com.stratio.mojo.unix</groupId>

@@ -78,6 +78,7 @@
         <coverage.data.dir>${project.build.outputDirectory}</coverage.data.dir>
         <crossdata.version>0.4.0</crossdata.version>
         <cassandra.driver.version>2.1.7.1</cassandra.driver.version>
+        <jmx.port>7192</jmx.port>
     </properties>
     <dependencies>
         <dependency>
