@@ -11,10 +11,11 @@ DIR_CONF='/etc/sds/connectors/cassandra'
 DIR_CONF='/etc/sds/connectors/cassandra'
 DIR_LOG='/var/log/sds/connectors/cassandra'
 
+mv /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra* /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 
 chmod 755 /etc/init.d/connector_cassandra
 chmod 755 /opt/sds/connectors/cassandra/bin
-chmod +x /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra*
+chmod +x /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 chmod +x /etc/default/cassandra_connector
 export CASSANDRA_CONNECTOR_LIB=/opt/sds/connectors/cassandra
 export CASSANDRA_CONNECTOR_CONF="/etc/sds/connectors/cassandra"
@@ -48,10 +49,11 @@ case "$1" in
   chmod -R 775 $DIR_INSTALL
   chmod 775 $DIR_LOG
 
-  sed -i 's!"$BASEDIR"/conf!/etc/sds/connectors/cassandra!g' /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra*
+  sed -i 's!"$BASEDIR"/conf!/etc/sds/connectors/cassandra!g' /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 
   update-rc.d connector_cassandra defaults
   ;;
+
 esac    
 
 
