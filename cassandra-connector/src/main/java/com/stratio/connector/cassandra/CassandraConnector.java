@@ -98,24 +98,19 @@ public class CassandraConnector implements IConnector {
      * Constructor.
      */
     public CassandraConnector() {
+
         sessions = new HashMap<>();
         connectorOptionsPerCluster = new HashMap<>();
-        File file = new File("../conf/CassandraConnector.xml");
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            connectorManifestPath = getClass().getResource("CassandraConnector.xml").getPath();
-            datastoreManifestPath[0] = getClass().getResource("CassandraDataStore.xml").getPath();
-        }
-        if (inputStream == null) {
-            connectorManifestPath = getClass().getResource("CassandraConnector.xml").getPath();
-            datastoreManifestPath[0] = getClass().getResource("CassandraDataStore.xml").getPath();
-        } else {
+
+
+        if (new File("../conf/CassandraConnector.xml").exists()) {
             connectorManifestPath = "../conf/CassandraConnector.xml";
             datastoreManifestPath[0] = "../conf/CassandraDataStore.xml";
-
+        } else {
+            connectorManifestPath = getClass().getResource("/CassandraConnector.xml").getPath();
+            datastoreManifestPath[0] = getClass().getResource("/CassandraDataStore.xml").getPath();
         }
+
     }
 
     /**
