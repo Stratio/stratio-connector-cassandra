@@ -215,16 +215,22 @@
                                 <section>devel</section>
                             </deb>
 
+                            <excludeDirectoryAttributes>
+                                <dir>/etc</dir>
+                                <dir>/etc/init.d</dir>
+                                <dir>/etc/default</dir>
+                                <dir>/var</dir>
+                                <dir>/opt</dir>
+                                <dir>/usr</dir>
+                                <dir>/bin</dir>
+                            </excludeDirectoryAttributes>
+                            
                             <!--  Default values for files and directories. -->
                             <defaults>
                                 <directoryAttributes>
-                                    <user>stratio</user>
-                                    <group>stratio</group>
                                     <mode>0755</mode>
                                 </directoryAttributes>
                                 <fileAttributes>
-                                    <user>stratio</user>
-                                    <group>stratio</group>
                                     <mode>0644</mode>
                                 </fileAttributes>
                             </defaults>

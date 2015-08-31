@@ -11,7 +11,7 @@ DIR_CONF='/etc/sds/connectors/cassandra'
 DIR_CONF='/etc/sds/connectors/cassandra'
 DIR_LOG='/var/log/sds/connectors/cassandra'
 
-rm /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
+rm -f /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 mv /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra* /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 
 chmod 755 /etc/init.d/connector_cassandra
