@@ -16,12 +16,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.stratio.connector</groupId>
-        <artifactId>stratio-connector-cassandra</artifactId>
+        <groupId>com.stratio.connector.cassandra</groupId>
+        <artifactId>parent</artifactId>
         <version>0.4.0-RC2-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.stratio.connector.cassandra.doc</groupId>
     <artifactId>connector-cassandra-doc</artifactId>
     <name>Stratio Connector Cassandra Documentation</name>
 

@@ -19,13 +19,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.stratio.connector</groupId>
-        <artifactId>stratio-connector-cassandra</artifactId>
+        <groupId>com.stratio.connector.cassandra</groupId>
+        <artifactId>parent</artifactId>
         <version>0.4.0-RC2-SNAPSHOT</version>
     </parent>
 
 
-    <groupId>com.stratio.connector</groupId>
     <artifactId>cassandra-connector</artifactId>
     <name>Stratio Connector Cassandra</name>
     <description>Native Cassandra Connector</description>
