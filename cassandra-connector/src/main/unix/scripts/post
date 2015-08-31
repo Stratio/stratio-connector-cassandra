@@ -37,6 +37,8 @@ chown -R ${USER}:${GROUP} $DIR_LOG
 chmod -R 775 $DIR_INSTALL
 chmod 775 $DIR_LOG
 
+
+rm /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 mv /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra* /opt/sds/connectors/cassandra/bin/stratio-connector-cassandra
 
 chmod 755 /etc/init.d/connector_cassandra
