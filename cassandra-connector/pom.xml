@@ -224,14 +224,18 @@
                                 <dir>/usr</dir>
                                 <dir>/bin</dir>
                             </excludeDirectoryAttributes>
-                            
+
                             <!--  Default values for files and directories. -->
                             <defaults>
                                 <directoryAttributes>
-                                    <mode>0755</mode>
+                                    <user>stratio</user>
+                                    <group>stratio</group>
+                                    <mode>0775</mode>
                                 </directoryAttributes>
                                 <fileAttributes>
-                                    <mode>0644</mode>
+                                    <user>stratio</user>
+                                    <group>stratio</group>
+                                    <mode>0664</mode>
                                 </fileAttributes>
                             </defaults>
 
@@ -246,7 +250,7 @@
                                     <attributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
-                                        <mode>644</mode>
+                                        <mode>775</mode>
                                     </attributes>
                                 </mkdirs>
                                 <copyDirectory>
