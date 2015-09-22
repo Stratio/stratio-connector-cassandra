@@ -8,3 +8,6 @@ Only listing significant user-visible, not internal code cleanups and minor bug 
 - Upgrade datastax-driver to 2.1.7.1
 - Adapt to Crossdata 0.4.0
 - Adapt to new cassandra lucene plugin
+
+## 0.4.1 (September 2015)
+- Adapt to Crossdata 0.4.3

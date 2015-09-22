@@ -39,13 +39,13 @@ To generate the executable execute the following command::
 
 To run Connector Cassandra execute::
 
-    > target/stratio-connector-cassandra-0.4.0/bin/stratio-connector-cassandra-0.4.0 start
+    > target/stratio-connector-cassandra-0.4.1/bin/stratio-connector-cassandra-0.4.1 start
 
 
 To stop the connector execute::
 
 
-    > target/stratio-connector-cassandra-0.4.0/bin/stratio-connector-cassandra-0.4.0 stop
+    > target/stratio-connector-cassandra-0.4.1/bin/stratio-connector-cassandra-0.4.1 stop
 
 
 Build a redistributable package
@@ -62,11 +62,11 @@ Once the package it's created, execute this commands to install:
 
 RPM Package::
 
-    > rpm -i cassandra-connector/target/cassandra-connector-0.4.0.noarch.rpm
+    > rpm -i cassandra-connector/target/cassandra-connector-0.4.1.noarch.rpm
 
 DEB Package::
 
-    > dpkg -i cassandra-connector/target/cassandra-connector-0.4.0.all.deb
+    > dpkg -i cassandra-connector/target/cassandra-connector-0.4.1.all.deb
 
 Now to start/stop the connector::
 
