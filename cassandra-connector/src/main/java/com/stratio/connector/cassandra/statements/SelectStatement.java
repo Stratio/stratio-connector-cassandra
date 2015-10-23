@@ -246,7 +246,7 @@ public class SelectStatement {
         Selector left=relation.getLeftTerm();
         String luceneOrIndex="";
         boolean first=true;
-        for(Selector s:function.getFunctionColumns()) {
+        for(Selector s:function.getFunctionColumns().getSelectorList()) {
             if (!first){
                 sbLucene.append(",");
             }
@@ -265,8 +265,9 @@ public class SelectStatement {
         if (luceneIndexExist) {
             luceneIndex.append(",");
         }
-        String arg1 = function.getFunctionColumns().get(0).getStringValue();
-        String arg2 = function.getFunctionColumns().get(1).getStringValue();
+        List<Selector> functionSelectors = function.getFunctionColumns().getSelectorList();
+        String arg1 = functionSelectors.get(0).getStringValue();
+        String arg2 = functionSelectors.get(1).getStringValue();
         String column = Utils.toCaseSensitive(leftSelector.getName().getName());
         luceneIndex.append("{type:\"range\", field:").append(column).append(", " +
                 "lower:\"").append(arg1).append("\", upper:\"").append(arg2)
@@ -326,7 +327,7 @@ public class SelectStatement {
             result = selectorFunction.getFunctionName() + "()";
             break;
         default:
-            List<Selector> columns = selectorFunction.getFunctionColumns();
+            List<Selector> columns = selectorFunction.getFunctionColumns().getSelectorList();
             sb.append(selectorFunction.getFunctionName()).append("(");
             for (Selector s : columns) {
                 if (s instanceof ColumnSelector) {

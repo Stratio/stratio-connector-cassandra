@@ -67,6 +67,7 @@ import com.stratio.crossdata.common.statements.structures.Operator;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.OrderDirection;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.SelectExpression;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
@@ -446,7 +447,7 @@ public class CassandraQueryEngineIT extends BasicCoreCassandra {
         Selector asteriskSelector=new AsteriskSelector();
         functionColumns.add(asteriskSelector);
 
-        Selector functionSelector=new FunctionSelector("Count", functionColumns);
+        Selector functionSelector = new FunctionSelector("Count", new SelectExpression(functionColumns));
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(functionSelector,"count");
 
@@ -527,7 +528,7 @@ public class CassandraQueryEngineIT extends BasicCoreCassandra {
         //Selector asteriskSelector=new AsteriskSelector();
         //functionColumns.add(asteriskSelector);
 
-        Selector functionSelector=new FunctionSelector("now", functionColumns);
+        Selector functionSelector=new FunctionSelector("now", new SelectExpression(functionColumns));
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(functionSelector,"now");
 
@@ -605,7 +606,7 @@ public class CassandraQueryEngineIT extends BasicCoreCassandra {
         Selector columnSelector=new ColumnSelector(new ColumnName("cassandra_connector_demo","users","phrase"));
         functionColumns.add(columnSelector);
 
-        Selector functionSelector=new FunctionSelector("ttl", functionColumns);
+        Selector functionSelector=new FunctionSelector("ttl", new SelectExpression(functionColumns));
         Map<Selector, String> aliasColumns = new LinkedHashMap<>();
         aliasColumns.put(functionSelector,"ttl");
 
