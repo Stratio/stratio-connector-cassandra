@@ -97,8 +97,6 @@ At this point, we can start to send queries, that Crossdata execute with the con
     xdsh:user> USE catalogTest;
     
     xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text, description text, rating float);
-    
-    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (1, 'stratio1', 'Big Data', 5.0);
 
     xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (1, 'stratio1', 'Big Data', 5.0);
 
