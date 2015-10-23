@@ -96,12 +96,36 @@ At this point, we can start to send queries, that Crossdata execute with the con
     
     xdsh:user> USE catalogTest;
     
-    xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text);
+    xdsh:user> CREATE TABLE tableTest ON CLUSTER cassandra_prod (id int PRIMARY KEY, name text, description text, rating float);
     
-    xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (1, 'stratio1', 'Big Data', 5.0);
+
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (1, 'stratio1', 'Big Data', 5.0);
+
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (2, 'stratio2', 'Crossdata', 8.5);
+
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (3, 'stratio3', 'One framework to rule all the databases', 4.0);
+
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (4, 'worker', 'Happy', 9.2);
+
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (5, 'worker', 'Learning', 6.5);
+
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (6, 'employee', 'Working', 7.0);
+
+    xdsh:user> INSERT INTO tableTest(id, name, description, rating) VALUES (7, 'employee', 'Improving', 2);
     
     xdsh:user> SELECT * FROM tableTest;
+    
+    xdsh:user> SELECT count(*) FROM tableTest;
+    
+You can also try some queries using the Lucene indexes  ::
 
+    xdsh:user> CREATE FULL_TEXT INDEX myIndex ON tableTest(description);
+    
+    xdsh:user> SELECT * FROM tableTest WHERE description MATCH '*Data*';
+
+    xdsh:user> SELECT * FROM tableTest WHERE description=should("Learning", "Happy");
+    
 
 License
 ========
