@@ -9,7 +9,7 @@ Get `Cassandra Lucene Index plugin <https://github.com/Stratio/cassandra-lucene-
 
 `Cassandra <http://cassandra.apache.org/download/>`_ version 2.1.8 must be installed and started.
 
-`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.4.3 is needed to interact with this
+`Crossdata <https://github.com/Stratio/crossdata>`_ version 0.5.0 is needed to interact with this
 connector.
 
 Compiling Stratio Connector Cassandra
