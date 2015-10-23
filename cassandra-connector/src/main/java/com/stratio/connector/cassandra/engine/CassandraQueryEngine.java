@@ -64,9 +64,7 @@ public class CassandraQueryEngine implements IQueryEngine {
 
         Result result;
         if (ss.getSession() != null) {
-
             result = CassandraExecutor.execute(query, ss.getAliasColumns(), ss.getSession());
-
         } else {
             throw new ExecutionException("No session to cluster established");
         }

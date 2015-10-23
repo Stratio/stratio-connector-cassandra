@@ -77,7 +77,7 @@
         <slf4j.version>1.7.7</slf4j.version>
         <coverage.data.dir>${project.build.outputDirectory}</coverage.data.dir>
         <crossdata.version>0.5.0-RC1</crossdata.version>
-        <cassandra.driver.version>2.1.7.1</cassandra.driver.version>
+        <cassandra.driver.version>2.1.8</cassandra.driver.version>
         <jmx.port>7192</jmx.port>
     </properties>
     <dependencies>

@@ -261,7 +261,6 @@ public class SelectStatement {
     }
 
     private void getStringRangeFunction(FunctionSelector function, ColumnSelector leftSelector) {
-
         if (luceneIndexExist) {
             luceneIndex.append(",");
         }
@@ -274,7 +273,6 @@ public class SelectStatement {
                 .append("\",include_upper: true, include_lower: true }");
 
         luceneIndexExist = true;
-
     }
 
     private String getFromClause() {
@@ -372,7 +370,7 @@ public class SelectStatement {
         String column = relation.getLeftTerm().toString()
                 .substring(relation.getLeftTerm().toString().lastIndexOf('.') + 1);
 
-        String value = relation.getRightTerm().toString();
+        String value = relation.getRightTerm().toSQLString(false);
         // Generate query for column
         String[] processedQuery = processLuceneQueryType(value);
         sb.append("{type:\"");
