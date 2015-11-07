@@ -18,9 +18,10 @@
 
 package com.stratio.connector.cassandra.engine;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.datastax.driver.core.Session;
 import com.stratio.connector.cassandra.CassandraExecutor;
@@ -56,23 +57,22 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     private static final int PRIMARY_SINGLE = 1;
     private static final int PRIMARY_COMPOSED = 2;
     private static final int PRIMARY_AND_CLUSTERING_SPECIFIED = 3;
-    private static List<String> createTableOptions = new ArrayList<>();
+    private static Set<String> validTableOptions = new HashSet<>();
 
     static {
-        createTableOptions.add("bloom_filter_fp_chance");
-        createTableOptions.add("comment");
-        createTableOptions.add("dclocal_read_repair_chance");
-        createTableOptions.add("default_time_to_live");
-        createTableOptions.add("gc_grace_seconds");
-        createTableOptions.add("min_index_interval");
-        createTableOptions.add("max_index_interval");
-        createTableOptions.add("min_index_interval");
-        createTableOptions.add("populate_io_cache_on_flush");
-        createTableOptions.add("read_repair_chance");
-        createTableOptions.add("speculative_retry");
-        createTableOptions.add("durable_writes");
-        createTableOptions.add("populate_io_cache_on_flush");
-
+        validTableOptions.add("bloom_filter_fp_chance");
+        validTableOptions.add("comment");
+        validTableOptions.add("dclocal_read_repair_chance");
+        validTableOptions.add("default_time_to_live");
+        validTableOptions.add("gc_grace_seconds");
+        validTableOptions.add("min_index_interval");
+        validTableOptions.add("max_index_interval");
+        validTableOptions.add("min_index_interval");
+        validTableOptions.add("populate_io_cache_on_flush");
+        validTableOptions.add("read_repair_chance");
+        validTableOptions.add("speculative_retry");
+        validTableOptions.add("durable_writes");
+        validTableOptions.add("populate_io_cache_on_flush");
     }
 
     private Map<String, Session> sessions;
@@ -101,9 +101,9 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
         String catalogName = catalogMetadata.getName().getQualifiedName();
 
-        Map<Selector, Selector> catalogOptions = catalogMetadata.getOptions();
+        Map<Selector, Selector> options = catalogMetadata.getOptions();
 
-        String stringOptions = getStringOptions(catalogOptions);
+        String stringOptions = stringKeyspaceOptions(options);
 
         CreateCatalogStatement catalogStatement =
                 new CreateCatalogStatement(catalogName, false, stringOptions);
@@ -112,17 +112,46 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
-    @Override public void alterCatalog(ClusterName targetCluster, CatalogName catalogName,
+    @Override
+    public void alterCatalog(ClusterName targetCluster, CatalogName catalogName,
             Map<Selector, Selector> options) throws ConnectorException {
 
         session = sessions.get(targetCluster.getName());
 
-        String stringOptions = getStringOptions(options);
+        String stringOptions = stringKeyspaceOptions(options);
 
-        AlterCatalogStatement alterCatalogStatement =
-                new AlterCatalogStatement(catalogName.getName(), stringOptions);
+        if(!stringOptions.isEmpty()){
+            AlterCatalogStatement alterCatalogStatement =
+                    new AlterCatalogStatement(catalogName.getName(), stringOptions);
 
-        CassandraExecutor.execute(alterCatalogStatement.toString(), session);
+            CassandraExecutor.execute(alterCatalogStatement.toString(), session);
+        }
+    }
+
+    private String stringKeyspaceOptions(Map<Selector, Selector> options) {
+        StringBuilder sb = new StringBuilder();
+        if(options.containsKey("replication.class")){
+            sb.append("REPLICATION = {'class': '").append(options.get("replication.class")).append("'");
+            if(options.containsKey("replication.factor")){
+                sb.append(", 'replication_factor': ").append(options.get("replication.factor"));
+            }
+            sb.append("}");
+            if(options.containsKey("durable_writes")){
+                sb.append(" AND DURABLE WRITES = ").append(options.get("durable_writes"));
+            }
+        } else {
+            if(options.containsKey("replication.factor")){
+                sb.append("REPLICATION = {'replication_factor': " )
+                        .append(options.get("replication.factor"))
+                        .append("}");
+                if(options.containsKey("durable_writes")){
+                    sb.append(" AND DURABLE WRITES = ").append(options.get("durable_writes"));
+                }
+            } else if(options.containsKey("durable_writes")) {
+                sb.append("DURABLE WRITES = ").append(options.get("durable_writes"));
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -193,7 +222,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
 
     }
 
-    @Override public void alterTable(ClusterName targetCluster, TableName name, AlterOptions alterOptions)
+    @Override
+    public void alterTable(ClusterName targetCluster, TableName name, AlterOptions alterOptions)
             throws ConnectorException {
         AlterTableStatement tableStatement;
         session = sessions.get(targetCluster.getName());
@@ -268,7 +298,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             remove = "ALTER TABLE " + catalog + "." + tableName + " DROP " + Utils.toCaseSensitive(indexMetadata
                     .getName().getName());
             CassandraExecutor.execute(remove, session);
-        }else{
+        } else {
             remove = "DROP INDEX " + catalog + "."  + Utils.toCaseSensitive(indexMetadata.getName().getName());
            /* String removeColumn = "ALTER TABLE " + catalog + "." + tableName + " DROP " + Utils.toCaseSensitive
                     (indexMetadata
@@ -277,21 +307,23 @@ public class CassandraMetadataEngine implements IMetadataEngine {
             //CassandraExecutor.execute(removeColumn, session);
         }
 
-
     }
 
-    @Override public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {
+    @Override
+    public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws ConnectorException {
         session = sessions.get(clusterName.getName());
         return CassandraExecutor.getKeyspaces(session, clusterName.getName());
     }
 
-    @Override public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)
+    @Override
+    public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)
             throws ConnectorException {
         session = sessions.get(clusterName.getName());
         return CassandraExecutor.getKeyspacesByName(session, catalogName, clusterName.getName());
     }
 
-    @Override public TableMetadata provideTableMetadata(ClusterName clusterName, TableName tableName)
+    @Override
+    public TableMetadata provideTableMetadata(ClusterName clusterName, TableName tableName)
             throws ConnectorException {
         session = sessions.get(clusterName.getName());
         return CassandraExecutor.getTablesByTableName(session, tableName, clusterName.getName());
@@ -310,7 +342,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
                     stringOptions.append(" AND ");
                 }
                 i = 1;
-                //Analize if it is a pair {key,value} or its only a key
+                //Analyze if it is a pair {key,value} or its only a key
                 String key = stringKeySelector.getValue();
                 stringOptions.append(getStyleStringOption(key, optionSelector.getValue()));
             }
@@ -318,21 +350,20 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         return stringOptions.toString();
     }
 
-    private StringBuilder getStyleStringOption(String key, String value) {
+    private String getStyleStringOption(String key, String value) {
         StringBuilder stringOption = new StringBuilder();
 
         if ("COMPACT STORAGE".equals(key)) {
             stringOption.append(key);
         } else if ("CLUSTERING ORDER BY".equals(key)) {
             stringOption.append(key).append(" (").append(value).append(")");
-        } else if (createTableOptions.contains(key.toLowerCase())) {
-            stringOption.append(key).append(" = ").append(value).append("");
+        } else if (validTableOptions.contains(key.toLowerCase())) {
+            stringOption.append(key).append(" = ").append(value);
         } else {
-            stringOption.append(key).append(" = {")
-                    .append(value).append("}");
+            stringOption.append(key).append(" = {").append(value).append("}");
         }
 
-        return stringOption;
+        return stringOption.toString();
     }
 
 }

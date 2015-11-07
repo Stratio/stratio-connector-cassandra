@@ -63,10 +63,12 @@ public class CreateCatalogStatement {
         }
         sb.append(Utils.toCaseSensitive(catalog));
 
+        sb.append(" WITH ").append(options);
+
         if ((options != null) && (options.length() > 0)) {
-            sb.append(" WITH ").append(options);
+            sb.append(options);
         } else {
-            sb.append(" WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 1};");
+            sb.append("replication = {'class': 'SimpleStrategy', 'replication_factor' : 1};");
         }
         return sb.toString();
     }

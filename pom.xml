@@ -27,7 +27,7 @@
 
     <groupId>com.stratio.connector.cassandra</groupId>
     <artifactId>parent</artifactId>
-    <version>0.4.2</version>
+    <version>0.4.3-RC1-SNAPSHOT</version>
 
     <name>Stratio Connector Cassandra Parent</name>
     <description>Native Cassandra Connector</description>
@@ -76,7 +76,7 @@
         <scala.dep.version>2.10</scala.dep.version>
         <slf4j.version>1.7.7</slf4j.version>
         <coverage.data.dir>${project.build.outputDirectory}</coverage.data.dir>
-        <crossdata.version>0.5.0</crossdata.version>
+        <crossdata.version>0.5.1-RC1-SNAPSHOT</crossdata.version>
         <cassandra.driver.version>2.1.8</cassandra.driver.version>
         <jmx.port>7192</jmx.port>
     </properties>

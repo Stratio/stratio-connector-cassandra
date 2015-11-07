@@ -2,6 +2,10 @@
 
 Only listing significant user-visible, not internal code cleanups and minor bug fixes.
 
+## 0.4.3 (November 2015)
+- Adapt to Crossdata 0.5.1
+- Bug-fixing
+
 ## 0.4.2 (October 2015)
 - Adapt to Crossdata 0.5.0
 

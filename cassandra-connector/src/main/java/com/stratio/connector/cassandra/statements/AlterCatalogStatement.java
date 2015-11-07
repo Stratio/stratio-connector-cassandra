@@ -55,9 +55,8 @@ public class AlterCatalogStatement {
 
         if ((options != null) && (options.length() > 0)) {
             sb.append(" WITH ").append(options);
-        } else {
-            sb.append(" WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 1};");
         }
+
         return sb.toString();
     }
 
