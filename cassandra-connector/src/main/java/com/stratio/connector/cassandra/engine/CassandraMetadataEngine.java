@@ -256,6 +256,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
     @Override
     public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata)
             throws ConnectorException {
+        checkIndexMetadata(indexMetadata);
         session = sessions.get(targetCluster.getName());
         CreateIndexStatement indexStatement;
         try {
@@ -267,13 +268,22 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         try {
             CassandraExecutor.execute(indexStatement.toString(), session);
         } catch (ConnectorException e) {
-            //remove de column create for the index
-            String tableName = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
-            String catalog = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
-            String remove = "ALTER TABLE " + catalog + "." + tableName + " DROP " + indexMetadata
-                    .getName().getName();
-            CassandraExecutor.execute(remove, session);
+            if(indexMetadata.getType() == IndexType.FULL_TEXT){
+                //remove de column create for the index
+                String tableName = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
+                String catalog = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
+                String remove = "ALTER TABLE " + catalog + "." + tableName + " DROP " + indexMetadata
+                        .getName().getName();
+                CassandraExecutor.execute(remove, session);
+            }
             throw e;
+        }
+    }
+
+    private void checkIndexMetadata(IndexMetadata indexMetadata) throws ConnectorException {
+        if((indexMetadata.getType() != IndexType.FULL_TEXT)
+                && (indexMetadata.getColumns().size() != 1)){
+            throw new ConnectorException(indexMetadata.getType() + " indexes can be applied only to one column.");
         }
     }
 
