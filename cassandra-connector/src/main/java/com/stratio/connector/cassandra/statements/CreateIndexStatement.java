@@ -106,7 +106,7 @@ public class CreateIndexStatement {
         if (keyspace != null) {
             this.keyspaceIncluded = true;
         }
-        this.name = indexMetadata.getName().getName();
+        this.name = Utils.toCaseSensitive(indexMetadata.getName().getName());
 
         if (type == IndexType.FULL_TEXT) {
             usingClass = "'com.stratio.cassandra.lucene.Index'";

@@ -305,8 +305,8 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         String tableName = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getName());
         String catalog = Utils.toCaseSensitive(indexMetadata.getName().getTableName().getCatalogName().getName());
         if (indexMetadata.getType() == IndexType.FULL_TEXT) {
-            remove = "ALTER TABLE " + catalog + "." + tableName + " DROP " + Utils.toCaseSensitive(indexMetadata
-                    .getName().getName());
+            remove = "ALTER TABLE " + catalog + "." + tableName + " DROP "
+                    + Utils.toCaseSensitive(indexMetadata.getName().getName());
             CassandraExecutor.execute(remove, session);
         } else {
             remove = "DROP INDEX " + catalog + "."  + Utils.toCaseSensitive(indexMetadata.getName().getName());
