@@ -261,7 +261,7 @@ public class CassandraMetadataEngine implements IMetadataEngine {
         CreateIndexStatement indexStatement;
         try {
             indexStatement = new CreateIndexStatement(indexMetadata, true, session);
-        }catch(Exception e){
+        } catch(Exception e){
             throw e;
         }
 
