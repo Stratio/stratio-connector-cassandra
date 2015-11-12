@@ -27,6 +27,7 @@ import java.util.Map;
 
 import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Row;
@@ -285,10 +286,23 @@ public final class CassandraExecutor {
      * @param tableName The table name to search.
      * @return A {@link com.stratio.crossdata.common.metadata.TableMetadata} .
      */
-    public static TableMetadata getTablesByTableName(Session session, TableName tableName, String cluster) {
-        com.datastax.driver.core.TableMetadata cassandraTableMetadata = session.getCluster().getMetadata().getKeyspace
-                (Utils.toCaseSensitive(tableName.getCatalogName().getName())).getTable(Utils.toCaseSensitive
-                (tableName.getName()));
+    public static TableMetadata getTablesByTableName(Session session, TableName tableName, String cluster)
+            throws ConnectorException {
+        Metadata clusterMetadata = session.getCluster().getMetadata();
+        String ks = Utils.toCaseSensitive(tableName.getCatalogName().getName());
+
+        KeyspaceMetadata ksMetadata = clusterMetadata.getKeyspace(ks);
+
+        if(clusterMetadata.getKeyspace(ks) == null){
+            throw new ConnectorException("Catalog " + ks + " not found");
+        }
+
+        String tn = Utils.toCaseSensitive(tableName.getName());
+        com.datastax.driver.core.TableMetadata cassandraTableMetadata = ksMetadata.getTable(tn);
+
+        if(ksMetadata.getTable(tn) == null){
+            throw new ConnectorException("Table " + ks + "." + tn + " not found");
+        }
 
         return getXDTableMetadata(session, cassandraTableMetadata, cluster);
     }
