@@ -164,17 +164,24 @@ public class CassandraConnector implements IConnector {
 
         //Check if the cluster is attached with other connector
         if (sessions.containsKey(clusterName.getName())) {
-            throw new ConnectionException("The connection to " + clusterName.getName() + " already exists.");
+            LOG.warn("The connection to " + clusterName.getName() + " already exists.");
+            return;
         }
 
         Map<String, String> clusterOptions = config.getClusterOptions();
         Map<String, String> connectorOptions = config.getConnectorOptions();
 
         EngineConfig engineConfig = new EngineConfig();
-        //the hosts must be received as [host1:port,host2:port,host3:port...]
-        engineConfig.setCassandraHosts(
-                clusterOptions.get("Hosts").substring(1, clusterOptions.get("Hosts").length() - 1)
-                        .split(","));
+
+        String[] hosts = clusterOptions.get("Hosts").substring(1, clusterOptions.get("Hosts").length() - 1).split(",");
+
+        String[] trimmedHosts = new String[hosts.length];
+
+        for(int i=0; i < hosts.length; i++){
+            trimmedHosts[i] = hosts[i].trim();
+        }
+
+        engineConfig.setCassandraHosts(trimmedHosts);
         engineConfig.setCassandraPort(Integer.parseInt(clusterOptions.get("Port")));
         engineConfig.setCredentials(credentials);
 
