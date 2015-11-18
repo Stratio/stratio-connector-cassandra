@@ -27,7 +27,7 @@
 
     <groupId>com.stratio.connector.cassandra</groupId>
     <artifactId>parent</artifactId>
-    <version>0.4.3</version>
+    <version>0.4.4-RC1-SNAPSHOT</version>
 
     <name>Stratio Connector Cassandra Parent</name>
     <description>Native Cassandra Connector</description>
